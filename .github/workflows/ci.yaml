@@ -2,7 +2,7 @@ name: AurumAI CI
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: ["main", "develop"]
   pull_request:
 
 jobs:
@@ -19,10 +19,10 @@ jobs:
           python-version: "3.11"
 
       - name: Install deps
-        run: pip install -r aurumai-api/requirements.txt
+        run: pip install -r backend/requirements.txt
 
       - name: Run tests
-        run: pytest -q
+        run: cd backend && pytest -q
 
   build_docker:
     runs-on: ubuntu-latest
@@ -32,10 +32,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build API Docker Image
-        run: docker build -t aurumai-api ./aurumai-api
+      - name: Build Backend Docker Image
+        run: docker build -t aurumai-backend ./backend
 
-      - name: Build Edge Docker Image
-        run: docker build -t aurumai-edge -f aurumai-api/Dockerfile.edge ./aurumai-api
+      - name: Build Edge Simulator Docker Image
+        run: docker build -t aurumai-edge-sim ./edge-sim
 
-
+      - name: Build IoT Simulator Docker Image
+        run: docker build -t aurumai-iot-sim ./iot-sim
