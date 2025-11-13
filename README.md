@@ -49,11 +49,13 @@ docker compose up --build
 ```
 
 **Acceder a la demo:**
+
 - 📊 **Dashboard**: [http://localhost:3000](http://localhost:3000)
 - 🔧 **API Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
 - 💚 **Health Check**: [http://localhost:8000/health](http://localhost:8000/health)
 
 **Servicios levantados:**
+
 - Backend API (port 8000)
 - Frontend Dashboard (port 3000)
 - Edge Simulator (port 9000)
@@ -76,6 +78,7 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas de setup manual para de
 ### Arquitectura Técnica
 
 Ver [ARCHITECTURE.md](./ARCHITECTURE.md) para detalles completos sobre:
+
 - Arquitectura hexagonal
 - Domain-Driven Design
 - Entidades del dominio
@@ -129,6 +132,7 @@ backend/
 ## 📝 Roadmap
 
 ### ✅ Completado (Mockup Demo Funcional)
+
 - [x] Arquitectura hexagonal base
 - [x] Backend FastAPI completo con endpoints REST
 - [x] Base de datos SQLite con tablas operacionales
@@ -143,11 +147,13 @@ backend/
 ### 🎯 Estado Actual: **MOCKUP DEMO LISTO**
 
 El proyecto está **listo para demo comercial**. Puedes:
+
 - Presentarlo a inversores
 - Mostrarlo a clientes industriales
 - Usarlo como base para el producto real
 
 ### 🚧 Próximos Pasos para Producción
+
 - [ ] Migrar SQLite → PostgreSQL + TimescaleDB
 - [ ] Implementar ML models reales (scikit-learn/XGBoost)
 - [ ] Añadir autenticación y multi-tenant real
@@ -162,6 +168,7 @@ El proyecto está **listo para demo comercial**. Puedes:
 - [Documentación de Arquitectura](./ARCHITECTURE.md)
 - [FastAPI](https://fastapi.tiangulo.com/)
 - [TimescaleDB](https://www.timescale.com/)
+- [Third-Party Notices](./THIRD_PARTY_NOTICES.md)
 
 ---
 
