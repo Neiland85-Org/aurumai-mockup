@@ -2,7 +2,7 @@
 
 This file centralizes third-party code notices, attributions and license metadata for components, snippets and other third-party content used in this repository.
 
-IMPORTANT: I cannot verify remote repositories from this environment. The entries below include the original source URL and *action items* where a human maintainer must confirm the license (SPDX identifier), the exact commit SHA used, and any attribution obligations. Replace the "ACTION_REQUIRED" markers with the verified license and permalink before release.
+IMPORTANT: I cannot verify remote repositories from this environment. The entries below include the original source URL and _action items_ where a human maintainer must confirm the license (SPDX identifier), the exact commit SHA used, and any attribution obligations. Replace the "ACTION_REQUIRED" markers with the verified license and permalink before release.
 
 ---
 

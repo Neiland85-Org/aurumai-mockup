@@ -167,7 +167,7 @@ El proyecto está **listo para demo comercial**. Puedes:
 - [Documentación de Arquitectura](./ARCHITECTURE.md)
 - [FastAPI](https://fastapi.tiangulo.com/)
 - [TimescaleDB](https://www.timescale.com/)
- - [Third-Party Notices](./THIRD_PARTY_NOTICES.md)
+- [Third-Party Notices](./THIRD_PARTY_NOTICES.md)
 
 ---
 
