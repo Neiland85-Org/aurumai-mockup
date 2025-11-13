@@ -1,0 +1,5 @@
+packages:
+  - "aurumai-api"
+  - "aurumai-frontend"
+  - "docs"
+
