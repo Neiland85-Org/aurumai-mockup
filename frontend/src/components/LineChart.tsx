@@ -20,11 +20,11 @@ const LineChart: React.FC<Props> = ({ data, color = "#cc7f32", height = 100 }) =
     y: ((v - minVal) / range) * 100
   }));
 
-  const svgPath = points.map((p, i) => (` ${i === 0 ? "M" : "L"} ${p.x},${100 - p.y}`).join(" ");
+  const svgPath = points.map((p, i) => ` ${i === 0 ? "M" : "L"} ${p.x},${100 - p.y}`).join(" ");
 
   return (
     <div className="w-full bg-gray-800 p-4 rounded-xl border border-gray-700">
-      <svg viewBox="0 0 100 100" className="w-full" style={{ height: `${height}px` }}} preserveAspectRatio="none">
+      <svg viewBox="0 0 100 100" className="w-full" style={{ height: `${height}px` }} preserveAspectRatio="none">
         <path d={svgPath} fill="none" stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" />
       </svg>
     </div>
