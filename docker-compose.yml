@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: aurumai-backend
+    environment:
+      - DB_PATH=/data/aurumai.db
+    volumes:
+      - backend-data:/data
+    ports:
+      - "8000:8000"
+    networks:
+      - aurumai-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  edge-sim:
+    build: ./edge-sim
+    container_name: aurumai-edge
+    environment:
+      - EDGE_PORT=9000
+      - BACKEND_HOST=backend
+      - BACKEND_PORT=8000
+      - SYNC_INTERVAL=5
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "9000:9000"
+    networks:
+      - aurumai-network
+
+  iot-sim:
+    build: ./iot-sim
+    container_name: aurumai-iot
+    environment:
+      - EDGE_HOST=edge-sim
+      - EDGE_PORT=9000
+      - MACHINES=TRUCK-21,MILL-3,BOILER-7
+      - SIM_INTERVAL_SECONDS=3
+      - NORMAL_PHASE_CYCLES=50
+      - DRIFT_PHASE_CYCLES=50
+    depends_on:
+      - edge-sim
+    networks:
+      - aurumai-network
+
+  frontend:
+    build: ./frontend
+    container_name: aurumai-frontend
+    environment:
+      - NEXT_PUBLIC_API_BASE=http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - aurumai-network
+
+volumes:
+  backend-data:
+    driver: local
+
+networks:
+  aurumai-network:
+    driver: bridge

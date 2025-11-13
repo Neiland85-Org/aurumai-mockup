@@ -1,0 +1,46 @@
+╔═══════════════════════════════════════════════════════════╗
+║           🏭 AurumAI Mockup Demo - Quick Start            ║
+╚═══════════════════════════════════════════════════════════╝
+
+✅ EL PROYECTO ESTÁ COMPLETO Y LISTO PARA DEMO
+
+📦 Componentes Implementados:
+  ✓ Backend FastAPI con REST API completa
+  ✓ IoT Simulator (3 máquinas: TRUCK-21, MILL-3, BOILER-7)
+  ✓ Edge Simulator con feature engineering
+  ✓ Frontend Next.js con 3 vistas
+  ✓ ML Engine predictivo (fake pero creíble)
+  ✓ ESG Calculator con factores IPCC
+  ✓ Docker Compose orquestación completa
+
+🚀 Arranque en 1 Comando:
+
+    docker compose up --build
+
+⏱  Espera ~2 minutos y abre:
+
+    📊 Dashboard:   http://localhost:3000
+    🔧 API Docs:    http://localhost:8000/docs
+    💚 Health:      http://localhost:8000/health
+
+📖 Documentación:
+  • README.md         → Quick start y overview
+  • SETUP.md          → Setup detallado para desarrollo
+  • START_DEMO.md     → Script de presentación comercial
+  • PROYECTO_MEJORADO.md → Este resumen completo
+
+🎬 Para hacer una demo comercial:
+  1. Lee START_DEMO.md (script de 10-15 min)
+  2. Levanta con: docker compose up --build
+  3. Abre http://localhost:3000
+  4. Sigue el script
+
+🎯 Estado: MOCKUP DEMO 100% FUNCIONAL
+   Listo para presentar a inversores/clientes
+
+💡 Tip: Si tienes 7-8 minutos, espera a que el simulador
+   entre en fase "failure" y verás anomalías en vivo.
+
+═══════════════════════════════════════════════════════════
+              ¡Buena suerte con la demo! 🚀
+═══════════════════════════════════════════════════════════
