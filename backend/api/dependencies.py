@@ -5,13 +5,15 @@ Provides factory functions for use cases with their dependencies
 from typing import AsyncGenerator, TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from sqlalchemy.ext.asyncio import AsyncSession # type: ignore
-    from fastapi import Depends
+    from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 else:
     AsyncSession = Any
 
+try:
+    from fastapi import Depends  # type: ignore
+except Exception:
     # Fallback stub for editors/linters that don't have FastAPI installed.
-    # At runtime with FastAPI installed, the real Depends will be used (imported under TYPE_CHECKING only for type checkers).
+    # At runtime with FastAPI installed, the real Depends will be used.
     def Depends(dependency=None):
         return dependency
 from infrastructure.db.postgres_config import get_db
@@ -22,10 +24,10 @@ from infrastructure.adapters.output.postgres import (
     PostgresESGRepository,
 )
 from application.use_cases import (
-    IngestTelemetryUseCase,
-    RunPredictionUseCase,
-    CalculateESGUseCase,
-    GetMachineMetricsUseCase,
+    IngestTelemetryUseCase, # type: ignore
+    RunPredictionUseCase, # type: ignore
+    CalculateESGUseCase, # type: ignore
+    GetMachineMetricsUseCase, # type: ignore
 )
 from domain.services.ml_service_impl import MLServiceImpl
 from domain.services.esg_service_impl import ESGServiceImpl
@@ -39,7 +41,7 @@ esg_service = ESGServiceImpl()
 # Dependency providers for use cases
 
 async def get_ingest_telemetry_use_case(
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db), # pyright: ignore[reportInvalidTypeForm]
 ) -> IngestTelemetryUseCase:
     """
     Provides IngestTelemetryUseCase with dependencies.
@@ -54,7 +56,7 @@ async def get_ingest_telemetry_use_case(
 
 
 async def get_run_prediction_use_case(
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db), # type: ignore
 ) -> RunPredictionUseCase:
     """
     Provides RunPredictionUseCase with dependencies.
@@ -112,8 +114,8 @@ async def get_machine_metrics_use_case(
 
 async def get_machine_repository(
     db: AsyncSession = Depends(get_db),
-) -> PostgresMachineRepository:
-    """Provides MachineRepository instance"""
+) -> PostgresMachineRepository: # pyright: ignore[reportReturnType]
+    """Provides MachineRepository instance""" # type: ignore
     return PostgresMachineRepository(db)
 
 
