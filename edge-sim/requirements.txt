@@ -1,3 +1,8 @@
+# Edge Simulator - Simplified Version
+# For synchronous HTTP requests
+requests>=2.31.0
+
+# Optional: Keep for compatibility with original version
 fastapi>=0.109.0
 uvicorn>=0.27.0
 httpx>=0.26.0
