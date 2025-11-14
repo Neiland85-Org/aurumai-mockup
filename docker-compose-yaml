@@ -1,0 +1,73 @@
+version: "3.9"
+
+services:
+  api:
+    container_name: aurumai_api
+    build:
+      context: ./aurumai-api
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: aurumai
+      DB_PASS: aurumai
+      DB_NAME: aurumai
+    depends_on:
+      - db
+      - mqtt
+    restart: unless-stopped
+
+  edge:
+    container_name: aurumai_edge
+    build:
+      context: ./aurumai-api
+      dockerfile: Dockerfile.edge
+    environment:
+      MQTT_BROKER: mqtt
+      API_URL: http://api:8000
+    depends_on:
+      - api
+      - mqtt
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    container_name: aurumai_db
+    environment:
+      POSTGRES_USER: aurumai
+      POSTGRES_PASSWORD: aurumai
+      POSTGRES_DB: aurumai
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: aurumai_mqtt
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./docker/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  prometheus:
+    image: prom/prometheus
+    container_name: aurumai_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    container_name: aurumai_grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+volumes:
+  pgdata:
+

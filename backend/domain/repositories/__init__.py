@@ -9,6 +9,8 @@ from .tenant_repository import ITenantRepository
 from .machine_repository import IMachineRepository
 from .sensor_repository import ISensorRepository
 from .measurement_repository import IMeasurementRepository
+from .prediction_repository import IPredictionRepository
+from .esg_repository import IESGRepository
 from .alert_repository import IAlertRepository
 from .emission_repository import IEmissionRepository
 
@@ -17,6 +19,8 @@ __all__ = [
     "IMachineRepository",
     "ISensorRepository",
     "IMeasurementRepository",
+    "IPredictionRepository",
+    "IESGRepository",
     "IAlertRepository",
     "IEmissionRepository",
 ]

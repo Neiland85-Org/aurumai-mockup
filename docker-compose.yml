@@ -1,10 +1,31 @@
 version: "3.9"
 
 services:
+  # PostgreSQL with TimescaleDB extension for time-series data
+  postgres:
+    image: timescale/timescaledb:latest-pg15
+    container_name: aurumai-postgres
+    environment:
+      - POSTGRES_DB=aurumai_db
+      - POSTGRES_USER=aurumai
+      - POSTGRES_PASSWORD=aurumai_pass
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - aurumai-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aurumai -d aurumai_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build: ./backend
     container_name: aurumai-backend
     environment:
+      - DATABASE_URL=postgresql+asyncpg://aurumai:aurumai_pass@postgres:5432/aurumai_db
       - DB_PATH=/data/aurumai.db
     volumes:
       - backend-data:/data
@@ -12,6 +33,9 @@ services:
       - "8000:8000"
     networks:
       - aurumai-network
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 10s
@@ -62,6 +86,8 @@ services:
       - aurumai-network
 
 volumes:
+  postgres-data:
+    driver: local
   backend-data:
     driver: local
 

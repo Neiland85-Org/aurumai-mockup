@@ -1,77 +1,54 @@
-from fastapi import APIRouter, HTTPException
+"""
+Ingest Router - Hexagonal Architecture
+Handles ingestion of raw telemetry and feature vectors
+"""
+from fastapi import APIRouter, HTTPException, Depends
 from models import RawMeasurement, FeatureVector
-from infrastructure.db.database import get_connection
+from api.dependencies import get_ingest_telemetry_use_case
+from application.use_cases import IngestTelemetryUseCase
 
 router = APIRouter()
 
 
 @router.post("/raw")
-async def ingest_raw(meas: RawMeasurement):
+async def ingest_raw(
+    meas: RawMeasurement,
+    use_case: IngestTelemetryUseCase = Depends(get_ingest_telemetry_use_case),
+):
     """
-    Ingest raw telemetry data from IoT devices/Edge nodes
+    Ingest raw telemetry data from IoT devices/Edge nodes.
+    Uses hexagonal architecture with dependency injection.
     """
     try:
-        conn = get_connection()
-        cur = conn.cursor()
-
-        # Verify machine exists
-        cur.execute("SELECT machine_id FROM machines WHERE machine_id = ?", (meas.machine_id,))
-        if not cur.fetchone():
-            raise HTTPException(status_code=404, detail=f"Machine {meas.machine_id} not found")
-
-        # Insert all metrics
-        for key, value in meas.metrics.items():
-            cur.execute("""
-                INSERT INTO raw_measurements (machine_id, timestamp, metric_key, metric_value)
-                VALUES (?, ?, ?, ?)
-            """, (meas.machine_id, meas.timestamp.isoformat(), key, value))
-
-        conn.commit()
-        conn.close()
-
-        return {
-            "status": "ok",
-            "message": "raw data ingested",
-            "machine_id": meas.machine_id,
-            "metrics_count": len(meas.metrics)
-        }
-    except HTTPException:
-        raise
+        result = await use_case.execute_raw(
+            machine_id=meas.machine_id,
+            timestamp=meas.timestamp,
+            metrics=meas.metrics,
+        )
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/features")
-async def ingest_features(vec: FeatureVector):
+async def ingest_features(
+    vec: FeatureVector,
+    use_case: IngestTelemetryUseCase = Depends(get_ingest_telemetry_use_case),
+):
     """
-    Ingest feature-engineered data from Edge nodes
+    Ingest feature-engineered data from Edge nodes.
+    Uses hexagonal architecture with dependency injection.
     """
     try:
-        conn = get_connection()
-        cur = conn.cursor()
-
-        # Verify machine exists
-        cur.execute("SELECT machine_id FROM machines WHERE machine_id = ?", (vec.machine_id,))
-        if not cur.fetchone():
-            raise HTTPException(status_code=404, detail=f"Machine {vec.machine_id} not found")
-
-        # Insert all features
-        for key, value in vec.features.items():
-            cur.execute("""
-                INSERT INTO features (machine_id, timestamp, feature_key, feature_value)
-                VALUES (?, ?, ?, ?)
-            """, (vec.machine_id, vec.timestamp.isoformat(), key, value))
-
-        conn.commit()
-        conn.close()
-
-        return {
-            "status": "ok",
-            "message": "features ingested",
-            "machine_id": vec.machine_id,
-            "features_count": len(vec.features)
-        }
-    except HTTPException:
-        raise
+        result = await use_case.execute_features(
+            machine_id=vec.machine_id,
+            timestamp=vec.timestamp,
+            features=vec.features,
+        )
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
