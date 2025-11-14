@@ -1,0 +1,155 @@
+"""
+Concrete PostgreSQL implementation of IMeasurementRepository
+"""
+from typing import List, Optional, Dict, Any
+from datetime import datetime
+from uuid import UUID
+from domain.value_objects import Measurement, TimeSeriesPoint
+from sqlalchemy import select, desc
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from domain.repositories.measurement_repository import IMeasurementRepository
+from domain.entities.measurement import RawMeasurement, FeatureVector
+from infrastructure.db.models import RawMeasurementModel, FeatureModel
+
+
+class PostgresMeasurementRepository(IMeasurementRepository):
+    """PostgreSQL implementation of measurement repository"""
+
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def save_raw_measurement(self, measurement: RawMeasurement) -> RawMeasurement:
+        """Save raw telemetry measurement"""
+        model = RawMeasurementModel(
+            machine_id=measurement.machine_id,
+            timestamp=measurement.timestamp,
+            metrics=measurement.metrics,
+        )
+        self.session.add(model)
+        await self.session.flush()
+
+        return self._raw_model_to_entity(model)
+
+    async def save_feature_vector(self, features: FeatureVector) -> FeatureVector:
+        """Save engineered features"""
+        model = FeatureModel(
+            machine_id=features.machine_id,
+            timestamp=features.timestamp,
+            features=features.features,
+        )
+        self.session.add(model)
+        await self.session.flush()
+
+        return self._feature_model_to_entity(model)
+
+    async def get_latest_raw_measurement(self, machine_id: str) -> Optional[RawMeasurement]:
+        """Get latest raw measurement for machine"""
+        stmt = (
+            select(RawMeasurementModel)
+            .where(RawMeasurementModel.machine_id == machine_id)
+            .order_by(desc(RawMeasurementModel.timestamp))
+            .limit(1)
+        )
+        result = await self.session.execute(stmt)
+        model = result.scalar_one_or_none()
+
+        if model:
+            return self._raw_model_to_entity(model)
+        return None
+
+    async def get_latest_features(self, machine_id: str) -> Optional[FeatureVector]:
+        """Get latest feature vector for machine"""
+        stmt = (
+            select(FeatureModel)
+            .where(FeatureModel.machine_id == machine_id)
+            .order_by(desc(FeatureModel.timestamp))
+            .limit(1)
+        )
+        result = await self.session.execute(stmt)
+        model = result.scalar_one_or_none()
+
+        if model:
+            return self._feature_model_to_entity(model)
+        return None
+
+    async def get_raw_measurements_range(
+        self,
+        machine_id: str,
+        start_time: datetime,
+        end_time: datetime,
+        limit: int = 1000
+    ) -> List[RawMeasurement]:
+        """Get raw measurements within time range"""
+        stmt = (
+            select(RawMeasurementModel)
+            .where(
+                RawMeasurementModel.machine_id == machine_id,
+                RawMeasurementModel.timestamp >= start_time,
+                RawMeasurementModel.timestamp <= end_time,
+            )
+            .order_by(RawMeasurementModel.timestamp)
+            .limit(limit)
+        )
+        result = await self.session.execute(stmt)
+        models = result.scalars().all()
+
+        return [self._raw_model_to_entity(model) for model in models]
+
+    async def get_features_range(
+        self,
+        machine_id: str,
+        start_time: datetime,
+        end_time: datetime,
+        limit: int = 1000
+    ) -> List[FeatureVector]:
+        """Get feature vectors within time range"""
+        stmt = (
+            select(FeatureModel)
+            .where(
+                FeatureModel.machine_id == machine_id,
+                FeatureModel.timestamp >= start_time,
+                FeatureModel.timestamp <= end_time,
+            )
+            .order_by(FeatureModel.timestamp)
+            .limit(limit)
+        )
+        result = await self.session.execute(stmt)
+        models = result.scalars().all()
+
+        return [self._feature_model_to_entity(model) for model in models]
+
+    def _raw_model_to_entity(self, model: RawMeasurementModel) -> RawMeasurement:
+        """Convert SQLAlchemy model to domain entity"""
+        return RawMeasurement(
+            machine_id=model.machine_id,
+            timestamp=model.timestamp,
+            metrics=model.metrics,
+        )
+
+    def _feature_model_to_entity(self, model: FeatureModel) -> FeatureVector:
+        """Convert SQLAlchemy model to domain entity"""
+        return FeatureVector(
+            machine_id=model.machine_id,
+            timestamp=model.timestamp,
+            features=model.features,
+        )
+
+    async def save_measurement(self, measurement: Measurement) -> bool:
+        raise NotImplementedError
+
+    async def save_batch(self, measurements: List[Measurement]) -> int:
+        raise NotImplementedError
+
+    async def save_timeseries_point(self, point: TimeSeriesPoint) -> bool:
+        raise NotImplementedError
+
+    async def get_latest(self, machine_id: UUID, metric_names: List[str], limit: int = 100) -> List[Dict]:
+        raise NotImplementedError
+
+    async def get_range(self, machine_id: UUID, metric_name: str, start_time: datetime, end_time: datetime) -> List[Dict]:
+        raise NotImplementedError
+
+    async def get_aggregated(self, machine_id: UUID, metric_name: str, start_time: datetime, end_time: datetime, interval_seconds: int) -> List[Dict]:
+        raise NotImplementedError
+

@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "python",
+      "request": "launch",
+      "name": "Debug AurumAI Backend",
+      "program": "${workspaceFolder}/backend/app.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug AurumAI Frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "cwd": "${workspaceFolder}/frontend",
+      "port": 9229
+    },
+    {
+      "type": "python",
+      "request": "launch",
+      "name": "Debug Edge Simulator",
+      "program": "${workspaceFolder}/edge-sim/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "python",
+      "request": "launch",
+      "name": "Debug IoT Simulator",
+      "program": "${workspaceFolder}/iot-sim/generator.py",
+      "console": "integratedTerminal"
+    }
+  ]
+}
