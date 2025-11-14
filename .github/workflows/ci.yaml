@@ -2,7 +2,7 @@ name: AurumAI CI
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: ["main", "develop"]
   pull_request:
 
 jobs:
@@ -10,32 +10,83 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      # -------------------------
+      # 1. Checkout repository
+      # -------------------------
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      # -------------------------
+      # 2. Setup Python 3.11
+      # -------------------------
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install deps
-        run: pip install -r aurumai-api/requirements.txt
+      # -------------------------
+      # 3. FIND requirements.txt
+      # (robusto aunque cambies carpetas)
+      # -------------------------
+      - name: Locate requirements.txt
+        id: reqfile
+        run: |
+          FILE=$(find . -maxdepth 4 -type f -name "requirements.txt" | head -n 1)
+          if [ -z "$FILE" ]; then
+            echo "❌ ERROR: No requirements.txt found in repository."
+            exit 1
+          fi
+          echo "FOUND requirements file: $FILE"
+          echo "requirements=$FILE" >> $GITHUB_OUTPUT
 
-      - name: Run tests
+      # -------------------------
+      # 4. Install dependencies
+      # -------------------------
+      - name: Install dependencies
+        run: |
+          pip install -r "${{ steps.reqfile.outputs.requirements }}"
+
+      # -------------------------
+      # 5. Run tests
+      # -------------------------
+      - name: Run pytest
         run: pytest -q
 
+
+  # -------------------------------------------------
+  # BUILD DOCKER IMAGES ONLY IF TESTS PASS
+  # -------------------------------------------------
   build_docker:
     runs-on: ubuntu-latest
     needs: test
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Build Backend API Docker image
       - name: Build API Docker Image
-        run: docker build -t aurumai-api ./aurumai-api
+        run: |
+          API_DIR=$(find . -maxdepth 3 -type f -name "Dockerfile" -path "*/aurumai-api/*" | head -n 1)
+          if [ -z "$API_DIR" ]; then
+            echo "❌ ERROR: Cannot locate aurumai-api Dockerfile."
+            exit 1
+          fi
 
+          DIR=$(dirname "$API_DIR")
+          echo "Building API from $DIR"
+          docker build -t aurumai-api "$DIR"
+
+      # Build Edge Docker image
       - name: Build Edge Docker Image
-        run: docker build -t aurumai-edge -f aurumai-api/Dockerfile.edge ./aurumai-api
+        run: |
+          EDGE_DIR=$(find . -maxdepth 3 -type f -name "Dockerfile.edge" | head -n 1)
+          if [ -z "$EDGE_DIR" ]; then
+            echo "❌ ERROR: Cannot locate Dockerfile.edge"
+            exit 1
+          fi
 
-
+          DIR=$(dirname "$EDGE_DIR")
+          echo "Building EDGE from $DIR"
+          docker build -t aurumai-edge -f "$EDGE_DIR" "$DIR"
