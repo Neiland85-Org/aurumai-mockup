@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       # -------------------------
       # 1. Checkout repository
       # -------------------------
@@ -26,33 +25,19 @@ jobs:
           python-version: "3.11"
 
       # -------------------------
-      # 3. FIND requirements.txt
-      # (robusto aunque cambies carpetas)
+      # 3. Install backend dependencies
       # -------------------------
-      - name: Locate requirements.txt
-        id: reqfile
+      - name: Install dependencies (backend)
         run: |
-          FILE=$(find . -maxdepth 4 -type f -name "requirements.txt" | head -n 1)
-          if [ -z "$FILE" ]; then
-            echo "❌ ERROR: No requirements.txt found in repository."
-            exit 1
-          fi
-          echo "FOUND requirements file: $FILE"
-          echo "requirements=$FILE" >> $GITHUB_OUTPUT
+          python -m pip install --upgrade pip
+          python -m pip install -r backend/requirements.txt
 
       # -------------------------
-      # 4. Install dependencies
-      # -------------------------
-      - name: Install dependencies
-        run: |
-          pip install -r "${{ steps.reqfile.outputs.requirements }}"
-
-      # -------------------------
-      # 5. Run tests
+      # 4. Run tests (backend)
       # -------------------------
       - name: Run pytest
+        working-directory: backend
         run: pytest -q
-
 
   # -------------------------------------------------
   # BUILD DOCKER IMAGES ONLY IF TESTS PASS
