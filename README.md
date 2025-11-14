@@ -1,6 +1,6 @@
 # AurumAI Platform - Mockup Demo
 
-**Industrial IoT Platform for Predictive Maintenance & ESG Monitoring**
+## Industrial IoT Platform for Predictive Maintenance & ESG Monitoring
 
 AurumAI Platform es una plataforma industrial multi-vertical diseñada para:
 
@@ -141,7 +141,8 @@ backend/
 - [x] ML Engine fake pero creíble (predictivo)
 - [x] ESG Calculator con factores IPCC
 - [x] Frontend Next.js con 3 vistas (Overview, Predictivo, ESG)
-- [x] Docker Compose orquestación completaías programadas
+- [x] Docker Compose orquestación completa
+- [x] Datos simulados realistas con anomalías programadas
 
 ### 🎯 Estado Actual: **MOCKUP DEMO LISTO**
 
@@ -167,7 +168,6 @@ El proyecto está **listo para demo comercial**. Puedes:
 - [Documentación de Arquitectura](./ARCHITECTURE.md)
 - [FastAPI](https://fastapi.tiangulo.com/)
 - [TimescaleDB](https://www.timescale.com/)
-- [Third-Party Notices](./THIRD_PARTY_NOTICES.md)
 
 ---
 

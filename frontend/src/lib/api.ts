@@ -1,28 +1,13 @@
-export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE as string) || "http://localhost:8000";
-
-export type Machine = {
-  machine_id: string;
-  machine_type: string;
-  site: string;
-  status: string;
-};
+export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
 
 export async function fetchJSON(path: string) {
   const res = await fetch(`${API_BASE}${path}`);
-  if (!res.ok) throw new Error(`API Error ${res.status} ${res.statusText}`);
+  if (!res.ok) throw new Error("API Error");
   return res.json();
 }
 
-export async function getMachines(): Promise<Machine[]> {
-  const data = await fetchJSON("/machines/");
-  if (!Array.isArray(data)) return [];
-  // Normalize shape defensively
-  return data.map((m: any) => ({
-    machine_id: String(m.machine_id ?? m.id ?? ""),
-    machine_type: String(m.machine_type ?? m.type ?? "unknown"),
-    site: String(m.site ?? m.location ?? ""),
-    status: String(m.status ?? "unknown"),
-  }));
+export async function getMachines() {
+  return fetchJSON("/machines/");
 }
 
 export async function getMachineMetrics(machineId: string) {
@@ -40,4 +25,3 @@ export async function getESG(machineId: string) {
 export async function getESGSummary() {
   return fetchJSON("/esg/summary");
 }
-

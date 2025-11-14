@@ -4,7 +4,7 @@ Emission Repository Interface
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Dict
 from uuid import UUID
 from domain.entities import EmissionSource, EmissionFactor, EmissionRecord
 
