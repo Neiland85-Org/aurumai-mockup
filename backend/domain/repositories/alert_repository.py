@@ -27,7 +27,7 @@ class IAlertRepository(ABC):
         machine_id: UUID,
         status: Optional[AlertStatus] = None,
         skip: int = 0,
-        limit: int = 100
+        limit: int = 100,
     ) -> List[Alert]:
         """Find alerts by machine, optionally filtered by status"""
         pass
@@ -38,7 +38,7 @@ class IAlertRepository(ABC):
         site_id: UUID,
         level: Optional[AlertLevel] = None,
         skip: int = 0,
-        limit: int = 100
+        limit: int = 100,
     ) -> List[Alert]:
         """Find alerts by site, optionally filtered by level"""
         pass

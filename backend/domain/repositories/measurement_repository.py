@@ -29,10 +29,7 @@ class IMeasurementRepository(ABC):
 
     @abstractmethod
     async def get_latest(
-        self,
-        machine_id: UUID,
-        metric_names: List[str],
-        limit: int = 100
+        self, machine_id: UUID, metric_names: List[str], limit: int = 100
     ) -> List[Dict]:
         """Get latest measurements for specified metrics"""
         pass
@@ -43,7 +40,7 @@ class IMeasurementRepository(ABC):
         machine_id: UUID,
         metric_name: str,
         start_time: datetime,
-        end_time: datetime
+        end_time: datetime,
     ) -> List[Dict]:
         """Get measurements within a time range"""
         pass
@@ -55,7 +52,7 @@ class IMeasurementRepository(ABC):
         metric_name: str,
         start_time: datetime,
         end_time: datetime,
-        interval_seconds: int
+        interval_seconds: int,
     ) -> List[Dict]:
         """Get aggregated measurements (avg, min, max) per interval"""
         pass

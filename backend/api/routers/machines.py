@@ -2,9 +2,11 @@
 Machines Router - Hexagonal Architecture
 Handles machine information and metrics retrieval
 """
+
 try:
     # Use dynamic import to avoid static analysis failing to resolve 'fastapi'
     import importlib
+
     _fastapi = importlib.import_module("fastapi")
     APIRouter = getattr(_fastapi, "APIRouter")
     HTTPException = getattr(_fastapi, "HTTPException")
@@ -19,6 +21,7 @@ except Exception:
         def get(self, path, response_model=None):
             def decorator(func):
                 return func
+
             return decorator
 
     class HTTPException(Exception):
@@ -30,6 +33,7 @@ except Exception:
     def Depends(dep=None):
         # Return the dependency callable or None as a simple placeholder.
         return dep
+
 
 from typing import List
 from models import MachineInfo, MachineMetrics, PredictionResponse
@@ -82,12 +86,17 @@ async def get_machine_metrics(
         last_timestamp = None
         latest_metrics = {}
         if metrics.get("latest_measurement"):
-            last_timestamp = datetime.fromisoformat(metrics["latest_measurement"]["timestamp"])
+            last_timestamp = datetime.fromisoformat(
+                metrics["latest_measurement"]["timestamp"]
+            )
             latest_metrics = metrics["latest_measurement"]["metrics"]
 
         # Extract prediction
         prediction = None
-        if metrics.get("latest_prediction") and metrics["latest_prediction"]["risk_score"] is not None:
+        if (
+            metrics.get("latest_prediction")
+            and metrics["latest_prediction"]["risk_score"] is not None
+        ):
             pred_data = metrics["latest_prediction"]
             prediction = PredictionResponse(
                 machine_id=machine_id,
@@ -107,7 +116,9 @@ async def get_machine_metrics(
 
         return MachineMetrics(
             machine_id=machine_id,
-            current_status="operational" if metrics["machine"]["operational"] else "down",
+            current_status=(
+                "operational" if metrics["machine"]["operational"] else "down"
+            ),
             last_measurement=last_timestamp,
             metrics=latest_metrics,
             alerts_count=alerts_count,

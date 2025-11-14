@@ -18,6 +18,7 @@ class EmissionRecord:
     Represents a calculated emission record.
     Links activity data with emission factors to produce CO2eq values.
     """
+
     id: UUID
     tenant_id: UUID
     site_id: UUID
@@ -56,7 +57,7 @@ class EmissionRecord:
         machine_id: Optional[UUID] = None,
         calculation_method: str = "direct",
         confidence_level: float = 1.0,
-        metadata: Optional[Dict[str, any]] = None
+        metadata: Optional[Dict[str, any]] = None,
     ) -> "EmissionRecord":
         """Factory method to create a new emission record"""
         return EmissionRecord(
@@ -78,7 +79,7 @@ class EmissionRecord:
             calculation_method=calculation_method,
             confidence_level=confidence_level,
             created_at=datetime.utcnow(),
-            metadata=metadata or {}
+            metadata=metadata or {},
         )
 
     @property

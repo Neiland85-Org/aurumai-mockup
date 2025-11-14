@@ -16,6 +16,7 @@ class FeatureVector:
     Represents engineered features ready for ML model inference.
     Immutable after creation.
     """
+
     machine_id: UUID
     timestamp: datetime
     window_size_seconds: int
@@ -25,7 +26,7 @@ class FeatureVector:
     def __post_init__(self):
         """Initialize feature names list"""
         if self.feature_names is None:
-            object.__setattr__(self, 'feature_names', sorted(self.features.keys()))
+            object.__setattr__(self, "feature_names", sorted(self.features.keys()))
 
     def get_feature(self, name: str) -> float:
         """Get feature value by name"""

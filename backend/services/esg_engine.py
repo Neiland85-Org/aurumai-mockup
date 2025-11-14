@@ -1,5 +1,5 @@
 import random
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 # Emission factors (simplified for demo)
 # In production, these would come from EmissionFactor entities with versioning
@@ -21,7 +21,7 @@ def compute_esg_metrics(
     machine_id: str,
     measurements: Dict[str, float],
     previous_total: float = 0.0,
-    region: str = "latam"
+    region: str = "latam",
 ) -> Dict[str, Any]:
     """
     Calculate ESG/Carbon metrics based on machine measurements.
@@ -37,8 +37,16 @@ def compute_esg_metrics(
     """
 
     # Extract relevant measurements
-    fuel_rate_lh = measurements.get("fuel_rate_lh") or measurements.get("fuel_rate") or random.uniform(8.0, 15.0)
-    kwh = measurements.get("kwh") or measurements.get("power_kw") or random.uniform(2.0, 10.0)
+    fuel_rate_lh = (
+        measurements.get("fuel_rate_lh")
+        or measurements.get("fuel_rate")
+        or random.uniform(8.0, 15.0)
+    )
+    kwh = (
+        measurements.get("kwh")
+        or measurements.get("power_kw")
+        or random.uniform(2.0, 10.0)
+    )
     co2_ppm = measurements.get("co2_ppm") or random.uniform(420, 650)
 
     # Select electricity factor by region
@@ -84,14 +92,12 @@ def compute_esg_metrics(
         "factors_used": {
             "fuel_factor": FACTOR_FUEL_DIESEL,
             "electricity_factor": electricity_factor,
-        }
+        },
     }
 
 
 def calculate_carbon_intensity(
-    total_co2eq_kg: float,
-    production_units: float,
-    unit_type: str = "tons"
+    total_co2eq_kg: float, production_units: float, unit_type: str = "tons"
 ) -> float:
     """
     Calculate carbon intensity: kg CO2eq per unit of production.
@@ -111,8 +117,7 @@ def calculate_carbon_intensity(
 
 
 def forecast_emissions(
-    current_rate_kg_per_hour: float,
-    forecast_hours: int
+    current_rate_kg_per_hour: float, forecast_hours: int
 ) -> Dict[str, float]:
     """
     Simple linear forecast of future emissions.
@@ -132,16 +137,13 @@ def forecast_emissions(
     hourly_forecast = []
 
     for hour in range(forecast_hours):
-        hour_emission = current_rate_kg_per_hour * (trend_factor ** hour)
+        hour_emission = current_rate_kg_per_hour * (trend_factor**hour)
         forecast_total += hour_emission
-        hourly_forecast.append({
-            "hour": hour + 1,
-            "co2eq_kg": round(hour_emission, 2)
-        })
+        hourly_forecast.append({"hour": hour + 1, "co2eq_kg": round(hour_emission, 2)})
 
     return {
         "forecast_hours": forecast_hours,
         "forecast_total_kg": round(forecast_total, 2),
         "forecast_total_tons": round(forecast_total / 1000, 3),
-        "hourly": hourly_forecast[:24]  # Return first 24 hours detail
+        "hourly": hourly_forecast[:24],  # Return first 24 hours detail
     }

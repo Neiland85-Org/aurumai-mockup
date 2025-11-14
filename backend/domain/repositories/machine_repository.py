@@ -27,12 +27,16 @@ class IMachineRepository(ABC):
         pass
 
     @abstractmethod
-    async def find_by_site(self, site_id: UUID, skip: int = 0, limit: int = 100) -> List[Machine]:
+    async def find_by_site(
+        self, site_id: UUID, skip: int = 0, limit: int = 100
+    ) -> List[Machine]:
         """Find machines by site"""
         pass
 
     @abstractmethod
-    async def find_by_tenant(self, tenant_id: UUID, skip: int = 0, limit: int = 100) -> List[Machine]:
+    async def find_by_tenant(
+        self, tenant_id: UUID, skip: int = 0, limit: int = 100
+    ) -> List[Machine]:
         """Find machines by tenant"""
         pass
 

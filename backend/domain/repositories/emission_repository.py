@@ -54,20 +54,14 @@ class IEmissionRepository(ABC):
 
     @abstractmethod
     async def get_emissions_by_site(
-        self,
-        site_id: UUID,
-        start_time: datetime,
-        end_time: datetime
+        self, site_id: UUID, start_time: datetime, end_time: datetime
     ) -> List[EmissionRecord]:
         """Get emission records for a site in a time range"""
         pass
 
     @abstractmethod
     async def get_emissions_summary(
-        self,
-        tenant_id: UUID,
-        start_time: datetime,
-        end_time: datetime
+        self, tenant_id: UUID, start_time: datetime, end_time: datetime
     ) -> Dict:
         """Get aggregated emissions summary"""
         pass

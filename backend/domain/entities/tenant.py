@@ -14,6 +14,7 @@ from uuid import UUID, uuid4
 @dataclass
 class TenantConfig:
     """Configuration specific to a tenant"""
+
     gdpr_enabled: bool = False
     data_residency: str = "EU"  # EU, LATAM, US, Other
     esg_frameworks: List[str] = field(default_factory=lambda: ["GHG_PROTOCOL", "IPCC"])
@@ -29,6 +30,7 @@ class Tenant:
     Represents a customer organization using AurumAI Platform.
     Each tenant has isolated data and configuration.
     """
+
     id: UUID
     name: str
     code: str  # Short identifier (e.g., "AR_001", "ES_MINING_01")
@@ -46,7 +48,7 @@ class Tenant:
         code: str,
         industry: str,
         region: str,
-        config: Optional[TenantConfig] = None
+        config: Optional[TenantConfig] = None,
     ) -> "Tenant":
         """Factory method to create a new tenant"""
         now = datetime.utcnow()
@@ -60,7 +62,7 @@ class Tenant:
             created_at=now,
             updated_at=now,
             is_active=True,
-            metadata={}
+            metadata={},
         )
 
     def update_config(self, config: TenantConfig) -> None:

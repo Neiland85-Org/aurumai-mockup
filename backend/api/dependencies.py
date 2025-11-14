@@ -2,7 +2,8 @@
 FastAPI Dependency Injection Configuration
 Provides factory functions for use cases with their dependencies
 """
-from typing import AsyncGenerator, TYPE_CHECKING, Any
+
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -32,6 +33,7 @@ esg_service = ESGServiceImpl()
 
 
 # Dependency providers for use cases
+
 
 async def get_ingest_telemetry_use_case(
     db: AsyncSession = get_db(),
@@ -104,6 +106,7 @@ async def get_machine_metrics_use_case(
 
 
 # Individual repository providers (for cases where direct access is needed)
+
 
 async def get_machine_repository(
     db: AsyncSession = get_db(),
