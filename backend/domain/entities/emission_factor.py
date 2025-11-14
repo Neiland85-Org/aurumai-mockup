@@ -14,6 +14,7 @@ from enum import Enum
 
 class EmissionFactorSource(str, Enum):
     """Source of emission factor"""
+
     IPCC_2006 = "ipcc_2006"
     IPCC_2019 = "ipcc_2019"
     EU_ETS = "eu_ets"
@@ -32,6 +33,7 @@ class EmissionFactor:
     Represents an emission factor for converting activity data to CO2eq.
     Factors are versioned and have validity periods.
     """
+
     id: UUID
     name: str
     code: str  # e.g., "DIESEL_MOBILE", "ELEC_GRID_ES", "COAL_COMBUSTION"
@@ -58,7 +60,9 @@ class EmissionFactor:
         # More recent IPCC AR5: CH4 = 28, N2O = 265
         # We use AR5 values
         if self.co2eq_factor == 0.0:
-            self.co2eq_factor = self.co2_factor + (self.ch4_factor * 28) + (self.n2o_factor * 265)
+            self.co2eq_factor = (
+                self.co2_factor + (self.ch4_factor * 28) + (self.n2o_factor * 265)
+            )
 
     @staticmethod
     def create(
@@ -75,7 +79,7 @@ class EmissionFactor:
         valid_from: Optional[date] = None,
         valid_to: Optional[date] = None,
         version: str = "1.0",
-        metadata: Optional[Dict[str, any]] = None
+        metadata: Optional[Dict[str, any]] = None,
     ) -> "EmissionFactor":
         """Factory method to create a new emission factor"""
         now = datetime.utcnow()
@@ -97,7 +101,7 @@ class EmissionFactor:
             created_at=now,
             updated_at=now,
             is_active=True,
-            metadata=metadata or {}
+            metadata=metadata or {},
         )
         factor.__post_init__()  # Calculate CO2eq
         return factor

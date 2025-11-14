@@ -2,7 +2,9 @@ import random
 from typing import Dict, Any
 
 
-def run_prediction(machine_id: str, machine_type: str, features: Dict[str, float]) -> Dict[str, Any]:
+def run_prediction(
+    machine_id: str, machine_type: str, features: Dict[str, float]
+) -> Dict[str, Any]:
     """
     Fake but credible ML prediction engine for predictive maintenance.
 
@@ -89,10 +91,9 @@ def run_batch_prediction(machine_id: str, features_batch: list) -> list:
         prediction = run_prediction(
             machine_id,
             feature_vec.get("machine_type", "unknown"),
-            feature_vec.get("features", {})
+            feature_vec.get("features", {}),
         )
-        results.append({
-            "timestamp": feature_vec.get("timestamp"),
-            "prediction": prediction
-        })
+        results.append(
+            {"timestamp": feature_vec.get("timestamp"), "prediction": prediction}
+        )
     return results

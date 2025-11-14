@@ -2,6 +2,7 @@
 Use Case: Ingest Telemetry Data
 Handles ingestion of raw measurements and feature vectors from IoT/Edge devices
 """
+
 from datetime import datetime
 from typing import Dict, Any
 
@@ -135,10 +136,12 @@ class IngestTelemetryUseCase:
                 successful += 1
             except Exception as e:
                 failed += 1
-                errors.append({
-                    "machine_id": measurement_data.get("machine_id"),
-                    "error": str(e),
-                })
+                errors.append(
+                    {
+                        "machine_id": measurement_data.get("machine_id"),
+                        "error": str(e),
+                    }
+                )
 
         return {
             "status": "completed",

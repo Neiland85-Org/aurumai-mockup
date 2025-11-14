@@ -13,6 +13,7 @@ from enum import Enum
 
 class EmissionScope(str, Enum):
     """GHG Protocol scopes"""
+
     SCOPE_1 = "scope_1"  # Direct emissions
     SCOPE_2 = "scope_2"  # Indirect emissions from purchased energy
     SCOPE_3 = "scope_3"  # Other indirect emissions
@@ -20,6 +21,7 @@ class EmissionScope(str, Enum):
 
 class EmissionSourceType(str, Enum):
     """Types of emission sources"""
+
     MOBILE_COMBUSTION = "mobile_combustion"  # Trucks, excavators, loaders
     STATIONARY_COMBUSTION = "stationary_combustion"  # Boilers, furnaces, generators
     ELECTRICITY = "electricity"  # Purchased electricity
@@ -36,6 +38,7 @@ class EmissionSource:
     Represents a source of GHG emissions.
     Can be associated with a machine or a site-level process.
     """
+
     id: UUID
     tenant_id: UUID
     site_id: UUID
@@ -44,7 +47,9 @@ class EmissionSource:
     code: str
     source_type: EmissionSourceType
     scope: EmissionScope
-    fuel_type: Optional[str] = None  # diesel, gasoline, natural_gas, coal, electric, etc.
+    fuel_type: Optional[str] = (
+        None  # diesel, gasoline, natural_gas, coal, electric, etc.
+    )
     capacity: Optional[float] = None
     capacity_unit: Optional[str] = None
     created_at: datetime = field(default_factory=datetime.utcnow)
@@ -64,7 +69,7 @@ class EmissionSource:
         fuel_type: Optional[str] = None,
         capacity: Optional[float] = None,
         capacity_unit: Optional[str] = None,
-        metadata: Optional[Dict[str, any]] = None
+        metadata: Optional[Dict[str, any]] = None,
     ) -> "EmissionSource":
         """Factory method to create a new emission source"""
         now = datetime.utcnow()
@@ -83,7 +88,7 @@ class EmissionSource:
             created_at=now,
             updated_at=now,
             is_active=True,
-            metadata=metadata or {}
+            metadata=metadata or {},
         )
 
     def deactivate(self) -> None:

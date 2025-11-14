@@ -17,7 +17,8 @@ def init_db():
     cur = conn.cursor()
 
     # Machines table
-    cur.execute("""
+    cur.execute(
+        """
         CREATE TABLE IF NOT EXISTS machines (
             machine_id TEXT PRIMARY KEY,
             machine_type TEXT NOT NULL,
@@ -26,10 +27,12 @@ def init_db():
             commissioned_date TEXT,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
         )
-    """)
+    """
+    )
 
     # Raw measurements table
-    cur.execute("""
+    cur.execute(
+        """
         CREATE TABLE IF NOT EXISTS raw_measurements (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             machine_id TEXT NOT NULL,
@@ -39,16 +42,20 @@ def init_db():
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (machine_id) REFERENCES machines(machine_id)
         )
-    """)
+    """
+    )
 
     # Index for time-based queries
-    cur.execute("""
+    cur.execute(
+        """
         CREATE INDEX IF NOT EXISTS idx_raw_measurements_timestamp
         ON raw_measurements(timestamp DESC)
-    """)
+    """
+    )
 
     # Features table
-    cur.execute("""
+    cur.execute(
+        """
         CREATE TABLE IF NOT EXISTS features (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             machine_id TEXT NOT NULL,
@@ -58,10 +65,12 @@ def init_db():
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (machine_id) REFERENCES machines(machine_id)
         )
-    """)
+    """
+    )
 
     # Predictions table
-    cur.execute("""
+    cur.execute(
+        """
         CREATE TABLE IF NOT EXISTS predictions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             machine_id TEXT NOT NULL,
@@ -73,10 +82,12 @@ def init_db():
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (machine_id) REFERENCES machines(machine_id)
         )
-    """)
+    """
+    )
 
     # ESG records table
-    cur.execute("""
+    cur.execute(
+        """
         CREATE TABLE IF NOT EXISTS esg_records (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             machine_id TEXT NOT NULL,
@@ -89,7 +100,8 @@ def init_db():
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (machine_id) REFERENCES machines(machine_id)
         )
-    """)
+    """
+    )
 
     # Insert demo machines if not exist
     machines_data = [
@@ -99,10 +111,13 @@ def init_db():
     ]
 
     for machine in machines_data:
-        cur.execute("""
+        cur.execute(
+            """
             INSERT OR IGNORE INTO machines (machine_id, machine_type, site, status)
             VALUES (?, ?, ?, ?)
-        """, machine)
+        """,
+            machine,
+        )
 
     conn.commit()
     conn.close()

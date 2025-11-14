@@ -2,6 +2,7 @@
 Domain Entity: Prediction
 Represents ML prediction results for predictive maintenance
 """
+
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Dict

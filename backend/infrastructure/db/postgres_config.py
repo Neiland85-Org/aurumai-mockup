@@ -1,6 +1,7 @@
 """
 PostgreSQL Database Configuration with TimescaleDB support
 """
+
 import os
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
@@ -9,7 +10,7 @@ from sqlalchemy.orm import declarative_base
 # Database URL from environment variable with fallback
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql+asyncpg://aurumai:aurumai_pass@localhost:5432/aurumai_db"
+    "postgresql+asyncpg://aurumai:aurumai_pass@localhost:5432/aurumai_db",
 )
 
 # Create async engine
@@ -64,28 +65,34 @@ async def init_database():
         await conn.execute("CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;")
 
         # Convert raw_measurements to hypertable
-        await conn.execute("""
+        await conn.execute(
+            """
             SELECT create_hypertable(
                 'raw_measurements',
                 'timestamp',
                 if_not_exists => TRUE
             );
-        """)
+        """
+        )
 
         # Convert predictions to hypertable
-        await conn.execute("""
+        await conn.execute(
+            """
             SELECT create_hypertable(
                 'predictions',
                 'timestamp',
                 if_not_exists => TRUE
             );
-        """)
+        """
+        )
 
         # Convert esg_records to hypertable
-        await conn.execute("""
+        await conn.execute(
+            """
             SELECT create_hypertable(
                 'esg_records',
                 'timestamp',
                 if_not_exists => TRUE
             );
-        """)
+        """
+        )

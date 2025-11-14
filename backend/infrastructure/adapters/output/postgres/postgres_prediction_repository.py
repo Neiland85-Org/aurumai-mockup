@@ -1,6 +1,7 @@
 """
 Concrete PostgreSQL implementation of IPredictionRepository
 """
+
 from typing import List, Optional
 from datetime import datetime
 from sqlalchemy import select, desc
@@ -50,11 +51,7 @@ class PostgresPredictionRepository(IPredictionRepository):
             return self._model_to_entity(model)
         return None
 
-    async def get_history(
-        self,
-        machine_id: str,
-        limit: int = 50
-    ) -> List[Prediction]:
+    async def get_history(self, machine_id: str, limit: int = 50) -> List[Prediction]:
         """Get prediction history for machine"""
         stmt = (
             select(PredictionModel)
@@ -72,7 +69,7 @@ class PostgresPredictionRepository(IPredictionRepository):
         machine_id: str,
         start_time: datetime,
         end_time: datetime,
-        limit: int = 1000
+        limit: int = 1000,
     ) -> List[Prediction]:
         """Get predictions within time range"""
         stmt = (
@@ -91,9 +88,7 @@ class PostgresPredictionRepository(IPredictionRepository):
         return [self._model_to_entity(model) for model in models]
 
     async def get_high_risk_predictions(
-        self,
-        risk_threshold: float = 0.7,
-        limit: int = 100
+        self, risk_threshold: float = 0.7, limit: int = 100
     ) -> List[Prediction]:
         """Get predictions with high risk scores"""
         stmt = (

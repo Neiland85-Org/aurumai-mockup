@@ -2,6 +2,7 @@
 Prediction Router - Hexagonal Architecture
 Handles ML predictions for predictive maintenance
 """
+
 from fastapi import APIRouter, HTTPException, Query, Depends
 from models import PredictionResponse
 from api.dependencies import get_run_prediction_use_case

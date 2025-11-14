@@ -16,6 +16,7 @@ class Prediction:
     Represents the output of an ML model prediction.
     Immutable after creation.
     """
+
     machine_id: UUID
     timestamp: datetime
     model_name: str

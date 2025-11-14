@@ -2,6 +2,7 @@
 Concrete Implementation: ML Service
 Fake but credible ML prediction engine for demo purposes
 """
+
 import random
 from typing import Dict, Any
 
@@ -38,7 +39,9 @@ class MLServiceImpl(IMLService):
 
         # Extract key features if available
         vibration = features.get("vibration") or features.get("raw_vibration") or 3.0
-        temperature = features.get("temperature") or features.get("raw_temperature") or 85.0
+        temperature = (
+            features.get("temperature") or features.get("raw_temperature") or 85.0
+        )
         rpm = features.get("rpm") or features.get("raw_rpm") or 1600.0
 
         # Risk modifiers based on features
@@ -69,7 +72,9 @@ class MLServiceImpl(IMLService):
                 risk_adjustment += 0.05
 
         # Calculate final risk score (0-1)
-        risk_score = min(base_risk + risk_adjustment + random.uniform(-0.05, 0.05), 0.95)
+        risk_score = min(
+            base_risk + risk_adjustment + random.uniform(-0.05, 0.05), 0.95
+        )
         failure_probability = min(risk_score * 1.2, 0.99)
 
         # Estimate hours until maintenance needed
@@ -88,9 +93,17 @@ class MLServiceImpl(IMLService):
         # Determine likely failure type based on which metric is most elevated
         failure_type = None
         if vibration > 4.5:
-            failure_type = "bearing_failure" if machine_type in ["haul_truck", "grinding_mill"] else "mechanical_wear"
+            failure_type = (
+                "bearing_failure"
+                if machine_type in ["haul_truck", "grinding_mill"]
+                else "mechanical_wear"
+            )
         elif temperature > 100:
-            failure_type = "overheating" if machine_type == "industrial_boiler" else "thermal_stress"
+            failure_type = (
+                "overheating"
+                if machine_type == "industrial_boiler"
+                else "thermal_stress"
+            )
         elif rpm > 1900 or rpm < 1300:
             failure_type = "motor_failure"
 

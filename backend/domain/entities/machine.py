@@ -2,6 +2,7 @@
 Domain Entity: Machine
 Represents a monitored industrial machine/equipment
 """
+
 from dataclasses import dataclass
 
 

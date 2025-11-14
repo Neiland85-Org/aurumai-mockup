@@ -2,6 +2,7 @@
 Use Case: Calculate ESG Metrics
 Calculates carbon emissions and ESG metrics for machines
 """
+
 from datetime import datetime
 from typing import Dict, Any, Optional
 
@@ -136,14 +137,16 @@ class CalculateESGUseCase:
         for machine in machines:
             latest = await self.esg_repo.get_latest(machine.machine_id)
             if latest:
-                machine_esg.append({
-                    "machine_id": machine.machine_id,
-                    "machine_type": machine.machine_type,
-                    "instant_co2eq_kg": latest.instant_co2eq_kg,
-                    "cumulative_co2eq_kg": latest.cumulative_co2eq_kg,
-                    "fuel_rate_lh": latest.fuel_rate_lh,
-                    "power_consumption_kw": latest.power_consumption_kw,
-                })
+                machine_esg.append(
+                    {
+                        "machine_id": machine.machine_id,
+                        "machine_type": machine.machine_type,
+                        "instant_co2eq_kg": latest.instant_co2eq_kg,
+                        "cumulative_co2eq_kg": latest.cumulative_co2eq_kg,
+                        "fuel_rate_lh": latest.fuel_rate_lh,
+                        "power_consumption_kw": latest.power_consumption_kw,
+                    }
+                )
 
         # Calculate totals
         total_instant = sum(m["instant_co2eq_kg"] for m in machine_esg)

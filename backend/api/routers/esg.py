@@ -2,6 +2,7 @@
 ESG Router - Hexagonal Architecture
 Handles ESG/Carbon emission calculations and reporting
 """
+
 from fastapi import APIRouter, HTTPException, Query, Depends
 from models import ESGResponse
 from api.dependencies import get_calculate_esg_use_case

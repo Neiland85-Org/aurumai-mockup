@@ -2,6 +2,7 @@
 Ingest Router - Hexagonal Architecture
 Handles ingestion of raw telemetry and feature vectors
 """
+
 from fastapi import APIRouter, HTTPException, Depends
 from models import RawMeasurement, FeatureVector
 from api.dependencies import get_ingest_telemetry_use_case

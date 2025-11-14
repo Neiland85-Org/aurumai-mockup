@@ -6,7 +6,6 @@ Loads from environment variables with .env file support.
 """
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field
 from typing import List
 
 
@@ -14,9 +13,7 @@ class Settings(BaseSettings):
     """Main application settings"""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        case_sensitive=False
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=False
     )
 
     # Application
@@ -76,10 +73,7 @@ class Settings(BaseSettings):
     prometheus_port: int = 9090
 
     # CORS
-    cors_origins: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:8000"
-    ]
+    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:8000"]
     cors_allow_credentials: bool = True
 
     # Feature Flags

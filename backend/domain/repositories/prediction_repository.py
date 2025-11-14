@@ -39,6 +39,8 @@ class IPredictionRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_high_risk_predictions(self, risk_threshold: float = 0.7, limit: int = 100) -> List[Prediction]:
+    async def get_high_risk_predictions(
+        self, risk_threshold: float = 0.7, limit: int = 100
+    ) -> List[Prediction]:
         """Fetch predictions above a risk threshold"""
         raise NotImplementedError

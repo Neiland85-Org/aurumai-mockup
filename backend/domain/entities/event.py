@@ -13,6 +13,7 @@ from enum import Enum
 
 class EventType(str, Enum):
     """Event types"""
+
     MAINTENANCE = "maintenance"
     FAILURE = "failure"
     REPAIR = "repair"
@@ -33,6 +34,7 @@ class Event:
     Represents operational or domain events.
     Used for maintenance tracking, failure history, and audit trail.
     """
+
     id: UUID
     tenant_id: UUID
     site_id: UUID
@@ -61,7 +63,7 @@ class Event:
         performed_by: Optional[str] = None,
         cost: Optional[float] = None,
         related_alert_id: Optional[UUID] = None,
-        metadata: Optional[Dict[str, any]] = None
+        metadata: Optional[Dict[str, any]] = None,
     ) -> "Event":
         """Factory method to create a new event"""
         return Event(
@@ -78,5 +80,5 @@ class Event:
             cost=cost,
             related_alert_id=related_alert_id,
             metadata=metadata or {},
-            created_at=datetime.utcnow()
+            created_at=datetime.utcnow(),
         )

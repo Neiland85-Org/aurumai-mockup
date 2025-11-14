@@ -1,6 +1,7 @@
 """
 Concrete PostgreSQL implementation of IESGRepository
 """
+
 from typing import List, Optional
 from datetime import datetime
 from sqlalchemy import select, desc, func
@@ -49,11 +50,7 @@ class PostgresESGRepository(IESGRepository):
             return self._model_to_entity(model)
         return None
 
-    async def get_history(
-        self,
-        machine_id: str,
-        limit: int = 100
-    ) -> List[ESGRecord]:
+    async def get_history(self, machine_id: str, limit: int = 100) -> List[ESGRecord]:
         """Get ESG history for machine"""
         stmt = (
             select(ESGRecordModel)
@@ -71,7 +68,7 @@ class PostgresESGRepository(IESGRepository):
         machine_id: str,
         start_time: datetime,
         end_time: datetime,
-        limit: int = 1000
+        limit: int = 1000,
     ) -> List[ESGRecord]:
         """Get ESG records within time range"""
         stmt = (
@@ -98,13 +95,10 @@ class PostgresESGRepository(IESGRepository):
         else:
             # Sum latest cumulative values across all machines
             # This is a simplified approach; in production you'd use a more sophisticated query
-            stmt = (
-                select(
-                    ESGRecordModel.machine_id,
-                    func.max(ESGRecordModel.cumulative_co2eq_kg).label("max_cumulative")
-                )
-                .group_by(ESGRecordModel.machine_id)
-            )
+            stmt = select(
+                ESGRecordModel.machine_id,
+                func.max(ESGRecordModel.cumulative_co2eq_kg).label("max_cumulative"),
+            ).group_by(ESGRecordModel.machine_id)
             result = await self.session.execute(stmt)
             rows = result.all()
 
@@ -112,9 +106,7 @@ class PostgresESGRepository(IESGRepository):
             return total
 
     async def get_summary_stats(
-        self,
-        start_time: Optional[datetime] = None,
-        end_time: Optional[datetime] = None
+        self, start_time: Optional[datetime] = None, end_time: Optional[datetime] = None
     ) -> dict:
         """Get summary statistics for ESG metrics"""
         stmt = select(

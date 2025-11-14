@@ -2,6 +2,7 @@
 Domain Entity: ESG Record
 Represents ESG/Carbon emissions data
 """
+
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Dict, Optional
@@ -34,7 +35,9 @@ class ESGRecord:
         if self.cumulative_co2eq_kg < 0:
             raise ValueError("cumulative_co2eq_kg cannot be negative")
 
-        if self.efficiency_score is not None and not (0 <= self.efficiency_score <= 100):
+        if self.efficiency_score is not None and not (
+            0 <= self.efficiency_score <= 100
+        ):
             raise ValueError("efficiency_score must be between 0 and 100")
 
     def get_scope(self) -> str:

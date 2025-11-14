@@ -13,6 +13,7 @@ from uuid import UUID, uuid4
 @dataclass
 class SiteLocation:
     """Geographic location of a site"""
+
     latitude: float
     longitude: float
     altitude: Optional[float] = None
@@ -29,6 +30,7 @@ class Site:
     Represents a physical location (mine, plant, facility) where assets operate.
     Belongs to a single tenant.
     """
+
     id: UUID
     tenant_id: UUID
     name: str
@@ -48,7 +50,7 @@ class Site:
         code: str,
         site_type: str,
         location: SiteLocation,
-        timezone: str = "UTC"
+        timezone: str = "UTC",
     ) -> "Site":
         """Factory method to create a new site"""
         now = datetime.utcnow()
@@ -63,7 +65,7 @@ class Site:
             created_at=now,
             updated_at=now,
             is_active=True,
-            metadata={}
+            metadata={},
         )
 
     def update_location(self, location: SiteLocation) -> None:

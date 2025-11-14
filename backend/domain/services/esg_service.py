@@ -2,6 +2,7 @@
 Domain Service Interface: ESG/Carbon Calculation Service
 Defines contract for ESG metrics calculation
 """
+
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 

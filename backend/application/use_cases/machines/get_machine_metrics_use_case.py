@@ -2,6 +2,7 @@
 Use Case: Get Machine Metrics
 Retrieves comprehensive metrics and status for machines
 """
+
 from typing import Dict, Any, Optional, List
 
 from domain.repositories.machine_repository import IMachineRepository
@@ -53,7 +54,9 @@ class GetMachineMetricsUseCase:
             raise ValueError(f"Machine {machine_id} not found")
 
         # Get latest measurements
-        raw_measurement = await self.measurement_repo.get_latest_raw_measurement(machine_id)
+        raw_measurement = await self.measurement_repo.get_latest_raw_measurement(
+            machine_id
+        )
         features = await self.measurement_repo.get_latest_features(machine_id)
 
         # Get latest prediction
@@ -70,28 +73,54 @@ class GetMachineMetricsUseCase:
                 "location": machine.location,
                 "operational": machine.operational,
             },
-            "latest_measurement": {
-                "timestamp": raw_measurement.timestamp.isoformat() if raw_measurement else None,
-                "metrics": raw_measurement.metrics if raw_measurement else {},
-            } if raw_measurement else None,
-            "latest_features": {
-                "timestamp": features.timestamp.isoformat() if features else None,
-                "features": features.features if features else {},
-            } if features else None,
-            "latest_prediction": {
-                "timestamp": prediction.timestamp.isoformat() if prediction else None,
-                "risk_score": prediction.risk_score if prediction else None,
-                "failure_probability": prediction.failure_probability if prediction else None,
-                "maintenance_hours": prediction.maintenance_hours if prediction else None,
-                "failure_type": prediction.failure_type if prediction else None,
-            } if prediction else None,
-            "latest_esg": {
-                "timestamp": esg.timestamp.isoformat() if esg else None,
-                "instant_co2eq_kg": esg.instant_co2eq_kg if esg else None,
-                "cumulative_co2eq_kg": esg.cumulative_co2eq_kg if esg else None,
-                "fuel_rate_lh": esg.fuel_rate_lh if esg else None,
-                "power_consumption_kw": esg.power_consumption_kw if esg else None,
-            } if esg else None,
+            "latest_measurement": (
+                {
+                    "timestamp": (
+                        raw_measurement.timestamp.isoformat()
+                        if raw_measurement
+                        else None
+                    ),
+                    "metrics": raw_measurement.metrics if raw_measurement else {},
+                }
+                if raw_measurement
+                else None
+            ),
+            "latest_features": (
+                {
+                    "timestamp": features.timestamp.isoformat() if features else None,
+                    "features": features.features if features else {},
+                }
+                if features
+                else None
+            ),
+            "latest_prediction": (
+                {
+                    "timestamp": (
+                        prediction.timestamp.isoformat() if prediction else None
+                    ),
+                    "risk_score": prediction.risk_score if prediction else None,
+                    "failure_probability": (
+                        prediction.failure_probability if prediction else None
+                    ),
+                    "maintenance_hours": (
+                        prediction.maintenance_hours if prediction else None
+                    ),
+                    "failure_type": prediction.failure_type if prediction else None,
+                }
+                if prediction
+                else None
+            ),
+            "latest_esg": (
+                {
+                    "timestamp": esg.timestamp.isoformat() if esg else None,
+                    "instant_co2eq_kg": esg.instant_co2eq_kg if esg else None,
+                    "cumulative_co2eq_kg": esg.cumulative_co2eq_kg if esg else None,
+                    "fuel_rate_lh": esg.fuel_rate_lh if esg else None,
+                    "power_consumption_kw": esg.power_consumption_kw if esg else None,
+                }
+                if esg
+                else None
+            ),
         }
 
     async def get_all_machines(self) -> List[Dict[str, Any]]:
@@ -130,15 +159,17 @@ class GetMachineMetricsUseCase:
             # Get latest ESG
             esg = await self.esg_repo.get_latest(machine.machine_id)
 
-            result.append({
-                "machine_id": machine.machine_id,
-                "machine_type": machine.machine_type,
-                "location": machine.location,
-                "operational": machine.operational,
-                "risk_score": prediction.risk_score if prediction else None,
-                "instant_co2eq_kg": esg.instant_co2eq_kg if esg else None,
-                "cumulative_co2eq_kg": esg.cumulative_co2eq_kg if esg else None,
-            })
+            result.append(
+                {
+                    "machine_id": machine.machine_id,
+                    "machine_type": machine.machine_type,
+                    "location": machine.location,
+                    "operational": machine.operational,
+                    "risk_score": prediction.risk_score if prediction else None,
+                    "instant_co2eq_kg": esg.instant_co2eq_kg if esg else None,
+                    "cumulative_co2eq_kg": esg.cumulative_co2eq_kg if esg else None,
+                }
+            )
 
         return result
 

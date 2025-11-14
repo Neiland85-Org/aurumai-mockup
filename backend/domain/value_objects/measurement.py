@@ -15,6 +15,7 @@ class Measurement:
 
     Immutable representation of a single sensor reading.
     """
+
     machine_id: UUID
     sensor_id: UUID
     metric_name: str
@@ -36,6 +37,7 @@ class TimeSeriesPoint:
     Represents multiple metrics at a single timestamp.
     Used for efficient batch operations.
     """
+
     tenant_id: UUID
     site_id: UUID
     machine_id: UUID

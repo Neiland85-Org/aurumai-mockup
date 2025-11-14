@@ -13,6 +13,7 @@ from uuid import UUID, uuid4
 @dataclass
 class SensorSpec:
     """Technical specifications of a sensor"""
+
     manufacturer: Optional[str] = None
     model: Optional[str] = None
     serial_number: Optional[str] = None
@@ -30,10 +31,13 @@ class Sensor:
     Represents a sensor that collects telemetry from a machine.
     Each sensor measures a specific metric type.
     """
+
     id: UUID
     machine_id: UUID
     name: str
-    sensor_type: str  # vibration, temperature, pressure, rpm, power, flow, co2, nox, etc.
+    sensor_type: (
+        str  # vibration, temperature, pressure, rpm, power, flow, co2, nox, etc.
+    )
     unit: str  # mm/s, °C, bar, rpm, kW, l/h, ppm, etc.
     protocol: str  # modbus, opcua, mqtt, lora, canbus, analog
     address: Optional[str] = None  # Protocol-specific address/tag
@@ -51,7 +55,7 @@ class Sensor:
         unit: str,
         protocol: str,
         address: Optional[str] = None,
-        spec: Optional[SensorSpec] = None
+        spec: Optional[SensorSpec] = None,
     ) -> "Sensor":
         """Factory method to create a new sensor"""
         now = datetime.utcnow()
@@ -67,7 +71,7 @@ class Sensor:
             created_at=now,
             updated_at=now,
             is_active=True,
-            metadata={}
+            metadata={},
         )
 
     def calibrate(self, spec: SensorSpec) -> None:

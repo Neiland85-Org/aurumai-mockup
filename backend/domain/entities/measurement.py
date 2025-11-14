@@ -2,6 +2,7 @@
 Domain Entities: Measurement
 Represents raw telemetry and engineered features
 """
+
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict

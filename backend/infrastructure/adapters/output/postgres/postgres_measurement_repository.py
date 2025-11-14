@@ -1,7 +1,8 @@
 """
 Concrete PostgreSQL implementation of IMeasurementRepository
 """
-from typing import List, Optional, Dict, Any
+
+from typing import List, Optional, Dict
 from datetime import datetime
 from uuid import UUID
 from domain.value_objects import Measurement, TimeSeriesPoint
@@ -43,7 +44,9 @@ class PostgresMeasurementRepository(IMeasurementRepository):
 
         return self._feature_model_to_entity(model)
 
-    async def get_latest_raw_measurement(self, machine_id: str) -> Optional[RawMeasurement]:
+    async def get_latest_raw_measurement(
+        self, machine_id: str
+    ) -> Optional[RawMeasurement]:
         """Get latest raw measurement for machine"""
         stmt = (
             select(RawMeasurementModel)
@@ -78,7 +81,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         machine_id: str,
         start_time: datetime,
         end_time: datetime,
-        limit: int = 1000
+        limit: int = 1000,
     ) -> List[RawMeasurement]:
         """Get raw measurements within time range"""
         stmt = (
@@ -101,7 +104,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         machine_id: str,
         start_time: datetime,
         end_time: datetime,
-        limit: int = 1000
+        limit: int = 1000,
     ) -> List[FeatureVector]:
         """Get feature vectors within time range"""
         stmt = (
@@ -144,12 +147,26 @@ class PostgresMeasurementRepository(IMeasurementRepository):
     async def save_timeseries_point(self, point: TimeSeriesPoint) -> bool:
         raise NotImplementedError
 
-    async def get_latest(self, machine_id: UUID, metric_names: List[str], limit: int = 100) -> List[Dict]:
+    async def get_latest(
+        self, machine_id: UUID, metric_names: List[str], limit: int = 100
+    ) -> List[Dict]:
         raise NotImplementedError
 
-    async def get_range(self, machine_id: UUID, metric_name: str, start_time: datetime, end_time: datetime) -> List[Dict]:
+    async def get_range(
+        self,
+        machine_id: UUID,
+        metric_name: str,
+        start_time: datetime,
+        end_time: datetime,
+    ) -> List[Dict]:
         raise NotImplementedError
 
-    async def get_aggregated(self, machine_id: UUID, metric_name: str, start_time: datetime, end_time: datetime, interval_seconds: int) -> List[Dict]:
+    async def get_aggregated(
+        self,
+        machine_id: UUID,
+        metric_name: str,
+        start_time: datetime,
+        end_time: datetime,
+        interval_seconds: int,
+    ) -> List[Dict]:
         raise NotImplementedError
-

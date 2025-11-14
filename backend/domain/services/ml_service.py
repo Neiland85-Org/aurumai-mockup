@@ -2,6 +2,7 @@
 Domain Service Interface: Machine Learning Service
 Defines contract for ML prediction operations
 """
+
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 

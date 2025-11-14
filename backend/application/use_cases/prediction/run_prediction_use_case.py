@@ -2,8 +2,9 @@
 Use Case: Run Predictive Maintenance Prediction
 Executes ML prediction for a machine and stores the result
 """
+
 from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Optional
 
 from domain.repositories.machine_repository import IMachineRepository
 from domain.repositories.measurement_repository import IMeasurementRepository
