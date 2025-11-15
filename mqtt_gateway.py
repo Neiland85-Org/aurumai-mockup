@@ -30,7 +30,6 @@ except (ImportError, ModuleNotFoundError):
 
     mqtt = _MqttModule()
 import json
-from typing import Dict, Any
 
 # Ensure project root is on sys.path so 'src' can be imported when running this module directly.
 PROJECT_ROOT = Path(__file__).resolve().parent
