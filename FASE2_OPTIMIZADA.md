@@ -366,14 +366,14 @@ MACHINES = ["TRUCK-21", "MILL-3", "BOILER-7"]
 
 ## 🎯 Decisión Final
 
-### ✅ Usar Versión Simplificada para:
+### ✅ Usar Versión Simplificada para
 
 - Mockup demo inicial
 - Pruebas de concepto
 - Validación de arquitectura
 - Presentaciones a stakeholders
 
-### ⏰ Usar Versión Completa para:
+### ⏰ Usar Versión Completa para
 
 - MVP en producción
 - Sites con conectividad pobre

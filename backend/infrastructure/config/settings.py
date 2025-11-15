@@ -29,29 +29,29 @@ class Settings(BaseSettings):
     api_prefix: str = "/api/v1"
 
     # Database (PostgreSQL)
-    db_host: str = "localhost"
+    db_host: str
     db_port: int = 5432
-    db_user: str = "aurumai"
-    db_password: str = "aurumai_dev_password"
-    db_name: str = "aurumai"
+    db_user: str
+    db_password: str
+    db_name: str
     db_echo: bool = False
 
     # TimescaleDB
-    tsdb_host: str = "localhost"
+    tsdb_host: str
     tsdb_port: int = 5432
-    tsdb_user: str = "aurumai"
-    tsdb_password: str = "aurumai_dev_password"
-    tsdb_name: str = "aurumai_timeseries"
+    tsdb_user: str
+    tsdb_password: str
+    tsdb_name: str
 
     # MQTT
-    mqtt_broker_host: str = "localhost"
+    mqtt_broker_host: str
     mqtt_broker_port: int = 1883
-    mqtt_username: str = "aurumai"
-    mqtt_password: str = "aurumai_mqtt"
+    mqtt_username: str
+    mqtt_password: str
     mqtt_topic_prefix: str = "aurumai"
 
     # Security
-    secret_key: str = "your-secret-key-change-in-production"
+    secret_key: str
     access_token_expire_minutes: int = 30
     algorithm: str = "HS256"
 

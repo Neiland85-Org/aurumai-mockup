@@ -10,7 +10,8 @@ if TYPE_CHECKING:
 else:
     AsyncSession = Any
 
-from infrastructure.db.postgres_config import get_db
+# Use SQLite for development instead of PostgreSQL
+from infrastructure.db.sqlite_config import get_db
 from infrastructure.adapters.output.postgres import (
     PostgresMachineRepository,
     PostgresMeasurementRepository,

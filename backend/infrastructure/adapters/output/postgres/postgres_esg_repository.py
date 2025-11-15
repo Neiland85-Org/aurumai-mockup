@@ -2,7 +2,7 @@
 Concrete PostgreSQL implementation of IESGRepository
 """
 
-from typing import List, Optional
+from typing import List, Optional, cast
 from datetime import datetime
 from sqlalchemy import select, desc, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -137,7 +137,7 @@ class PostgresESGRepository(IESGRepository):
         """Convert SQLAlchemy model to domain entity"""
         return ESGRecord(
             machine_id=model.machine_id,
-            timestamp=model.timestamp,
+            timestamp=cast(datetime, model.timestamp),
             instant_co2eq_kg=model.instant_co2eq_kg,
             cumulative_co2eq_kg=model.cumulative_co2eq_kg,
             fuel_rate_lh=model.fuel_rate_lh,
