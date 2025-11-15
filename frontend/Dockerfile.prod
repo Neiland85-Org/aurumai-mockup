@@ -13,7 +13,7 @@
 # STAGE 1: DEPENDENCIES
 # Install production and development dependencies
 # -----------------------------------------------------------------------------
-FROM node:20-alpine AS deps
+FROM node:25-alpine AS deps
 
 # Install libc6-compat for compatibility
 RUN apk add --no-cache libc6-compat
@@ -31,7 +31,7 @@ RUN npm ci
 # STAGE 2: BUILDER
 # Build Next.js application
 # -----------------------------------------------------------------------------
-FROM node:20-alpine AS builder
+FROM node:25-alpine AS builder
 
 WORKDIR /app
 
@@ -52,7 +52,7 @@ RUN npm run build
 # STAGE 3: RUNNER
 # Minimal runtime image with only production files
 # -----------------------------------------------------------------------------
-FROM node:20-alpine AS runner
+FROM node:25-alpine AS runner
 
 WORKDIR /app
 
