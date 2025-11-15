@@ -49,11 +49,11 @@ def test_imports_domain_entities():
 def test_imports_repositories():
     """Test that repositories can be imported or at least exist as modules"""
     try:
-        from domain.repositories.machine_repository import MachineRepository  # noqa: F401
-        from domain.repositories.sensor_repository import SensorRepository  # noqa: F401
+        from domain.repositories.machine_repository import IMachineRepository  # noqa: F401
+        from domain.repositories.sensor_repository import ISensorRepository  # noqa: F401
 
-        assert MachineRepository is not None
-        assert SensorRepository is not None
+        assert IMachineRepository is not None
+        assert ISensorRepository is not None
     except ImportError:
         repos_path = backend_dir / "domain" / "repositories"
         assert repos_path.exists(), f"Repositories path not found: {repos_path}"

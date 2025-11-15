@@ -124,18 +124,60 @@ class PostgresMeasurementRepository(IMeasurementRepository):
 
     def _raw_model_to_entity(self, model: RawMeasurementModel) -> RawMeasurement:
         """Convert SQLAlchemy model to domain entity"""
+        # Convierte machine_id y timestamp si son Column
+        machine_id = str(getattr(model, 'machine_id', ''))
+        timestamp = getattr(model, 'timestamp', None)
+        if timestamp is not None and hasattr(timestamp, 'value'):
+            timestamp = timestamp.value
+        if timestamp is None:
+            from datetime import datetime
+            timestamp = datetime.now()
+        # Convierte metrics a dict[str, float]
+        metrics = getattr(model, 'metrics', {})
+        metrics_dict = {}
+        if isinstance(metrics, dict):
+            for k, v in metrics.items():
+                key = k.decode() if isinstance(k, bytes) else str(k)
+                try:
+                    value = float(v.decode() if isinstance(v, bytes) else v)
+                except Exception:
+                    value = None
+                if value is not None:
+                    metrics_dict[key] = value
         return RawMeasurement(
-            machine_id=model.machine_id,
-            timestamp=model.timestamp,
-            metrics=model.metrics,
+            machine_id=machine_id,
+            timestamp=timestamp,
+            metrics=metrics_dict,
         )
 
     def _feature_model_to_entity(self, model: FeatureModel) -> FeatureVector:
         """Convert SQLAlchemy model to domain entity"""
+        # Si model.features es un objeto Column, conviértelo a dict
+        features = model.features
+        features_dict = {}
+        if isinstance(features, dict):
+            # Si las claves/valores son bytes, decodifica y convierte a float
+            for k, v in features.items():
+                key = k.decode() if isinstance(k, bytes) else str(k)
+                try:
+                    value = float(v.decode() if isinstance(v, bytes) else v)
+                except Exception:
+                    value = None
+                if value is not None:
+                    features_dict[key] = value
+        # Si es None o tipo inesperado, retorna dict vacío
+        # Convierte los campos machine_id y timestamp si son Column
+        machine_id = str(getattr(model, 'machine_id', ''))
+        timestamp = getattr(model, 'timestamp', None)
+        if timestamp is not None and hasattr(timestamp, 'value'):
+            timestamp = timestamp.value
+        if timestamp is None:
+            from datetime import datetime
+            timestamp = datetime.now()
         return FeatureVector(
-            machine_id=model.machine_id,
-            timestamp=model.timestamp,
-            features=model.features,
+            machine_id=machine_id,
+            timestamp=timestamp,
+            features=features_dict,
         )
 
     async def save_measurement(self, measurement: Measurement) -> bool:

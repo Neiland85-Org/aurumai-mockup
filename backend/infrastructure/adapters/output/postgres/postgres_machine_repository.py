@@ -46,10 +46,10 @@ class PostgresMachineRepository(IMachineRepository):
 
         if existing:
             # Update existing
-            existing.machine_type = machine.machine_type
-            existing.location = machine.location
-            existing.operational = machine.operational
-            existing.updated_at = datetime.utcnow()
+            setattr(existing, 'machine_type', machine.machine_type)
+            setattr(existing, 'location', machine.location)
+            setattr(existing, 'operational', machine.operational)
+            setattr(existing, 'updated_at', datetime.utcnow())
             model = existing
         else:
             # Create new
@@ -84,11 +84,15 @@ class PostgresMachineRepository(IMachineRepository):
 
     def _model_to_entity(self, model: MachineModel) -> Machine:
         """Convert SQLAlchemy model to domain entity"""
+        machine_id = str(getattr(model, 'machine_id', ''))
+        machine_type = str(getattr(model, 'machine_type', ''))
+        location = str(getattr(model, 'location', ''))
+        operational = bool(getattr(model, 'operational', False))
         return Machine(
-            machine_id=model.machine_id,
-            machine_type=model.machine_type,
-            location=model.location,
-            operational=model.operational,
+            machine_id=machine_id,
+            machine_type=machine_type,
+            location=location,
+            operational=operational,
         )
 
     def _entity_to_model(self, entity: Machine) -> MachineModel:

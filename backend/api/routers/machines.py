@@ -3,42 +3,13 @@ Machines Router - Hexagonal Architecture
 Handles machine information and metrics retrieval
 """
 
-try:
-    # Use dynamic import to avoid static analysis failing to resolve 'fastapi'
-    import importlib
 
-    _fastapi = importlib.import_module("fastapi")
-    APIRouter = getattr(_fastapi, "APIRouter")
-    HTTPException = getattr(_fastapi, "HTTPException")
-    Depends = getattr(_fastapi, "Depends")
-except Exception:
-    # Minimal local stubs so the module can be imported in environments
-    # where FastAPI is not installed (use real FastAPI in production).
-    class APIRouter:
-        def __init__(self):
-            pass
-
-        def get(self, path, response_model=None):
-            def decorator(func):
-                return func
-
-            return decorator
-
-    class HTTPException(Exception):
-        def __init__(self, status_code=500, detail=None):
-            super().__init__(detail)
-            self.status_code = status_code
-            self.detail = detail
-
-    def Depends(dep=None):
-        # Return the dependency callable or None as a simple placeholder.
-        return dep
+from fastapi import APIRouter, HTTPException, Depends
 
 
 from typing import List
 from models import MachineInfo, MachineMetrics, PredictionResponse
 from api.dependencies import get_machine_metrics_use_case
-from application.use_cases import GetMachineMetricsUseCase
 from datetime import datetime
 
 router = APIRouter()
@@ -46,7 +17,7 @@ router = APIRouter()
 
 @router.get("/", response_model=List[MachineInfo])
 async def list_machines(
-    use_case: GetMachineMetricsUseCase = Depends(get_machine_metrics_use_case),
+    use_case=Depends(get_machine_metrics_use_case),
 ):
     """
     List all available machines.
@@ -73,7 +44,7 @@ async def list_machines(
 @router.get("/{machine_id}/metrics", response_model=MachineMetrics)
 async def get_machine_metrics(
     machine_id: str,
-    use_case: GetMachineMetricsUseCase = Depends(get_machine_metrics_use_case),
+    use_case=Depends(get_machine_metrics_use_case),
 ):
     """
     Get current metrics and status for a specific machine.

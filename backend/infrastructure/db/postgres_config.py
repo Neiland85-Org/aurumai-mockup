@@ -6,6 +6,7 @@ import os
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base
+from sqlalchemy import text
 
 # Database URL from environment variable with fallback
 DATABASE_URL = os.getenv(
@@ -62,37 +63,37 @@ async def init_database():
 
         # Enable TimescaleDB extension and create hypertables
         # for time-series data
-        await conn.execute("CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;")
+        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"))
 
         # Convert raw_measurements to hypertable
-        await conn.execute(
+        await conn.execute(text(
             """
             SELECT create_hypertable(
                 'raw_measurements',
                 'timestamp',
                 if_not_exists => TRUE
             );
-        """
-        )
+            """
+        ))
 
         # Convert predictions to hypertable
-        await conn.execute(
+        await conn.execute(text(
             """
             SELECT create_hypertable(
                 'predictions',
                 'timestamp',
                 if_not_exists => TRUE
             );
-        """
-        )
+            """
+        ))
 
         # Convert esg_records to hypertable
-        await conn.execute(
+        await conn.execute(text(
             """
             SELECT create_hypertable(
                 'esg_records',
                 'timestamp',
                 if_not_exists => TRUE
             );
-        """
-        )
+            """
+        ))
