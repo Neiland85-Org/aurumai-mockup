@@ -1,3 +1,4 @@
+
 from typing import List, Dict, Any, Optional
 
 class FeatureCalculator:
@@ -13,7 +14,6 @@ class FeatureCalculator:
         """
         Calcula características de ventana deslizante (rolling features) para un conjunto de datos.
         """
-        # Import diferido para evitar errores de importación en entornos donde aún no está instalada la dependencia (útil para Pylance en VS Code).
         import pandas as pd  # type: ignore
 
         if len(data_points) < window_size:

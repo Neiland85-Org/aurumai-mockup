@@ -1,3 +1,4 @@
+
 """
 Application Settings & Configuration
 
@@ -7,16 +8,14 @@ Loads from environment variables with .env file support.
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
-
-
-
 import os
+
 _env_file = os.environ.get("ENV_FILE", ".env")
 
 class Settings(BaseSettings):
     """Main application settings"""
     model_config = SettingsConfigDict(
-        env_file=_env_file, env_file_encoding="utf-8", case_sensitive=False
+        env_file=_env_file, env_file_encoding="utf-8", case_sensitive=False, extra="ignore"
     )
 
     # Application
@@ -34,27 +33,27 @@ class Settings(BaseSettings):
     # Database (PostgreSQL)
     db_host: str = "localhost"
     db_port: int = 5432
-    db_user: str = "testuser"
-    db_password: str = "testpass"
-    db_name: str = "testdb"
+    db_user: str = "aurumai"
+    db_password: str = "aurumai_dev_password"
+    db_name: str = "aurumai"
     db_echo: bool = False
 
     # TimescaleDB
     tsdb_host: str = "localhost"
     tsdb_port: int = 5432
-    tsdb_user: str = "testuser"
-    tsdb_password: str = "testpass"
-    tsdb_name: str = "testdb"
+    tsdb_user: str = "aurumai"
+    tsdb_password: str = "aurumai_dev_password"
+    tsdb_name: str = "aurumai_timeseries"
 
     # MQTT
     mqtt_broker_host: str = "localhost"
     mqtt_broker_port: int = 1883
-    mqtt_username: str = "testuser"
-    mqtt_password: str = "testpass"
+    mqtt_username: str = "aurumai"
+    mqtt_password: str = "aurumai_mqtt"
     mqtt_topic_prefix: str = "aurumai"
 
     # Security
-    secret_key: str = "testsecret"
+    secret_key: str = "your-secret-key-change-in-production"
     access_token_expire_minutes: int = 30
     algorithm: str = "HS256"
 
@@ -110,7 +109,6 @@ class Settings(BaseSettings):
         return self.environment.lower() == "development"
 
 
-
 # Global settings instance
 try:
     settings = Settings()
@@ -125,17 +123,3 @@ except Exception as e:
             msg = err['msg']
             print(f"- {loc}: {msg}", file=sys.stderr)
     settings = None
-
-# Ejemplo de variables obligatorias para .env:
-# db_host=localhost
-# db_user=testuser
-# db_password=testpass
-# db_name=testdb
-# tsdb_host=localhost
-# tsdb_user=testuser
-# tsdb_password=testpass
-# tsdb_name=testdb
-# mqtt_broker_host=localhost
-# mqtt_username=testuser
-# mqtt_password=testpass
-# secret_key=testsecret
