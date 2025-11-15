@@ -3,6 +3,9 @@
 requests>=2.31.0
 
 # Optional: Keep for compatibility with original version
+# IoT Simulator - Simplified Version
+# Runtime dependencies for the simplified IoT simulator
+
 httpx>=0.26.0
 pydantic>=2.5.0
 python-dotenv>=1.0.0
