@@ -1,22 +1,17 @@
+
 """
 PostgreSQL Database Configuration with TimescaleDB support
 """
 
-import os
 from typing import AsyncGenerator
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import text
-
-# Database URL from environment variable with fallback
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+asyncpg://aurumai:aurumai_pass@localhost:5432/aurumai_db",
-)
+from infrastructure.config.settings import settings
 
 # Create async engine
 engine = create_async_engine(
-    DATABASE_URL,
+    settings.async_database_url,
     echo=False,  # Set to True for SQL query logging
     pool_size=10,
     max_overflow=20,
@@ -28,13 +23,10 @@ AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
     expire_on_commit=False,
-    autocommit=False,
-    autoflush=False,
 )
 
 # Base class for SQLAlchemy models
 Base = declarative_base()
-
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
@@ -50,7 +42,6 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             raise
         finally:
             await session.close()
-
 
 async def init_database():
     """

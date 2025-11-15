@@ -28,7 +28,7 @@ async def process_and_forward(payloads: List[Dict[str, Any]]) -> None:
 async def sync_loop(interval_seconds: int = 5) -> None:
     """Periodic loop: takes buffered payloads, processes & forwards to backend"""
     while True:
-        buffered = get_and_clear_buffer()
+        buffered = await get_and_clear_buffer()
         if buffered:
             await process_and_forward(buffered)
             print(f"📤 Synced {len(buffered)} payloads to backend")

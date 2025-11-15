@@ -1,8 +1,8 @@
 # Fase 2 Optimizada - IoT & Edge Simulators Simplificados
 
-**Fecha**: 14 de Noviembre, 2025  
-**Objetivo**: Reducir tiempo de implementación de 4-6 días a **2-3 días**  
-**Reducción**: **50% del tiempo** sin pérdida de funcionalidad core
+Fecha: 14 de Noviembre, 2025
+Objetivo: Reducir tiempo de implementación de 4-6 días a 2-3 días
+Reducción: 50% del tiempo sin pérdida de funcionalidad core
 
 ---
 
@@ -27,25 +27,25 @@
 ### IoT Simulator
 
 ```text
- iot-sim/
- ├── generator_simplified.py    # ✅ NUEVO - Generador simple TRUCK-21
- ├── run_demo.py                 # ✅ NUEVO - Demo integrado IoT + Edge
- ├── generator.py                # ⚠️  ORIGINAL - Mantener para referencia
- ├── anomalies.py                # ⚠️  ORIGINAL - No usar en mockup
- ├── config.py                   # ✅ ORIGINAL - Actualizar para versión simple
- └── requirements.txt            # ✅ Actualizar (eliminar paho-mqtt)
+iot-sim/
+├── generator_simplified.py    # ✅ NUEVO - Generador simple TRUCK-21
+├── run_demo.py                 # ✅ NUEVO - Demo integrado IoT + Edge
+├── generator.py                # ⚠️  ORIGINAL - Mantener para referencia
+├── anomalies.py                # ⚠️  ORIGINAL - No usar en mockup
+├── config.py                   # ✅ ORIGINAL - Actualizar para versión simple
+└── requirements.txt            # ✅ Actualizar (eliminar paho-mqtt)
 ```
 
 ### Edge Simulator
 
 ```text
- edge-sim/
- ├── main_simplified.py          # ✅ NUEVO - Edge simple sin buffer SQLite
- ├── main.py                     # ⚠️  ORIGINAL - Mantener para referencia
- ├── buffer.py                   # ❌ NO USAR en mockup
- ├── features.py                 # ✅ ORIGINAL - Reutilizar lógica básica
- ├── sync.py                     # ✅ ORIGINAL - Reutilizar HTTP client
- └── requirements.txt            # ✅ Actualizar
+edge-sim/
+├── main_simplified.py          # ✅ NUEVO - Edge simple sin buffer SQLite
+├── main.py                     # ⚠️  ORIGINAL - Mantener para referencia
+├── buffer.py                   # ❌ NO USAR en mockup
+├── features.py                 # ✅ ORIGINAL - Reutilizar lógica básica
+├── sync.py                     # ✅ ORIGINAL - Reutilizar HTTP client
+└── requirements.txt            # ✅ Actualizar
 ```
 
 ---
@@ -129,7 +129,7 @@ class EdgeSimulator:
             self.backend_client.send_features(features)
 ```
 
-#### Testing
+#### Testing Edge
 
 ```bash
 cd edge-sim
@@ -146,14 +146,14 @@ python main_simplified.py
 
 ### Día 3: Integración y Testing
 
-#### Objetivos
+#### Objetivos Integración
 
 - [ ] Conectar IoT → Edge → Backend
 - [ ] Script `run_demo.py` integrado
 - [ ] Verificar flujo end-to-end
 - [ ] Ajustes y debugging
 
-#### Implementación
+#### Implementación Integración
 
 ```python
 # iot-sim/run_demo.py
@@ -247,40 +247,35 @@ python run_demo.py
 **Razón**: Simplifica deployment, HTTP es suficiente para demo  
 **Ahorro**: 1 día (no need broker setup, MQTT config, QoS handling)
 
-### 2. Buffer SQLite Persistente
+Buffer SQLite Persistente
+Original: Store-and-forward con SQLite local
+Eliminado: Queue en memoria (Python queue.Queue)
+Razón: Para demo no necesitamos resiliencia offline
+Ahorro: 0.5 días (no DB schema, no persistence logic)
 
-**Original**: Store-and-forward con SQLite local  
-**Eliminado**: Queue en memoria (Python `queue.Queue`)  
-**Razón**: Para demo no necesitamos resiliencia offline  
-**Ahorro**: 0.5 días (no DB schema, no persistence logic)
+Inferencia ONNX Local
+Original: Modelo ML en edge vía ONNX Runtime
+Eliminado: Toda inferencia en backend
+Razón: Edge solo hace feature engineering
+Ahorro: 1 día (no ONNX export, no edge deployment)
 
-### 3. Inferencia ONNX Local
+Máquinas Adicionales
+Original: TRUCK-21, MILL-3, BOILER-7
+Eliminado: Solo TRUCK-21
+Razón: Un tipo de máquina es suficiente para demo
+Ahorro: 1 día (no múltiples configuraciones)
 
-**Original**: Modelo ML en edge vía ONNX Runtime  
-**Eliminado**: Toda inferencia en backend  
-**Razón**: Edge solo hace feature engineering  
-**Ahorro**: 1 día (no ONNX export, no edge deployment)
+Sistema Complejo de Anomalías
+Original: Módulo anomalies.py con inyección dinámica
+Eliminado: Progresión hardcoded en generate_sample()
+Razón: Patrón progresivo es más predecible para demo
+Ahorro: 0.5 días (no logic de detección/inyección)
 
-### 4. Máquinas Adicionales
-
-**Original**: TRUCK-21, MILL-3, BOILER-7  
-**Eliminado**: Solo TRUCK-21  
-**Razón**: Un tipo de máquina es suficiente para demo  
-**Ahorro**: 1 día (no múltiples configuraciones)
-
-### 5. Sistema Complejo de Anomalías
-
-**Original**: Módulo `anomalies.py` con inyección dinámica  
-**Eliminado**: Progresión hardcoded en `generate_sample()`  
-**Razón**: Patrón progresivo es más predecible para demo  
-**Ahorro**: 0.5 días (no logic de detección/inyección)
-
-### 6. AsyncIO Completo
-
-**Original**: async/await en todo el flujo  
-**Eliminado**: Código sincrónico simple  
-**Razón**: Menor complejidad, threads son suficientes  
-**Ahorro**: 0.5 días (no async coordination, simpler debugging)
+AsyncIO Completo
+Original: async/await en todo el flujo
+Eliminado: Código sincrónico simple
+Razón: Menor complejidad, threads son suficientes
+Ahorro: 0.5 días (no async coordination, simpler debugging)
 
 ---
 
@@ -311,56 +306,14 @@ TOTAL PARA DEMO:            2.5-4.5 semanas ⚡
 **Ahorro total**: 2-3 días en Fase 2  
 **Beneficio adicional**: Código más simple = menos bugs, más rápido debuggear
 
----
-
-## 🔄 Migración a Versión Completa (Futuro)
-
+🔄 Migración a Versión Completa (Futuro)
 Si en el futuro se necesita la versión completa con MQTT, buffer, etc:
 
-### Paso 1: Agregar MQTT (1 día)
-
-```python
-# iot-sim/mqtt_publisher.py
-import paho.mqtt.client as mqtt
-
-class MQTTPublisher:
-    def publish(self, topic, data):
-        self.client.publish(topic, json.dumps(data))
-```
-
-### Paso 2: Agregar Buffer SQLite (0.5 días)
-
-```python
-# edge-sim/buffer.py
-import sqlite3
-
-class LocalBuffer:
-    def store(self, data):
-        self.conn.execute("INSERT INTO buffer ...")
-
-    def sync_pending(self):
-        # Store and forward logic
-```
-
-### Paso 3: Agregar Inferencia ONNX (1 día)
-
-```python
-# edge-sim/inference.py
-import onnxruntime as ort
-
-class LocalInference:
-    def predict(self, features):
-        return self.session.run(None, features)
-```
-
-### Paso 4: Agregar Máquinas (0.5 días)
-
-```python
-# iot-sim/config.py
-MACHINES = ["TRUCK-21", "MILL-3", "BOILER-7"]
-```
-
-**Total para migración**: 3 días
+Paso 1: Agregar MQTT (1 día)
+Paso 2: Agregar Buffer SQLite (0.5 días)
+Paso 3: Agregar Inferencia ONNX (1 día)
+Paso 4: Agregar Máquinas (0.5 días)
+Total para migración: 3 días
 
 ---
 
@@ -417,3 +370,10 @@ MACHINES = ["TRUCK-21", "MILL-3", "BOILER-7"]
 **Complejidad**: Reducida significativamente
 
 ¡Manos a la obra! 🚀
+
+```cpp
+// Ejemplo correcto (4 espacios)
+    int main() {
+        return 0;
+    }
+```

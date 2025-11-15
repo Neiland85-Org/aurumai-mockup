@@ -58,7 +58,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         model = result.scalar_one_or_none()
 
         if model:
-            return self._raw_model_to_entity(model)
+                return self._raw_model_to_entity(model)
         return None
 
     async def get_latest_features(self, machine_id: str) -> Optional[FeatureVector]:
@@ -73,7 +73,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         model = result.scalar_one_or_none()
 
         if model:
-            return self._feature_model_to_entity(model)
+                return self._feature_model_to_entity(model)
         return None
 
     async def get_raw_measurements_range(
@@ -124,15 +124,14 @@ class PostgresMeasurementRepository(IMeasurementRepository):
 
     def _raw_model_to_entity(self, model: RawMeasurementModel) -> RawMeasurement:
         """Convert SQLAlchemy model to domain entity"""
-        # Convierte machine_id y timestamp si son Column
+        # Conversión segura de machine_id, timestamp y metrics
         machine_id = str(getattr(model, 'machine_id', ''))
-        timestamp = getattr(model, 'timestamp', None)
-        if timestamp is not None and hasattr(timestamp, 'value'):
-            timestamp = timestamp.value
-        if timestamp is None:
+        ts = getattr(model, 'timestamp', None)
+        if ts is not None and hasattr(ts, 'value'):
+            ts = ts.value
+        if ts is None:
             from datetime import datetime
-            timestamp = datetime.now()
-        # Convierte metrics a dict[str, float]
+            ts = datetime.now()
         metrics = getattr(model, 'metrics', {})
         metrics_dict = {}
         if isinstance(metrics, dict):
@@ -146,17 +145,23 @@ class PostgresMeasurementRepository(IMeasurementRepository):
                     metrics_dict[key] = value
         return RawMeasurement(
             machine_id=machine_id,
-            timestamp=timestamp,
+            timestamp=ts,
             metrics=metrics_dict,
         )
 
     def _feature_model_to_entity(self, model: FeatureModel) -> FeatureVector:
         """Convert SQLAlchemy model to domain entity"""
-        # Si model.features es un objeto Column, conviértelo a dict
-        features = model.features
+        # Conversión segura de machine_id, timestamp y features
+        machine_id = str(getattr(model, 'machine_id', ''))
+        ts = getattr(model, 'timestamp', None)
+        if ts is not None and hasattr(ts, 'value'):
+            ts = ts.value
+        if ts is None:
+            from datetime import datetime
+            ts = datetime.now()
+        features = getattr(model, 'features', {})
         features_dict = {}
         if isinstance(features, dict):
-            # Si las claves/valores son bytes, decodifica y convierte a float
             for k, v in features.items():
                 key = k.decode() if isinstance(k, bytes) else str(k)
                 try:
@@ -165,18 +170,9 @@ class PostgresMeasurementRepository(IMeasurementRepository):
                     value = None
                 if value is not None:
                     features_dict[key] = value
-        # Si es None o tipo inesperado, retorna dict vacío
-        # Convierte los campos machine_id y timestamp si son Column
-        machine_id = str(getattr(model, 'machine_id', ''))
-        timestamp = getattr(model, 'timestamp', None)
-        if timestamp is not None and hasattr(timestamp, 'value'):
-            timestamp = timestamp.value
-        if timestamp is None:
-            from datetime import datetime
-            timestamp = datetime.now()
         return FeatureVector(
             machine_id=machine_id,
-            timestamp=timestamp,
+            timestamp=ts,
             features=features_dict,
         )
 

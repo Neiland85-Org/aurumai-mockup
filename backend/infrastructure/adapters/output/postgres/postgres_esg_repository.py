@@ -2,7 +2,7 @@
 Concrete PostgreSQL implementation of IESGRepository
 """
 
-from typing import List, Optional
+from typing import List, Optional, cast
 from datetime import datetime
 from sqlalchemy import select, desc, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -135,23 +135,32 @@ class PostgresESGRepository(IESGRepository):
 
     def _model_to_entity(self, model: ESGRecordModel) -> ESGRecord:
         """Convert SQLAlchemy model to domain entity"""
-        machine_id = str(getattr(model, 'machine_id', ''))
-        timestamp = getattr(model, 'timestamp', None)
-        if timestamp is not None and hasattr(timestamp, 'value'):
-            timestamp = timestamp.value
-        if timestamp is None:
-            from datetime import datetime
-            timestamp = datetime.now()
+        def get_value(attr):
+            val = getattr(model, attr, None)
+            if val is None:
+                return None
+            if hasattr(val, 'value'):
+                return val.value
+            return val
+
         def safe_float(val):
             try:
+                if val is None:
+                    return 0.0
                 return float(val)
             except Exception:
                 return 0.0
-        instant_co2eq_kg = safe_float(getattr(model, 'instant_co2eq_kg', 0.0))
-        cumulative_co2eq_kg = safe_float(getattr(model, 'cumulative_co2eq_kg', 0.0))
-        fuel_rate_lh = safe_float(getattr(model, 'fuel_rate_lh', 0.0))
-        power_consumption_kw = safe_float(getattr(model, 'power_consumption_kw', 0.0))
-        efficiency_score = safe_float(getattr(model, 'efficiency_score', 0.0))
+
+        machine_id = str(get_value('machine_id'))
+        timestamp = get_value('timestamp')
+        if timestamp is None:
+            from datetime import datetime
+            timestamp = datetime.now()
+        instant_co2eq_kg = safe_float(get_value('instant_co2eq_kg'))
+        cumulative_co2eq_kg = safe_float(get_value('cumulative_co2eq_kg'))
+        fuel_rate_lh = safe_float(get_value('fuel_rate_lh'))
+        power_consumption_kw = safe_float(get_value('power_consumption_kw'))
+        efficiency_score = safe_float(get_value('efficiency_score'))
         metadata = getattr(model, 'metadata_json', {}) or {}
         return ESGRecord(
             machine_id=machine_id,

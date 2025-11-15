@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Backend",
+      "type": "shell",
+      "command": "cd backend && source .venv/bin/activate && python -m uvicorn app:app --reload",
+      "group": "build",
+      "presentation": { "panel": "dedicated" }
+    },
+    {
+      "label": "Frontend",
+      "type": "shell",
+      "command": "cd frontend && . ~/.asdf/asdf.sh && npm run dev",
+      "group": "build",
+      "presentation": { "panel": "dedicated" }
+    },
+    {
+      "label": "Simulador IoT",
+      "type": "shell",
+      "command": "cd iot-sim && source ../backend/.venv/bin/activate && python run_demo.py",
+      "group": "build",
+      "presentation": { "panel": "dedicated" }
+    },
+    {
+      "label": "Levantar todo (AurumAI)",
+      "dependsOn": ["Backend", "Frontend", "Simulador IoT"],
+      "dependsOrder": "parallel",
+      "group": "build"
+    }
+  ]
+}

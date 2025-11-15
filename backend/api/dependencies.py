@@ -10,7 +10,8 @@ if TYPE_CHECKING:
 else:
     AsyncSession = Any
 
-from infrastructure.db.postgres_config import get_db
+# Use SQLite for development instead of PostgreSQL
+from infrastructure.db.sqlite_config import get_db
 from infrastructure.adapters.output.postgres import (
     PostgresMachineRepository,
     PostgresMeasurementRepository,
@@ -35,8 +36,10 @@ esg_service = ESGServiceImpl()
 # Dependency providers for use cases
 
 
+from fastapi import Depends
+
 async def get_ingest_telemetry_use_case(
-    db: AsyncSession = get_db(),
+    db: AsyncSession = Depends(get_db),
 ) -> IngestTelemetryUseCase:
     """
     Provides IngestTelemetryUseCase with dependencies.
@@ -51,7 +54,7 @@ async def get_ingest_telemetry_use_case(
 
 
 async def get_run_prediction_use_case(
-    db: AsyncSession = get_db(),
+    db: AsyncSession = Depends(get_db),
 ) -> RunPredictionUseCase:
     """
     Provides RunPredictionUseCase with dependencies.
@@ -69,7 +72,7 @@ async def get_run_prediction_use_case(
 
 
 async def get_calculate_esg_use_case(
-    db: AsyncSession = get_db(),
+    db: AsyncSession = Depends(get_db),
 ) -> CalculateESGUseCase:
     """
     Provides CalculateESGUseCase with dependencies.
@@ -87,7 +90,7 @@ async def get_calculate_esg_use_case(
 
 
 async def get_machine_metrics_use_case(
-    db: AsyncSession = get_db(),
+    db: AsyncSession = Depends(get_db),
 ) -> GetMachineMetricsUseCase:
     """
     Provides GetMachineMetricsUseCase with dependencies.
@@ -109,28 +112,28 @@ async def get_machine_metrics_use_case(
 
 
 async def get_machine_repository(
-    db: AsyncSession = get_db(),
+    db: AsyncSession = Depends(get_db),
 ) -> PostgresMachineRepository:
     """Provides MachineRepository instance"""
     return PostgresMachineRepository(db)
 
 
 async def get_measurement_repository(
-    db: AsyncSession = get_db(),
+    db: AsyncSession = Depends(get_db),
 ) -> PostgresMeasurementRepository:
     """Provides MeasurementRepository instance"""
     return PostgresMeasurementRepository(db)
 
 
 async def get_prediction_repository(
-    db: AsyncSession = get_db(),
+    db: AsyncSession = Depends(get_db),
 ) -> PostgresPredictionRepository:
     """Provides PredictionRepository instance"""
     return PostgresPredictionRepository(db)
 
 
 async def get_esg_repository(
-    db: AsyncSession = get_db(),
+    db: AsyncSession = Depends(get_db),
 ) -> PostgresESGRepository:
     """Provides ESGRepository instance"""
     return PostgresESGRepository(db)
