@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 try:
     import paho.mqtt.client as mqtt  # type: ignore
-except Exception:
+except (ImportError, ModuleNotFoundError):
     # Minimal stub to allow editor/linters to resolve the import when paho-mqtt isn't installed.
     class _StubClient:
         class CallbackAPIVersion:
