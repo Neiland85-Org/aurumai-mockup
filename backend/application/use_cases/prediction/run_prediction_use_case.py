@@ -6,10 +6,10 @@ Executes ML prediction for a machine and stores the result
 from datetime import datetime
 from typing import Optional
 
+from domain.entities.prediction import Prediction
 from domain.repositories.machine_repository import IMachineRepository
 from domain.repositories.measurement_repository import IMeasurementRepository
 from domain.repositories.prediction_repository import IPredictionRepository
-from domain.entities.prediction import Prediction
 from domain.services.ml_service import IMLService
 
 
@@ -25,7 +25,7 @@ class RunPredictionUseCase:
         measurement_repo: IMeasurementRepository,
         prediction_repo: IPredictionRepository,
         ml_service: IMLService,
-    ):
+    ) -> None:
         self.machine_repo = machine_repo
         self.measurement_repo = measurement_repo
         self.prediction_repo = prediction_repo
@@ -99,7 +99,8 @@ class RunPredictionUseCase:
         if not machine:
             raise ValueError(f"Machine {machine_id} not found")
 
-        return await self.prediction_repo.get_history(machine_id, limit)
+        history = await self.prediction_repo.get_history(machine_id, limit)
+        return list(history)
 
     async def get_latest(self, machine_id: str) -> Optional[Prediction]:
         """
@@ -133,7 +134,8 @@ class RunPredictionUseCase:
         Returns:
             List of high-risk predictions
         """
-        return await self.prediction_repo.get_high_risk_predictions(
+        predictions = await self.prediction_repo.get_high_risk_predictions(
             risk_threshold=risk_threshold,
             limit=limit,
         )
+        return list(predictions)

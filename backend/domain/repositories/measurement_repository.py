@@ -2,11 +2,18 @@
 Measurement Repository Interface
 """
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List, Dict, Optional, Any
+from typing import Mapping, Optional, Sequence
 from uuid import UUID
-from domain.value_objects import TimeSeriesPoint, Measurement
+
+from domain.entities.measurement import FeatureVector, RawMeasurement
+from domain.value_objects import Measurement, TimeSeriesPoint
+
+MetricRecord = Mapping[str, float]
+AggregationRecord = Mapping[str, float]
 
 
 class IMeasurementRepository(ABC):
@@ -18,7 +25,7 @@ class IMeasurementRepository(ABC):
         pass
 
     @abstractmethod
-    async def save_batch(self, measurements: List[Measurement]) -> int:
+    async def save_batch(self, measurements: Sequence[Measurement]) -> int:
         """Save multiple measurements, returns count saved"""
         pass
 
@@ -29,8 +36,8 @@ class IMeasurementRepository(ABC):
 
     @abstractmethod
     async def get_latest(
-        self, machine_id: UUID, metric_names: List[str], limit: int = 100
-    ) -> List[Dict]:
+        self, machine_id: UUID, metric_names: Sequence[str], limit: int = 100
+    ) -> Sequence[MetricRecord]:
         """Get latest measurements for specified metrics"""
         pass
 
@@ -41,7 +48,7 @@ class IMeasurementRepository(ABC):
         metric_name: str,
         start_time: datetime,
         end_time: datetime,
-    ) -> List[Dict]:
+    ) -> Sequence[MetricRecord]:
         """Get measurements within a time range"""
         pass
 
@@ -53,27 +60,27 @@ class IMeasurementRepository(ABC):
         start_time: datetime,
         end_time: datetime,
         interval_seconds: int,
-    ) -> List[Dict]:
+    ) -> Sequence[AggregationRecord]:
         """Get aggregated measurements (avg, min, max) per interval"""
         pass
 
     # Aliases for compatibility with use cases
-    async def get_latest_raw_measurement(self, machine_id: str) -> Optional[Dict]:
+    async def get_latest_raw_measurement(self, machine_id: str) -> Optional[RawMeasurement]:
         """Get latest raw measurement for a machine"""
         # This should be implemented by concrete repositories
         return None
 
-    async def save_raw_measurement(self, machine_id: str, data: Dict) -> bool:
+    async def save_raw_measurement(self, measurement: RawMeasurement) -> RawMeasurement:
         """Save raw measurement data"""
         # This should be implemented by concrete repositories
-        return False
+        return measurement
 
-    async def get_latest_features(self, machine_id: str) -> Optional[Any]:
+    async def get_latest_features(self, machine_id: str) -> Optional[FeatureVector]:
         """Get latest feature vector for a machine"""
         # This should be implemented by concrete repositories
         return None
 
-    async def save_feature_vector(self, machine_id: str, features: Dict) -> bool:
+    async def save_feature_vector(self, features: FeatureVector) -> FeatureVector:
         """Save feature vector"""
         # This should be implemented by concrete repositories
-        return False
+        return features

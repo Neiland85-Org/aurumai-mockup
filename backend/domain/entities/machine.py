@@ -18,7 +18,7 @@ class Machine:
     location: str
     operational: bool = True
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate machine data"""
         if not self.machine_id or not self.machine_id.strip():
             raise ValueError("machine_id cannot be empty")
@@ -31,10 +31,10 @@ class Machine:
         """Check if machine is operational"""
         return self.operational
 
-    def mark_operational(self):
+    def mark_operational(self) -> None:
         """Mark machine as operational"""
         self.operational = True
 
-    def mark_down(self):
+    def mark_down(self) -> None:
         """Mark machine as down/offline"""
         self.operational = False

@@ -3,8 +3,25 @@ Domain Service Interface: Machine Learning Service
 Defines contract for ML prediction operations
 """
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Dict, Any
+from typing import Mapping
+from typing_extensions import TypedDict
+
+
+class _PredictionResultRequired(TypedDict):
+    """Required fields in prediction results (must always be present)"""
+    risk_score: float
+    failure_probability: float
+    maintenance_hours: int
+
+
+class PredictionResult(_PredictionResultRequired, total=False):
+    """Complete prediction result with required + optional fields"""
+    failure_type: str | None
+    confidence: float
+    model_version: str
 
 
 class IMLService(ABC):
@@ -15,8 +32,8 @@ class IMLService(ABC):
         self,
         machine_id: str,
         machine_type: str,
-        features: Dict[str, float],
-    ) -> Dict[str, Any]:
+        features: Mapping[str, float | int],
+    ) -> PredictionResult:
         """
         Run ML prediction for a machine.
 

@@ -3,14 +3,35 @@ Use Case: Calculate ESG Metrics
 Calculates carbon emissions and ESG metrics for machines
 """
 
-from datetime import datetime
-from typing import Dict, Any, Optional
+from __future__ import annotations
 
+from datetime import datetime
+from typing_extensions import TypedDict
+
+from domain.entities.esg import ESGRecord
+from domain.repositories.esg_repository import IESGRepository
 from domain.repositories.machine_repository import IMachineRepository
 from domain.repositories.measurement_repository import IMeasurementRepository
-from domain.repositories.esg_repository import IESGRepository
-from domain.entities.esg import ESGRecord
 from domain.services.esg_service import IESGService
+
+
+class MachineESGSummary(TypedDict):
+    machine_id: str
+    machine_type: str
+    instant_co2eq_kg: float
+    cumulative_co2eq_kg: float
+    fuel_rate_lh: float | None
+    power_consumption_kw: float | None
+
+
+class ESGSummary(TypedDict):
+    total_machines: int
+    monitored_machines: int
+    total_instant_co2eq_kg: float
+    total_cumulative_co2eq_kg: float
+    total_fuel_rate_lh: float
+    total_power_consumption_kw: float
+    machines: list[MachineESGSummary]
 
 
 class CalculateESGUseCase:
@@ -25,7 +46,7 @@ class CalculateESGUseCase:
         measurement_repo: IMeasurementRepository,
         esg_repo: IESGRepository,
         esg_service: IESGService,
-    ):
+    ) -> None:
         self.machine_repo = machine_repo
         self.measurement_repo = measurement_repo
         self.esg_repo = esg_repo
@@ -83,7 +104,7 @@ class CalculateESGUseCase:
 
         return saved_record
 
-    async def get_current(self, machine_id: str) -> Optional[ESGRecord]:
+    async def get_current(self, machine_id: str) -> ESGRecord | None:
         """
         Get current (latest) ESG metrics for a machine.
 
@@ -120,9 +141,10 @@ class CalculateESGUseCase:
         if not machine:
             raise ValueError(f"Machine {machine_id} not found")
 
-        return await self.esg_repo.get_history(machine_id, limit)
+        history = await self.esg_repo.get_history(machine_id, limit)
+        return list(history)
 
-    async def get_summary(self) -> Dict[str, Any]:
+    async def get_summary(self) -> ESGSummary:
         """
         Get ESG summary across all machines.
 
@@ -133,7 +155,7 @@ class CalculateESGUseCase:
         machines = await self.machine_repo.get_all()
 
         # Get latest ESG for each machine
-        machine_esg = []
+        machine_esg: list[MachineESGSummary] = []
         for machine in machines:
             latest = await self.esg_repo.get_latest(machine.machine_id)
             if latest:
@@ -166,7 +188,7 @@ class CalculateESGUseCase:
 
     async def get_total_emissions(
         self,
-        machine_id: Optional[str] = None,
+        machine_id: str | None = None,
     ) -> float:
         """
         Get total cumulative emissions.

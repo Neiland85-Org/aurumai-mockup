@@ -19,7 +19,7 @@ class RawMeasurement:
     timestamp: datetime
     metrics: Dict[str, float]
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate measurement data"""
         if not self.machine_id or not self.machine_id.strip():
             raise ValueError("machine_id cannot be empty")
@@ -40,7 +40,7 @@ class FeatureVector:
     timestamp: datetime
     features: Dict[str, float]
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate feature vector data"""
         if not self.machine_id or not self.machine_id.strip():
             raise ValueError("machine_id cannot be empty")

@@ -1,25 +1,50 @@
 {
+  // TypeScript Configuration
+  "typescript.tsdk": "frontend/node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+
+  // Python Configuration
   "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
-  "python.envFile": "${workspaceFolder}/.env",
   "python.analysis.extraPaths": [
-    "${workspaceFolder}",
     "${workspaceFolder}/backend",
-    "${workspaceFolder}/backend/api",
-    "${workspaceFolder}/backend/application",
-    "${workspaceFolder}/backend/domain",
-    "${workspaceFolder}/backend/infrastructure",
-    "${workspaceFolder}/edge-sim",
-    "${workspaceFolder}/iot-sim"
+    "${workspaceFolder}/iot-sim",
+    "${workspaceFolder}/edge-sim"
   ],
   "python.analysis.diagnosticMode": "workspace",
-  "python.analysis.typeCheckingMode": "basic",
-  "python.testing.pytestArgs": ["backend"],
-  "python.testing.pytestEnabled": true,
-  "editor.formatOnSave": false,
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": "never"
+  "python.terminal.activateEnvironment": true,
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.autoComplete.extraPaths": [
+    "${workspaceFolder}/backend/.venv/lib/python3.11/site-packages",
+    "${workspaceFolder}/backend",
+    "${workspaceFolder}/iot-sim",
+    "${workspaceFolder}/edge-sim"
+  ],
+
+  // Editor Formatting
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python",
+    "editor.formatOnSave": false, // ✅ Deshabilitado hasta instalar black-formatter
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
   },
-  "extensions.autoUpdate": false,
-  "python.analysis.autoImportCompletions": true,
-  "python.analysis.inlayHints.variableTypes": false
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+
+  // Performance Optimization
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.venv/**": true,
+    "**/__pycache__/**": true,
+    "**/.pytest_cache/**": true,
+    "**/.mypy_cache/**": true
+  }
 }

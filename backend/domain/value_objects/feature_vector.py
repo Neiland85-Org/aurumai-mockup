@@ -2,7 +2,7 @@
 FeatureVector Value Object - Engineered features for ML
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, List, Optional
 from uuid import UUID
@@ -23,7 +23,7 @@ class FeatureVector:
     features: Dict[str, float]  # feature_name -> value
     feature_names: Optional[List[str]] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize feature names list"""
         if self.feature_names is None:
             object.__setattr__(self, "feature_names", sorted(self.features.keys()))

@@ -6,10 +6,10 @@ Supports versioning and multiple methodologies (IPCC, country-specific, custom).
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime, date
-from typing import Optional, Dict, Any
-from uuid import UUID, uuid4
+from datetime import date, datetime
 from enum import Enum
+from typing import Any, Dict, Optional
+from uuid import UUID, uuid4
 
 
 class EmissionFactorSource(str, Enum):
@@ -54,15 +54,13 @@ class EmissionFactor:
     is_active: bool = True
     metadata: Dict[str, Any] = field(default_factory=dict)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Calculate total CO2eq factor using GWP100"""
         # GWP100: CH4 = 25, N2O = 298 (IPCC AR4)
         # More recent IPCC AR5: CH4 = 28, N2O = 265
         # We use AR5 values
         if self.co2eq_factor == 0.0:
-            self.co2eq_factor = (
-                self.co2_factor + (self.ch4_factor * 28) + (self.n2o_factor * 265)
-            )
+            self.co2eq_factor = self.co2_factor + (self.ch4_factor * 28) + (self.n2o_factor * 265)
 
     @staticmethod
     def create(

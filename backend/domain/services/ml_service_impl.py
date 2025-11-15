@@ -3,10 +3,12 @@ Concrete Implementation: ML Service
 Fake but credible ML prediction engine for demo purposes
 """
 
-import random
-from typing import Dict, Any
+from __future__ import annotations
 
-from .ml_service import IMLService
+import random
+from typing import Mapping
+
+from .ml_service import IMLService, PredictionResult
 
 
 class MLServiceImpl(IMLService):
@@ -15,15 +17,15 @@ class MLServiceImpl(IMLService):
     In production, this would integrate with a real ML model (ONNX, TensorFlow, PyTorch, etc.)
     """
 
-    def __init__(self, model_version: str = "mock_v1.0"):
+    def __init__(self, model_version: str = "mock_v1.0") -> None:
         self.model_version = model_version
 
     async def predict(
         self,
         machine_id: str,
         machine_type: str,
-        features: Dict[str, float],
-    ) -> Dict[str, Any]:
+        features: Mapping[str, float | int],
+    ) -> PredictionResult:
         """
         Run ML prediction using heuristic rules.
 
@@ -38,11 +40,9 @@ class MLServiceImpl(IMLService):
         }.get(machine_type, random.uniform(0.05, 0.20))
 
         # Extract key features if available
-        vibration = features.get("vibration") or features.get("raw_vibration") or 3.0
-        temperature = (
-            features.get("temperature") or features.get("raw_temperature") or 85.0
-        )
-        rpm = features.get("rpm") or features.get("raw_rpm") or 1600.0
+        vibration = float(features.get("vibration") or features.get("raw_vibration") or 3.0)
+        temperature = float(features.get("temperature") or features.get("raw_temperature") or 85.0)
+        rpm = float(features.get("rpm") or features.get("raw_rpm") or 1600.0)
 
         # Risk modifiers based on features
         risk_adjustment = 0.0
@@ -72,9 +72,7 @@ class MLServiceImpl(IMLService):
                 risk_adjustment += 0.05
 
         # Calculate final risk score (0-1)
-        risk_score = min(
-            base_risk + risk_adjustment + random.uniform(-0.05, 0.05), 0.95
-        )
+        risk_score = min(base_risk + risk_adjustment + random.uniform(-0.05, 0.05), 0.95)
         failure_probability = min(risk_score * 1.2, 0.99)
 
         # Estimate hours until maintenance needed
@@ -100,9 +98,7 @@ class MLServiceImpl(IMLService):
             )
         elif temperature > 100:
             failure_type = (
-                "overheating"
-                if machine_type == "industrial_boiler"
-                else "thermal_stress"
+                "overheating" if machine_type == "industrial_boiler" else "thermal_stress"
             )
         elif rpm > 1900 or rpm < 1300:
             failure_type = "motor_failure"

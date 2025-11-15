@@ -2,31 +2,33 @@
 API Tests for the Ingest Endpoints
 """
 
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..', 'backend')))
-from app import app
-from api.dependencies import get_ingest_telemetry_use_case
-import pytest
-from fastapi.testclient import TestClient
 from unittest.mock import AsyncMock
+
+import pytest
+from api.dependencies import get_ingest_telemetry_use_case
+from app import app
+from fastapi.testclient import TestClient
 
 # Create a test client
 client = TestClient(app)
 
 mock_ingest_use_case = AsyncMock()
 
-def override_get_ingest_telemetry_use_case():
+
+def override_get_ingest_telemetry_use_case() -> AsyncMock:
     return mock_ingest_use_case
+
 
 app.dependency_overrides[get_ingest_telemetry_use_case] = override_get_ingest_telemetry_use_case
 
+
 @pytest.fixture(autouse=True)
-def reset_mocks():
+def reset_mocks() -> None:
     """Reset mocks before each test"""
     mock_ingest_use_case.reset_mock()
 
-def test_ingest_raw_success():
+
+def test_ingest_raw_success() -> None:
     """
     Test successful ingestion of a raw measurement.
     """
@@ -50,7 +52,8 @@ def test_ingest_raw_success():
     assert response.json()["machine_id"] == "test-machine"
     mock_ingest_use_case.execute_raw.assert_called_once()
 
-def test_ingest_raw_machine_not_found():
+
+def test_ingest_raw_machine_not_found() -> None:
     """
     Test ingestion when the machine ID is not found.
     """
@@ -70,7 +73,8 @@ def test_ingest_raw_machine_not_found():
     assert "Machine test-machine not found" in response.json()["detail"]
     mock_ingest_use_case.execute_raw.assert_called_once()
 
-def test_ingest_features_success():
+
+def test_ingest_features_success() -> None:
     """
     Test successful ingestion of a feature vector.
     """

@@ -4,7 +4,7 @@ Calculates carbon emissions using IPCC/EPA factors
 """
 
 import random
-from typing import Dict, Any
+from typing import Any, Dict
 
 from .esg_service import IESGService
 
@@ -25,7 +25,7 @@ class ESGServiceImpl(IESGService):
     FACTOR_ELECTRICITY_US = 0.40  # kg CO2eq per kWh
     FACTOR_ELECTRICITY_EU = 0.30  # kg CO2eq per kWh (greener grid)
 
-    def __init__(self, region: str = "latam"):
+    def __init__(self, region: str = "latam") -> None:
         self.region = region
         self.electricity_factor = {
             "latam": self.FACTOR_ELECTRICITY_LATAM,
@@ -48,13 +48,9 @@ class ESGServiceImpl(IESGService):
         """
         # Extract relevant measurements
         fuel_rate_lh = (
-            metrics.get("fuel_rate_lh")
-            or metrics.get("fuel_rate")
-            or random.uniform(8.0, 15.0)
+            metrics.get("fuel_rate_lh") or metrics.get("fuel_rate") or random.uniform(8.0, 15.0)
         )
-        power_kw = (
-            metrics.get("kwh") or metrics.get("power_kw") or random.uniform(2.0, 10.0)
-        )
+        power_kw = metrics.get("kwh") or metrics.get("power_kw") or random.uniform(2.0, 10.0)
         co2_ppm = metrics.get("co2_ppm") or random.uniform(420, 650)
 
         # Calculate instant emissions (per measurement period, e.g., per hour)

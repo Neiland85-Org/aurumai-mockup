@@ -3,13 +3,13 @@ Use Case: Get Machine Metrics
 Retrieves comprehensive metrics and status for machines
 """
 
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, List, Optional
 
+from domain.entities.machine import Machine
+from domain.repositories.esg_repository import IESGRepository
 from domain.repositories.machine_repository import IMachineRepository
 from domain.repositories.measurement_repository import IMeasurementRepository
 from domain.repositories.prediction_repository import IPredictionRepository
-from domain.repositories.esg_repository import IESGRepository
-from domain.entities.machine import Machine
 
 
 class GetMachineMetricsUseCase:
@@ -24,7 +24,7 @@ class GetMachineMetricsUseCase:
         measurement_repo: IMeasurementRepository,
         prediction_repo: IPredictionRepository,
         esg_repo: IESGRepository,
-    ):
+    ) -> None:
         self.machine_repo = machine_repo
         self.measurement_repo = measurement_repo
         self.prediction_repo = prediction_repo
@@ -54,9 +54,7 @@ class GetMachineMetricsUseCase:
             raise ValueError(f"Machine {machine_id} not found")
 
         # Get latest measurements
-        raw_measurement = await self.measurement_repo.get_latest_raw_measurement(
-            machine_id
-        )
+        raw_measurement = await self.measurement_repo.get_latest_raw_measurement(machine_id)
         features = await self.measurement_repo.get_latest_features(machine_id)
 
         # Get latest prediction
@@ -76,9 +74,7 @@ class GetMachineMetricsUseCase:
             "latest_measurement": (
                 {
                     "timestamp": (
-                        raw_measurement.timestamp.isoformat()
-                        if raw_measurement
-                        else None
+                        raw_measurement.timestamp.isoformat() if raw_measurement else None
                     ),
                     "metrics": raw_measurement.metrics if raw_measurement else {},
                 }
@@ -95,16 +91,10 @@ class GetMachineMetricsUseCase:
             ),
             "latest_prediction": (
                 {
-                    "timestamp": (
-                        prediction.timestamp.isoformat() if prediction else None
-                    ),
+                    "timestamp": (prediction.timestamp.isoformat() if prediction else None),
                     "risk_score": prediction.risk_score if prediction else None,
-                    "failure_probability": (
-                        prediction.failure_probability if prediction else None
-                    ),
-                    "maintenance_hours": (
-                        prediction.maintenance_hours if prediction else None
-                    ),
+                    "failure_probability": (prediction.failure_probability if prediction else None),
+                    "maintenance_hours": (prediction.maintenance_hours if prediction else None),
                     "failure_type": prediction.failure_type if prediction else None,
                 }
                 if prediction

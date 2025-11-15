@@ -1,12 +1,13 @@
-
 """
 PostgreSQL Database Configuration with TimescaleDB support
 """
 
 from typing import AsyncGenerator
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import DeclarativeBase
+
 from infrastructure.config.settings import settings
 
 # Create async engine
@@ -25,8 +26,12 @@ AsyncSessionLocal = async_sessionmaker(
     expire_on_commit=False,
 )
 
-# Base class for SQLAlchemy models
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    """Typed Declarative base for SQLAlchemy models."""
+
+    pass
+
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
@@ -43,48 +48,28 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         finally:
             await session.close()
 
-async def init_database():
+
+async def init_database() -> None:
     """
-    Initialize database tables and TimescaleDB hypertables.
-    Should be called on application startup.
+    Initialize database - verify TimescaleDB extension.
+    
+    IMPORTANT: This function NO LONGER creates tables automatically.
+    Use Alembic migrations instead:
+    
+    1. Create migration: alembic revision --autogenerate -m "description"
+    2. Apply migration: alembic upgrade head
+    3. Rollback: alembic downgrade -1
+    
+    This function only ensures TimescaleDB extension is available.
+    Table creation and hypertable conversion are handled by migrations.
     """
     async with engine.begin() as conn:
-        # Create all tables
-        await conn.run_sync(Base.metadata.create_all)
-
-        # Enable TimescaleDB extension and create hypertables
-        # for time-series data
+        # Only enable TimescaleDB extension (idempotent operation)
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"))
-
-        # Convert raw_measurements to hypertable
-        await conn.execute(text(
-            """
-            SELECT create_hypertable(
-                'raw_measurements',
-                'timestamp',
-                if_not_exists => TRUE
-            );
-            """
-        ))
-
-        # Convert predictions to hypertable
-        await conn.execute(text(
-            """
-            SELECT create_hypertable(
-                'predictions',
-                'timestamp',
-                if_not_exists => TRUE
-            );
-            """
-        ))
-
-        # Convert esg_records to hypertable
-        await conn.execute(text(
-            """
-            SELECT create_hypertable(
-                'esg_records',
-                'timestamp',
-                if_not_exists => TRUE
-            );
-            """
-        ))
+        
+        # NOTE: Table creation removed - use Alembic migrations
+        # Tables and hypertables are created via:
+        #   alembic upgrade head
+        # 
+        # This prevents accidental data loss from recreating tables.
+        # See: backend/alembic/versions/ for migration files

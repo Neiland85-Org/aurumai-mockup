@@ -5,6 +5,7 @@ Tenant Repository Interface
 from abc import ABC, abstractmethod
 from typing import List, Optional
 from uuid import UUID
+
 from domain.entities import Tenant
 
 

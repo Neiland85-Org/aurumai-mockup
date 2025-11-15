@@ -3,29 +3,33 @@ FastAPI Dependency Injection Configuration
 Provides factory functions for use cases with their dependencies
 """
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Annotated, Any
+
+from fastapi import Depends
+
+from application.use_cases import (
+    CalculateESGUseCase,
+    GetMachineMetricsUseCase,
+    IngestTelemetryUseCase,
+    RunPredictionUseCase,
+)
+from domain.services.esg_service_impl import ESGServiceImpl
+from domain.services.ml_service_impl import MLServiceImpl
+from infrastructure.adapters.output.postgres import (
+    PostgresESGRepository,
+    PostgresMachineRepository,
+    PostgresMeasurementRepository,
+    PostgresPredictionRepository,
+)
+from infrastructure.db.sqlite_config import get_db
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 else:
     AsyncSession = Any
 
-# Use SQLite for development instead of PostgreSQL
-from infrastructure.db.sqlite_config import get_db
-from infrastructure.adapters.output.postgres import (
-    PostgresMachineRepository,
-    PostgresMeasurementRepository,
-    PostgresPredictionRepository,
-    PostgresESGRepository,
-)
-from application.use_cases import (
-    IngestTelemetryUseCase,
-    RunPredictionUseCase,
-    CalculateESGUseCase,
-    GetMachineMetricsUseCase,
-)
-from domain.services.ml_service_impl import MLServiceImpl
-from domain.services.esg_service_impl import ESGServiceImpl
+
+DbSession = Annotated[AsyncSession, Depends(get_db)]
 
 
 # Service instances (stateless, can be reused)
@@ -33,13 +37,8 @@ ml_service = MLServiceImpl()
 esg_service = ESGServiceImpl()
 
 
-# Dependency providers for use cases
-
-
-from fastapi import Depends
-
 async def get_ingest_telemetry_use_case(
-    db: AsyncSession = Depends(get_db),
+    db: DbSession,
 ) -> IngestTelemetryUseCase:
     """
     Provides IngestTelemetryUseCase with dependencies.
@@ -54,7 +53,7 @@ async def get_ingest_telemetry_use_case(
 
 
 async def get_run_prediction_use_case(
-    db: AsyncSession = Depends(get_db),
+    db: DbSession,
 ) -> RunPredictionUseCase:
     """
     Provides RunPredictionUseCase with dependencies.
@@ -72,7 +71,7 @@ async def get_run_prediction_use_case(
 
 
 async def get_calculate_esg_use_case(
-    db: AsyncSession = Depends(get_db),
+    db: DbSession,
 ) -> CalculateESGUseCase:
     """
     Provides CalculateESGUseCase with dependencies.
@@ -90,7 +89,7 @@ async def get_calculate_esg_use_case(
 
 
 async def get_machine_metrics_use_case(
-    db: AsyncSession = Depends(get_db),
+    db: DbSession,
 ) -> GetMachineMetricsUseCase:
     """
     Provides GetMachineMetricsUseCase with dependencies.
@@ -112,28 +111,28 @@ async def get_machine_metrics_use_case(
 
 
 async def get_machine_repository(
-    db: AsyncSession = Depends(get_db),
+    db: DbSession,
 ) -> PostgresMachineRepository:
     """Provides MachineRepository instance"""
     return PostgresMachineRepository(db)
 
 
 async def get_measurement_repository(
-    db: AsyncSession = Depends(get_db),
+    db: DbSession,
 ) -> PostgresMeasurementRepository:
     """Provides MeasurementRepository instance"""
     return PostgresMeasurementRepository(db)
 
 
 async def get_prediction_repository(
-    db: AsyncSession = Depends(get_db),
+    db: DbSession,
 ) -> PostgresPredictionRepository:
     """Provides PredictionRepository instance"""
     return PostgresPredictionRepository(db)
 
 
 async def get_esg_repository(
-    db: AsyncSession = Depends(get_db),
+    db: DbSession,
 ) -> PostgresESGRepository:
     """Provides ESGRepository instance"""
     return PostgresESGRepository(db)

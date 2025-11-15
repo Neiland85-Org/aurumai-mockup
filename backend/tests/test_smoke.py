@@ -5,37 +5,35 @@ Smoke tests - Basic validation that imports work and core modules load
 import sys
 from pathlib import Path
 
-# Add backend project root to path for imports
 backend_dir = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(backend_dir))
 
 
-def test_imports_fastapi():
+def test_imports_fastapi() -> None:
     """Test that FastAPI can be imported"""
-    from fastapi import FastAPI  # noqa: F401
+    from fastapi import FastAPI
 
     assert FastAPI is not None
 
 
-def test_imports_sqlalchemy():
+def test_imports_sqlalchemy() -> None:
     """Test that SQLAlchemy can be imported"""
-    from sqlalchemy import create_engine  # noqa: F401
+    from sqlalchemy import create_engine
 
     assert create_engine is not None
 
 
-def test_imports_pydantic():
+def test_imports_pydantic() -> None:
     """Test that Pydantic can be imported"""
-    from pydantic import BaseModel  # noqa: F401
+    from pydantic import BaseModel
 
     assert BaseModel is not None
 
 
-def test_imports_domain_entities():
+def test_imports_domain_entities() -> None:
     """Test that domain entities can be imported or at least exist as modules"""
     try:
-        from domain.entities.machine import Machine  # noqa: F401
-        from domain.entities.sensor import Sensor  # noqa: F401
+        from domain.entities.machine import Machine
+        from domain.entities.sensor import Sensor
 
         assert Machine is not None
         assert Sensor is not None
@@ -46,14 +44,13 @@ def test_imports_domain_entities():
         assert (entities_path / "sensor.py").exists(), "sensor.py not found"
 
 
-def test_imports_repositories():
+def test_imports_repositories() -> None:
     """Test that repositories can be imported or at least exist as modules"""
     try:
         # Intentar importar las interfaces y módulos
-        from domain.repositories.machine_repository import IMachineRepository  # noqa: F401
-        from domain.repositories.sensor_repository import ISensorRepository  # noqa: F401
-        from domain.repositories import machine_repository  # noqa: F401
-        from domain.repositories import sensor_repository  # noqa: F401
+        from domain.repositories import machine_repository, sensor_repository
+        from domain.repositories.machine_repository import IMachineRepository
+        from domain.repositories.sensor_repository import ISensorRepository
 
         # Verificar que las interfaces existen
         assert IMachineRepository is not None
@@ -68,7 +65,7 @@ def test_imports_repositories():
         assert (repos_path / "sensor_repository.py").exists(), "sensor_repository.py not found"
 
 
-def test_app_creation():
+def test_app_creation() -> None:
     """Test that FastAPI app can be created"""
     from fastapi import FastAPI
 
@@ -77,8 +74,6 @@ def test_app_creation():
     assert app.title == "Test"
 
 
-def test_python_version():
+def test_python_version() -> None:
     """Test that Python version is 3.11+ (project requirement)"""
     assert sys.version_info >= (3, 11), f"Python 3.11+ required, got {sys.version_info}"
-
-

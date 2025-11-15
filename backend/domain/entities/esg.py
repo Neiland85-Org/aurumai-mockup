@@ -5,7 +5,7 @@ Represents ESG/Carbon emissions data
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, Optional, Any
+from typing import Any, Dict, Optional
 
 
 @dataclass
@@ -24,7 +24,7 @@ class ESGRecord:
     efficiency_score: Optional[float] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate ESG data"""
         if not self.machine_id or not self.machine_id.strip():
             raise ValueError("machine_id cannot be empty")
@@ -35,15 +35,27 @@ class ESGRecord:
         if self.cumulative_co2eq_kg < 0:
             raise ValueError("cumulative_co2eq_kg cannot be negative")
 
-        if self.efficiency_score is not None and not (
-            0 <= self.efficiency_score <= 100
-        ):
+        if self.efficiency_score is not None and not (0 <= self.efficiency_score <= 100):
             raise ValueError("efficiency_score must be between 0 and 100")
 
     def get_scope(self) -> str:
         """Get dominant emission scope from metadata"""
-        return self.metadata.get("dominant_scope", "unknown")
+        scope = self.metadata.get("dominant_scope")
+        if isinstance(scope, str) and scope:
+            return scope
+        return "unknown"
 
     def get_breakdown(self) -> Dict[str, float]:
         """Get emissions breakdown by scope"""
-        return self.metadata.get("breakdown", {})
+        breakdown = self.metadata.get("breakdown")
+        if not isinstance(breakdown, dict):
+            return {}
+        result: Dict[str, float] = {}
+        for key, value in breakdown.items():
+            if not isinstance(key, str):
+                continue
+            try:
+                result[key] = float(value)
+            except (TypeError, ValueError):
+                continue
+        return result

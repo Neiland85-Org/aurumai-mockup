@@ -2,20 +2,21 @@
 Concrete PostgreSQL implementation of IPredictionRepository
 """
 
-from typing import List, Optional
 from datetime import datetime
-from sqlalchemy import select, desc
+from typing import Dict, List, Optional
+
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from domain.repositories.prediction_repository import IPredictionRepository
 from domain.entities.prediction import Prediction
+from domain.repositories.prediction_repository import IPredictionRepository
 from infrastructure.db.models import PredictionModel
 
 
 class PostgresPredictionRepository(IPredictionRepository):
     """PostgreSQL implementation of prediction repository"""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def save(self, prediction: Prediction) -> Prediction:
@@ -106,14 +107,27 @@ class PostgresPredictionRepository(IPredictionRepository):
         """Convert SQLAlchemy model to domain entity"""
         # SQLAlchemy models use descriptors, so type checkers see Column types
         # but at runtime these are the actual values
+        raw_features = getattr(model, "features_used", {}) or {}
+        if not isinstance(raw_features, dict):
+            raw_features = dict(raw_features)
+        features_used: Dict[str, float] = {}
+        for key, value in raw_features.items():
+            if isinstance(key, bytes):
+                key = key.decode()
+            try:
+                features_used[str(key)] = float(value)
+            except (TypeError, ValueError):
+                continue
         return Prediction(
-            machine_id=model.machine_id,  # type: ignore
-            timestamp=model.timestamp,  # type: ignore
-            risk_score=model.risk_score,  # type: ignore
-            failure_probability=model.failure_probability,  # type: ignore
-            maintenance_hours=model.maintenance_hours,  # type: ignore
-            failure_type=model.failure_type,  # type: ignore
-            confidence=model.confidence,  # type: ignore
-            model_version=model.model_version,  # type: ignore
-            features_used=model.features_used,  # type: ignore
+            machine_id=str(getattr(model, "machine_id", "")),
+            timestamp=getattr(model, "timestamp", datetime.utcnow()),
+            risk_score=float(getattr(model, "risk_score", 0.0)),
+            failure_probability=float(getattr(model, "failure_probability", 0.0)),
+            maintenance_hours=int(getattr(model, "maintenance_hours", 0)),
+            failure_type=getattr(model, "failure_type", None),
+            confidence=float(getattr(model, "confidence", 0.0))
+            if getattr(model, "confidence", None) is not None
+            else None,
+            model_version=str(getattr(model, "model_version", "")),
+            features_used=features_used,
         )

@@ -1,0 +1,91 @@
+# =============================================================================
+# DOCKERIGNORE - Exclude unnecessary files from Docker build context
+# =============================================================================
+# This reduces image size and build time by excluding files not needed in production
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+tests/
+test_*.py
+*_test.py
+
+# Documentation
+*.md
+!README.md
+docs/
+*.txt
+!requirements.txt
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Database files (local development only)
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Docker files
+Dockerfile
+Dockerfile.*
+docker-compose*.yml
+.dockerignore
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# Data directories (usually not needed in container)
+data/raw/
+data/features/
+data/models/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# OS-specific
+Thumbs.db

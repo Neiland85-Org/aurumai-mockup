@@ -1,15 +1,22 @@
-import React from "react";
+import type { ReactElement } from 'react';
+import type { Machine } from '@/types';
 
-interface Props {
-  machineId: string;
-  machineType: string;
-  site: string;
-  status: string;
+interface MachineCardProps {
+  machineId: Machine['machine_id'];
+  machineType: Machine['machine_type'];
+  site: Machine['site'];
+  status: Machine['status'];
   onClick?: () => void;
 }
 
-const MachineCard: React.FC<Props> = ({ machineId, machineType, site, status, onClick }) => {
-  const statusColor = status === "operational" ? "text-green-400" : "text-red-400";
+export default function MachineCard({
+  machineId,
+  machineType,
+  site,
+  status,
+  onClick,
+}: MachineCardProps): ReactElement {
+  const statusColor: string = status === 'operational' ? 'text-green-400' : 'text-red-400';
 
   return (
     <div
@@ -21,10 +28,8 @@ const MachineCard: React.FC<Props> = ({ machineId, machineType, site, status, on
         <h2 className="text-xl font-bold text-white">{machineId}</h2>
         <span className={`text-sm font-semibold ${statusColor}`}>{status}</span>
       </div>
-      <p className="text-sm text-gray-400 mb-1">{machineType.replace("_", " ")}</p>
+      <p className="text-sm text-gray-400 mb-1">{machineType.replace('_', ' ')}</p>
       <p className="text-xs text-gray-500">{site}</p>
     </div>
   );
-};
-
-export default MachineCard;
+}

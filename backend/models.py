@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field
-from typing import Dict, Optional
 from datetime import datetime
+from typing import Dict, Optional
+
+from pydantic import BaseModel, Field
 
 
 class RawMeasurement(BaseModel):
@@ -23,9 +24,7 @@ class PredictionResponse(BaseModel):
     machine_id: str
     timestamp: datetime
     risk_score: float = Field(..., ge=0.0, le=1.0, description="Failure risk score 0-1")
-    failure_probability: float = Field(
-        ..., ge=0.0, le=1.0, description="Probability of failure"
-    )
+    failure_probability: float = Field(..., ge=0.0, le=1.0, description="Probability of failure")
     confidence: float = Field(default=0.85, ge=0.0, le=1.0)
     next_maintenance_hours: Optional[int] = None
 

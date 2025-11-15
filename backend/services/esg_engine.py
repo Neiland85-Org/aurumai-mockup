@@ -1,5 +1,41 @@
+from __future__ import annotations
+
 import random
-from typing import Dict, Any
+from typing import Literal, Mapping
+from typing_extensions import TypedDict
+
+
+class ESGBreakdown(TypedDict):
+    scope1_kg: float
+    scope2_kg: float
+
+
+class ESGFactors(TypedDict):
+    fuel_factor: float
+    electricity_factor: float
+
+
+class ESGMetrics(TypedDict):
+    co2eq_instant: float
+    co2eq_total: float
+    fuel_rate_lh: float
+    kwh: float
+    co2_ppm: float
+    scope: Literal["scope1", "scope2"]
+    breakdown: ESGBreakdown
+    factors_used: ESGFactors
+
+
+class ForecastHourlyEntry(TypedDict):
+    hour: int
+    co2eq_kg: float
+
+
+class ForecastResult(TypedDict):
+    forecast_hours: int
+    forecast_total_kg: float
+    forecast_total_tons: float
+    hourly: list[ForecastHourlyEntry]
 
 # Emission factors (simplified for demo)
 # In production, these would come from EmissionFactor entities with versioning
@@ -19,10 +55,10 @@ FACTOR_ELECTRICITY_EU = 0.30  # kg CO2eq per kWh (greener grid)
 
 def compute_esg_metrics(
     machine_id: str,
-    measurements: Dict[str, float],
+    measurements: Mapping[str, float | int],
     previous_total: float = 0.0,
     region: str = "latam",
-) -> Dict[str, Any]:
+) -> ESGMetrics:
     """
     Calculate ESG/Carbon metrics based on machine measurements.
 
@@ -42,11 +78,7 @@ def compute_esg_metrics(
         or measurements.get("fuel_rate")
         or random.uniform(8.0, 15.0)
     )
-    kwh = (
-        measurements.get("kwh")
-        or measurements.get("power_kw")
-        or random.uniform(2.0, 10.0)
-    )
+    kwh = measurements.get("kwh") or measurements.get("power_kw") or random.uniform(2.0, 10.0)
     co2_ppm = measurements.get("co2_ppm") or random.uniform(420, 650)
 
     # Select electricity factor by region
@@ -74,7 +106,7 @@ def compute_esg_metrics(
 
     # Determine dominant scope
     if co2eq_fuel > co2eq_electricity:
-        scope = "scope1"
+        scope: Literal["scope1", "scope2"] = "scope1"
     else:
         scope = "scope2"
 
@@ -118,7 +150,7 @@ def calculate_carbon_intensity(
 
 def forecast_emissions(
     current_rate_kg_per_hour: float, forecast_hours: int
-) -> Dict[str, float]:
+) -> ForecastResult:
     """
     Simple linear forecast of future emissions.
     In production, this would use time series forecasting models.
@@ -134,7 +166,7 @@ def forecast_emissions(
     trend_factor = random.uniform(0.98, 1.03)
 
     forecast_total = 0.0
-    hourly_forecast = []
+    hourly_forecast: list[ForecastHourlyEntry] = []
 
     for hour in range(forecast_hours):
         hour_emission = current_rate_kg_per_hour * (trend_factor**hour)

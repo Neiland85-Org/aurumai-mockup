@@ -6,7 +6,7 @@ Represents a mine, plant, factory, or any physical location where assets operate
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 from uuid import UUID, uuid4
 
 

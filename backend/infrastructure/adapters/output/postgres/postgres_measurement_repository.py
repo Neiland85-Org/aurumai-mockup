@@ -2,22 +2,23 @@
 Concrete PostgreSQL implementation of IMeasurementRepository
 """
 
-from typing import List, Optional, Dict
 from datetime import datetime
+from typing import Dict, List, Mapping, Optional, Sequence
 from uuid import UUID
-from domain.value_objects import Measurement, TimeSeriesPoint
-from sqlalchemy import select, desc
+
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from domain.entities.measurement import FeatureVector, RawMeasurement
 from domain.repositories.measurement_repository import IMeasurementRepository
-from domain.entities.measurement import RawMeasurement, FeatureVector
-from infrastructure.db.models import RawMeasurementModel, FeatureModel
+from domain.value_objects import Measurement, TimeSeriesPoint
+from infrastructure.db.models import FeatureModel, RawMeasurementModel
 
 
 class PostgresMeasurementRepository(IMeasurementRepository):
     """PostgreSQL implementation of measurement repository"""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def save_raw_measurement(self, measurement: RawMeasurement) -> RawMeasurement:
@@ -44,9 +45,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
 
         return self._feature_model_to_entity(model)
 
-    async def get_latest_raw_measurement(
-        self, machine_id: str
-    ) -> Optional[RawMeasurement]:
+    async def get_latest_raw_measurement(self, machine_id: str) -> Optional[RawMeasurement]:
         """Get latest raw measurement for machine"""
         stmt = (
             select(RawMeasurementModel)
@@ -58,7 +57,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         model = result.scalar_one_or_none()
 
         if model:
-                return self._raw_model_to_entity(model)
+            return self._raw_model_to_entity(model)
         return None
 
     async def get_latest_features(self, machine_id: str) -> Optional[FeatureVector]:
@@ -73,7 +72,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         model = result.scalar_one_or_none()
 
         if model:
-                return self._feature_model_to_entity(model)
+            return self._feature_model_to_entity(model)
         return None
 
     async def get_raw_measurements_range(
@@ -125,15 +124,16 @@ class PostgresMeasurementRepository(IMeasurementRepository):
     def _raw_model_to_entity(self, model: RawMeasurementModel) -> RawMeasurement:
         """Convert SQLAlchemy model to domain entity"""
         # Conversión segura de machine_id, timestamp y metrics
-        machine_id = str(getattr(model, 'machine_id', ''))
-        ts = getattr(model, 'timestamp', None)
-        if ts is not None and hasattr(ts, 'value'):
+        machine_id = str(getattr(model, "machine_id", ""))
+        ts = getattr(model, "timestamp", None)
+        if ts is not None and hasattr(ts, "value"):
             ts = ts.value
         if ts is None:
             from datetime import datetime
+
             ts = datetime.now()
-        metrics = getattr(model, 'metrics', {})
-        metrics_dict = {}
+        metrics = getattr(model, "metrics", {})
+        metrics_dict: Dict[str, float] = {}
         if isinstance(metrics, dict):
             for k, v in metrics.items():
                 key = k.decode() if isinstance(k, bytes) else str(k)
@@ -152,15 +152,16 @@ class PostgresMeasurementRepository(IMeasurementRepository):
     def _feature_model_to_entity(self, model: FeatureModel) -> FeatureVector:
         """Convert SQLAlchemy model to domain entity"""
         # Conversión segura de machine_id, timestamp y features
-        machine_id = str(getattr(model, 'machine_id', ''))
-        ts = getattr(model, 'timestamp', None)
-        if ts is not None and hasattr(ts, 'value'):
+        machine_id = str(getattr(model, "machine_id", ""))
+        ts = getattr(model, "timestamp", None)
+        if ts is not None and hasattr(ts, "value"):
             ts = ts.value
         if ts is None:
             from datetime import datetime
+
             ts = datetime.now()
-        features = getattr(model, 'features', {})
-        features_dict = {}
+        features = getattr(model, "features", {})
+        features_dict: Dict[str, float] = {}
         if isinstance(features, dict):
             for k, v in features.items():
                 key = k.decode() if isinstance(k, bytes) else str(k)
@@ -179,15 +180,15 @@ class PostgresMeasurementRepository(IMeasurementRepository):
     async def save_measurement(self, measurement: Measurement) -> bool:
         raise NotImplementedError
 
-    async def save_batch(self, measurements: List[Measurement]) -> int:
+    async def save_batch(self, measurements: Sequence[Measurement]) -> int:
         raise NotImplementedError
 
     async def save_timeseries_point(self, point: TimeSeriesPoint) -> bool:
         raise NotImplementedError
 
     async def get_latest(
-        self, machine_id: UUID, metric_names: List[str], limit: int = 100
-    ) -> List[Dict]:
+        self, machine_id: UUID, metric_names: Sequence[str], limit: int = 100
+    ) -> Sequence[Mapping[str, float]]:
         raise NotImplementedError
 
     async def get_range(
@@ -196,7 +197,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         metric_name: str,
         start_time: datetime,
         end_time: datetime,
-    ) -> List[Dict]:
+    ) -> Sequence[Mapping[str, float]]:
         raise NotImplementedError
 
     async def get_aggregated(
@@ -206,5 +207,5 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         start_time: datetime,
         end_time: datetime,
         interval_seconds: int,
-    ) -> List[Dict]:
+    ) -> Sequence[Mapping[str, float]]:
         raise NotImplementedError

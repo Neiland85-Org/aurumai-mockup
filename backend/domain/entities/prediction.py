@@ -5,7 +5,7 @@ Represents ML prediction results for predictive maintenance
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 
 @dataclass
@@ -25,7 +25,7 @@ class Prediction:
     model_version: Optional[str] = None
     features_used: Optional[Dict[str, float]] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate prediction data"""
         if not self.machine_id or not self.machine_id.strip():
             raise ValueError("machine_id cannot be empty")

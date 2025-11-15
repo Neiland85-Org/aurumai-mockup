@@ -3,12 +3,50 @@ Use Case: Ingest Telemetry Data
 Handles ingestion of raw measurements and feature vectors from IoT/Edge devices
 """
 
-from datetime import datetime
-from typing import Dict, Any
+from __future__ import annotations
 
+from datetime import datetime
+from typing import Literal, Mapping, Sequence
+from typing_extensions import TypedDict
+
+from domain.entities.measurement import FeatureVector, RawMeasurement
 from domain.repositories.machine_repository import IMachineRepository
 from domain.repositories.measurement_repository import IMeasurementRepository
-from domain.entities.measurement import RawMeasurement, FeatureVector
+
+
+class RawIngestResult(TypedDict):
+    status: Literal["success", "completed"]
+    message: str
+    machine_id: str
+    timestamp: str
+    metrics_count: int
+
+
+class FeatureIngestResult(TypedDict):
+    status: Literal["success"]
+    message: str
+    machine_id: str
+    timestamp: str
+    features_count: int
+
+
+class BatchIngestError(TypedDict):
+    machine_id: str | None
+    error: str
+
+
+class BatchIngestResult(TypedDict):
+    status: Literal["completed"]
+    total: int
+    successful: int
+    failed: int
+    errors: list[BatchIngestError] | None
+
+
+class RawMeasurementInput(TypedDict):
+    machine_id: str
+    timestamp: datetime
+    metrics: Mapping[str, float]
 
 
 class IngestTelemetryUseCase:
@@ -21,7 +59,7 @@ class IngestTelemetryUseCase:
         self,
         machine_repo: IMachineRepository,
         measurement_repo: IMeasurementRepository,
-    ):
+    ) -> None:
         self.machine_repo = machine_repo
         self.measurement_repo = measurement_repo
 
@@ -29,8 +67,8 @@ class IngestTelemetryUseCase:
         self,
         machine_id: str,
         timestamp: datetime,
-        metrics: Dict[str, float],
-    ) -> Dict[str, Any]:
+        metrics: Mapping[str, float],
+    ) -> RawIngestResult:
         """
         Ingest raw measurement from IoT device.
 
@@ -54,10 +92,9 @@ class IngestTelemetryUseCase:
         measurement = RawMeasurement(
             machine_id=machine_id,
             timestamp=timestamp,
-            metrics=metrics,
+            metrics=dict(metrics),
         )
-
-        saved = await self.measurement_repo.save_raw_measurement(measurement)
+        await self.measurement_repo.save_raw_measurement(measurement)
 
         return {
             "status": "success",
@@ -71,8 +108,8 @@ class IngestTelemetryUseCase:
         self,
         machine_id: str,
         timestamp: datetime,
-        features: Dict[str, float],
-    ) -> Dict[str, Any]:
+        features: Mapping[str, float],
+    ) -> FeatureIngestResult:
         """
         Ingest engineered features from edge device.
 
@@ -96,10 +133,9 @@ class IngestTelemetryUseCase:
         feature_vector = FeatureVector(
             machine_id=machine_id,
             timestamp=timestamp,
-            features=features,
+            features=dict(features),
         )
-
-        saved = await self.measurement_repo.save_feature_vector(feature_vector)
+        await self.measurement_repo.save_feature_vector(feature_vector)
 
         return {
             "status": "success",
@@ -111,8 +147,8 @@ class IngestTelemetryUseCase:
 
     async def execute_batch_raw(
         self,
-        measurements: list[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    measurements: Sequence[RawMeasurementInput],
+    ) -> BatchIngestResult:
         """
         Ingest batch of raw measurements.
 
@@ -124,7 +160,7 @@ class IngestTelemetryUseCase:
         """
         successful = 0
         failed = 0
-        errors = []
+        errors: list[BatchIngestError] = []
 
         for measurement_data in measurements:
             try:
@@ -134,11 +170,11 @@ class IngestTelemetryUseCase:
                     metrics=measurement_data["metrics"],
                 )
                 successful += 1
-            except Exception as e:
+            except Exception as e:  # pragma: no cover - defensive logging
                 failed += 1
                 errors.append(
                     {
-                        "machine_id": measurement_data.get("machine_id"),
+                        "machine_id": measurement_data["machine_id"],
                         "error": str(e),
                     }
                 )

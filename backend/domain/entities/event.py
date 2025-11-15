@@ -6,9 +6,9 @@ Represents significant events in the system (maintenance, failures, operations).
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Dict, Any
-from uuid import UUID, uuid4
 from enum import Enum
+from typing import Any, Dict, Optional
+from uuid import UUID, uuid4
 
 
 class EventType(str, Enum):

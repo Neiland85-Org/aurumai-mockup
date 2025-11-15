@@ -1,10 +1,38 @@
+from __future__ import annotations
+
 import random
-from typing import Dict, Any
+from typing import Any, Mapping
+from typing_extensions import TypedDict
+
+
+class _PredictionResultRequired(TypedDict):
+    """Required fields in prediction results (must always be present)"""
+    risk_score: float
+    failure_probability: float
+    maintenance_hours: int
+
+
+class PredictionResult(_PredictionResultRequired, total=False):
+    """Complete prediction result with required + optional fields"""
+    confidence: float
+    failure_type: str | None
+    model_version: str
+
+
+class BatchPrediction(TypedDict):
+    timestamp: Any
+    prediction: PredictionResult
+
+
+class FeaturesBatchItem(TypedDict, total=False):
+    machine_type: str
+    features: Mapping[str, float | int]
+    timestamp: Any
 
 
 def run_prediction(
-    machine_id: str, machine_type: str, features: Dict[str, float]
-) -> Dict[str, Any]:
+    machine_id: str, machine_type: str, features: Mapping[str, float | int]
+) -> PredictionResult:
     """
     Fake but credible ML prediction engine for predictive maintenance.
 
@@ -24,9 +52,9 @@ def run_prediction(
     }.get(machine_type, random.uniform(0.05, 0.20))
 
     # Extract key features if available
-    vibration = features.get("vibration") or features.get("raw_vibration") or 3.0
-    temperature = features.get("temperature") or features.get("raw_temperature") or 85.0
-    rpm = features.get("rpm") or features.get("raw_rpm") or 1600.0
+    vibration = float(features.get("vibration") or features.get("raw_vibration") or 3.0)
+    temperature = float(features.get("temperature") or features.get("raw_temperature") or 85.0)
+    rpm = float(features.get("rpm") or features.get("raw_rpm") or 1600.0)
 
     # Risk modifiers based on features
     risk_adjustment = 0.0
@@ -76,24 +104,31 @@ def run_prediction(
         "risk_score": round(risk_score, 3),
         "failure_probability": round(failure_probability, 3),
         "confidence": round(confidence, 2),
-        "next_maintenance_hours": maintenance_hours,
+        "maintenance_hours": maintenance_hours,
         "model_version": "mock_v1.0",
     }
 
 
-def run_batch_prediction(machine_id: str, features_batch: list) -> list:
+def run_batch_prediction(
+    machine_id: str, features_batch: list[FeaturesBatchItem]
+) -> list[BatchPrediction]:
     """
     Run predictions on a batch of feature vectors.
     Used for historical analysis or batch jobs.
     """
-    results = []
+    results: list[BatchPrediction] = []
     for feature_vec in features_batch:
+        features_payload: Mapping[str, float | int] | None = feature_vec.get("features")
+        if features_payload is None:
+            features_payload = {}
         prediction = run_prediction(
             machine_id,
             feature_vec.get("machine_type", "unknown"),
-            feature_vec.get("features", {}),
+            features_payload,
         )
-        results.append(
-            {"timestamp": feature_vec.get("timestamp"), "prediction": prediction}
-        )
+        entry: BatchPrediction = {
+            "timestamp": feature_vec.get("timestamp"),
+            "prediction": prediction,
+        }
+        results.append(entry)
     return results

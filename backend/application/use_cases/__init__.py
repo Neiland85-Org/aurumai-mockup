@@ -9,10 +9,10 @@ Allows importing use cases via:
 	)
 """
 
-from .ingest import IngestTelemetryUseCase
-from .prediction import RunPredictionUseCase
 from .esg import CalculateESGUseCase
+from .ingest import IngestTelemetryUseCase
 from .machines import GetMachineMetricsUseCase
+from .prediction import RunPredictionUseCase
 
 __all__ = [
     "IngestTelemetryUseCase",

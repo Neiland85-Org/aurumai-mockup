@@ -6,7 +6,7 @@ Represents physical or virtual sensors attached to machines.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 from uuid import UUID, uuid4
 
 
@@ -35,9 +35,7 @@ class Sensor:
     id: UUID
     machine_id: UUID
     name: str
-    sensor_type: (
-        str  # vibration, temperature, pressure, rpm, power, flow, co2, nox, etc.
-    )
+    sensor_type: str  # vibration, temperature, pressure, rpm, power, flow, co2, nox, etc.
     unit: str  # mm/s, °C, bar, rpm, kW, l/h, ppm, etc.
     protocol: str  # modbus, opcua, mqtt, lora, canbus, analog
     address: Optional[str] = None  # Protocol-specific address/tag

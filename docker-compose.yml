@@ -1,36 +1,97 @@
 version: "3.9"
 
+# =============================================================================
+# DEVELOPMENT DOCKER COMPOSE CONFIGURATION
+# =============================================================================
+# This file is optimized for development with:
+# - Relaxed resource limits for easier debugging
+# - Basic healthchecks
+# - Hot-reloading support (via volume mounts in dev workflow)
+# - Restart policies for stability
+#
+# For PRODUCTION deployment, use: docker-compose -f docker-compose.prod.yml
+#
+# SECURITY NOTICE:
+# This docker-compose.yml uses environment variables from .env file.
+# NEVER commit secrets directly to this file.
+#
+# Usage:
+#   1. Copy .env.development to .env: cp .env.development .env
+#   2. Update secrets in .env if needed
+#   3. Run: docker-compose up -d
+# =============================================================================
+
 services:
   # PostgreSQL with TimescaleDB extension for time-series data
   postgres:
     image: timescale/timescaledb:latest-pg15
-    container_name: aurumai-postgres
+    container_name: aurumai-postgres-dev
+    env_file:
+      - .env
     environment:
-      - POSTGRES_DB=aurumai_db
-      - POSTGRES_USER=aurumai
-      - POSTGRES_PASSWORD=aurumai_pass
+      # Use variables from .env file
+      - POSTGRES_DB=${DB_NAME:-aurumai}
+      - POSTGRES_USER=${DB_USER:-aurumai}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:?DB_PASSWORD is required}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     networks:
       - aurumai-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U aurumai -d aurumai_db"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-aurumai} -d ${DB_NAME:-aurumai}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    # Development resource limits (relaxed)
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   backend:
     build: ./backend
-    container_name: aurumai-backend
+    container_name: aurumai-backend-dev
+    env_file:
+      - .env
     environment:
-      - DATABASE_URL=postgresql+asyncpg://aurumai:aurumai_pass@postgres:5432/aurumai_db
-      - DB_PATH=/data/aurumai.db
+      # Database connection using env vars
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-aurumai}
+      - DB_PASSWORD=${DB_PASSWORD:?DB_PASSWORD is required}
+      - DB_NAME=${DB_NAME:-aurumai}
+      # TimescaleDB (same credentials for dev)
+      - TSDB_HOST=postgres
+      - TSDB_PORT=5432
+      - TSDB_USER=${DB_USER:-aurumai}
+      - TSDB_PASSWORD=${DB_PASSWORD:?DB_PASSWORD is required}
+      - TSDB_NAME=${DB_NAME:-aurumai}
+      # Security
+      - SECRET_KEY=${SECRET_KEY:?SECRET_KEY is required}
+      - ENVIRONMENT=development
+      - DEBUG=true
+      # API
+      - API_HOST=0.0.0.0
+      - API_PORT=${API_PORT:-8000}
     volumes:
       - backend-data:/data
     ports:
-      - "8000:8000"
+      - "${API_PORT:-8000}:8000"
     networks:
       - aurumai-network
     depends_on:
@@ -41,15 +102,32 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    # Development resource limits (relaxed)
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   edge-sim:
     build: ./edge-sim
-    container_name: aurumai-edge
+    container_name: aurumai-edge-dev
+    env_file:
+      - .env
     environment:
       - EDGE_PORT=9000
       - BACKEND_HOST=backend
-      - BACKEND_PORT=8000
+      - BACKEND_PORT=${API_PORT:-8000}
       - SYNC_INTERVAL=5
+      - BACKEND_API_URL=http://backend:${API_PORT:-8000}
     depends_on:
       backend:
         condition: service_healthy
@@ -57,33 +135,100 @@ services:
       - "9000:9000"
     networks:
       - aurumai-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+    # Development resource limits (relaxed)
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   iot-sim:
     build: ./iot-sim
-    container_name: aurumai-iot
+    container_name: aurumai-iot-dev
+    env_file:
+      - .env
     environment:
       - EDGE_HOST=edge-sim
       - EDGE_PORT=9000
+      - BACKEND_API_URL=http://backend:${API_PORT:-8000}
       - MACHINES=TRUCK-21,MILL-3,BOILER-7
       - SIM_INTERVAL_SECONDS=3
       - NORMAL_PHASE_CYCLES=50
       - DRIFT_PHASE_CYCLES=50
+      - IOT_BATCH_SIZE=${IOT_BATCH_SIZE:-100}
+      - IOT_BATCH_INTERVAL=${IOT_BATCH_INTERVAL:-5}
     depends_on:
-      - edge-sim
+      edge-sim:
+        condition: service_healthy
     networks:
       - aurumai-network
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep '[p]ython' || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+    # Development resource limits (relaxed)
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   frontend:
     build: ./frontend
-    container_name: aurumai-frontend
+    container_name: aurumai-frontend-dev
+    env_file:
+      - .env
     environment:
-      - NEXT_PUBLIC_API_BASE=http://localhost:8000
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:${API_PORT:-8000}
+      - NEXT_PUBLIC_API_BASE=http://localhost:${API_PORT:-8000}
     ports:
       - "3000:3000"
     depends_on:
       - backend
     networks:
       - aurumai-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+    # Development resource limits (relaxed)
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   postgres-data:
