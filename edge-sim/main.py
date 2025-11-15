@@ -6,7 +6,7 @@ import asyncio
 import uvicorn
 from buffer import add_raw_payload, get_buffer_size
 from sync import sync_loop
-from config import EDGE_PORT, BACKEND_BASE_URL, SYNC_INTERVAL
+from config import EDGE_PORT, BACKEND_BASE_URL, SYNC_INTERVAL  # type: ignore
 
 class RawFromIoT(BaseModel):
     machine_id: str

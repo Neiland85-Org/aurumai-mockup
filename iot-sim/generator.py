@@ -3,7 +3,7 @@ from datetime import datetime
 import random
 from typing import Dict, Any
 import httpx
-from config import EDGE_BASE_URL, MACHINES, INTERVAL_SECONDS, MACHINE_CONFIGS, NORMAL_PHASE_CYCLES, DRIFT_PHASE_CYCLES
+from config import EDGE_BASE_URL, MACHINES, INTERVAL_SECONDS, MACHINE_CONFIGS, NORMAL_PHASE_CYCLES, DRIFT_PHASE_CYCLES  # type: ignore
 from anomalies import generate_normal_metrics, apply_drift, apply_failure_spike, get_failure_types_for_machine, should_trigger_anomaly
 
 async def send_payload(payload: Dict[str, Any]) -> bool:

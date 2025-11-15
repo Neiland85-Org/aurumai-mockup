@@ -3,7 +3,7 @@ from typing import Dict, Any, List
 import httpx
 from buffer import get_and_clear_buffer
 from features import enrich_payload_with_features
-from config import BACKEND_BASE_URL
+from config import BACKEND_BASE_URL  # type: ignore
 
 async def send_to_backend(path: str, json_payload: Dict[str, Any]) -> bool:
     url = f"{BACKEND_BASE_URL}{path}"

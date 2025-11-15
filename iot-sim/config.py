@@ -1,22 +1,23 @@
 import os
+from typing import Dict, Any, List, Tuple
 
 # Edge node endpoint
-EDGE_HOST = os.getenv("EDGE_HOST", "localhost")
-EDGE_PORT = int(os.getenv("EDGE_PORT", "9000"))
-EDGE_BASE_URL = f"http://{EDGE_HOST}:{EDGE_PORT}"
+EDGE_HOST: str = os.getenv("EDGE_HOST", "localhost")
+EDGE_PORT: int = int(os.getenv("EDGE_PORT", "9000"))
+EDGE_BASE_URL: str = f"http://{EDGE_HOST}:{EDGE_PORT}"
 
 # Machines to simulate
-MACHINES = os.getenv("MACHINES", "TRUCK-21,MILL-3,BOILER-7").split(",")
+MACHINES: List[str] = os.getenv("MACHINES", "TRUCK-21,MILL-3,BOILER-7").split(",")
 
 # Simulation timing
-INTERVAL_SECONDS = int(os.getenv("SIM_INTERVAL_SECONDS", "3"))
+INTERVAL_SECONDS: int = int(os.getenv("SIM_INTERVAL_SECONDS", "3"))
 
 # Phase durations (in cycles)
-NORMAL_PHASE_CYCLES = int(os.getenv("NORMAL_PHASE_CYCLES", "50"))
-DRIFT_PHASE_CYCLES = int(os.getenv("DRIFT_PHASE_CYCLES", "50"))
+NORMAL_PHASE_CYCLES: int = int(os.getenv("NORMAL_PHASE_CYCLES", "50"))
+DRIFT_PHASE_CYCLES: int = int(os.getenv("DRIFT_PHASE_CYCLES", "50"))
 
 # Machine-specific configurations
-MACHINE_CONFIGS = {
+MACHINE_CONFIGS: Dict[str, Dict[str, Any]] = {
     "TRUCK-21": {
         "type": "haul_truck",
         "site": "Copper Mine - North Pit",
@@ -59,3 +60,15 @@ MACHINE_CONFIGS = {
         }
     },
 }
+
+# Export all public symbols
+__all__ = [
+    "EDGE_HOST",
+    "EDGE_PORT",
+    "EDGE_BASE_URL",
+    "MACHINES",
+    "INTERVAL_SECONDS",
+    "NORMAL_PHASE_CYCLES",
+    "DRIFT_PHASE_CYCLES",
+    "MACHINE_CONFIGS",
+]
