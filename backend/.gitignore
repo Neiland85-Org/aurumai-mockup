@@ -1,0 +1,10 @@
+# Heredado desde .gitignore raíz; aquí solo añadimos específicos del backend si hiciera falta
+
+# Base de datos local nueva (mantener la ya versionada en la raíz del backend)
+*.db
+!aurumai.db
+
+# Datos generados
+data/raw/**
+data/features/**
+!data/**/.gitkeep

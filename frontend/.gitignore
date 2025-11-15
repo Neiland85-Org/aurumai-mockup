@@ -1,0 +1,13 @@
+# Heredado desde .gitignore raíz; reglas específicas para Next.js/Frontend
+.next/
+out/
+.vercel/
+.turbo/
+dist/
+coverage/
+
+# Dependencias
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*

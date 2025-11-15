@@ -1,1 +1,63 @@
-node_modules
+# macOS
+.DS_Store
+
+# General logs
+logs/
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Databases (mantener las .db ya versionadas)
+*.db
+!aurumai.db
+!backend/aurumai.db
+
+# VS Code (permitir settings/tasks/extensions del repo)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/extensions.json
+
+# Node/JS/TS
+node_modules/
+**/node_modules/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Next.js / Frontend
+frontend/.next/
+frontend/out/
+frontend/.vercel/
+frontend/.turbo/
+frontend/dist/
+frontend/coverage/
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+backend/.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Project data outputs (generados)
+backend/data/raw/**
+backend/data/features/**
+!backend/data/**/.gitkeep
