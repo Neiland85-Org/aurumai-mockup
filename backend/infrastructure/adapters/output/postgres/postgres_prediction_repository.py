@@ -104,14 +104,16 @@ class PostgresPredictionRepository(IPredictionRepository):
 
     def _model_to_entity(self, model: PredictionModel) -> Prediction:
         """Convert SQLAlchemy model to domain entity"""
+        # SQLAlchemy models use descriptors, so type checkers see Column types
+        # but at runtime these are the actual values
         return Prediction(
-            machine_id=model.machine_id,
-            timestamp=model.timestamp,
-            risk_score=model.risk_score,
-            failure_probability=model.failure_probability,
-            maintenance_hours=model.maintenance_hours,
-            failure_type=model.failure_type,
-            confidence=model.confidence,
-            model_version=model.model_version,
-            features_used=model.features_used,
+            machine_id=model.machine_id,  # type: ignore
+            timestamp=model.timestamp,  # type: ignore
+            risk_score=model.risk_score,  # type: ignore
+            failure_probability=model.failure_probability,  # type: ignore
+            maintenance_hours=model.maintenance_hours,  # type: ignore
+            failure_type=model.failure_type,  # type: ignore
+            confidence=model.confidence,  # type: ignore
+            model_version=model.model_version,  # type: ignore
+            features_used=model.features_used,  # type: ignore
         )
