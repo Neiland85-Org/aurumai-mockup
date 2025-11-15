@@ -1,0 +1,143 @@
+version: 2
+updates:
+  # ============================================
+  # BACKEND PYTHON DEPENDENCIES
+  # ============================================
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    assignees:
+      - "Neiland85-Org"
+    labels:
+      - "dependencies"
+      - "backend"
+      - "security"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    # Agrupación de actualizaciones
+    groups:
+      fastapi-ecosystem:
+        patterns:
+          - "fastapi*"
+          - "starlette"
+          - "uvicorn"
+      pydantic-ecosystem:
+        patterns:
+          - "pydantic*"
+      sqlalchemy-ecosystem:
+        patterns:
+          - "sqlalchemy*"
+          - "alembic"
+          - "asyncpg"
+          - "psycopg*"
+      opentelemetry-ecosystem:
+        patterns:
+          - "opentelemetry-*"
+      testing:
+        patterns:
+          - "pytest*"
+          - "coverage"
+      security:
+        patterns:
+          - "cryptography"
+          - "certifi"
+          - "urllib3"
+          - "jinja2"
+    # Ignorar versiones específicas si causan problemas (descomentar si necesario)
+    # ignore:
+    #   - dependency-name: "fastapi"
+    #     versions: [">=0.112.0"]
+
+  # ============================================
+  # FRONTEND NPM DEPENDENCIES
+  # ============================================
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    assignees:
+      - "Neiland85-Org"
+    labels:
+      - "dependencies"
+      - "frontend"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    # Agrupación de actualizaciones
+    groups:
+      react-ecosystem:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-router*"
+      nextjs-ecosystem:
+        patterns:
+          - "next"
+          - "@next/*"
+      ui-libraries:
+        patterns:
+          - "@mui/*"
+          - "@emotion/*"
+          - "recharts"
+      tooling:
+        patterns:
+          - "typescript"
+          - "eslint*"
+          - "@typescript-eslint/*"
+      testing:
+        patterns:
+          - "@testing-library/*"
+          - "vitest"
+          - "jest"
+
+  # ============================================
+  # DOCKER BASE IMAGES
+  # ============================================
+  - package-ecosystem: "docker"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    labels:
+      - "docker"
+      - "backend"
+      - "security"
+    commit-message:
+      prefix: "docker"
+
+  - package-ecosystem: "docker"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    labels:
+      - "docker"
+      - "frontend"
+      - "security"
+    commit-message:
+      prefix: "docker"
+
+  # ============================================
+  # GITHUB ACTIONS
+  # ============================================
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    labels:
+      - "github-actions"
+      - "ci-cd"
+    commit-message:
+      prefix: "ci"

@@ -1,0 +1,360 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "18"
+
+jobs:
+  # ============================================
+  # LINT & FORMAT CHECK
+  # ============================================
+  lint-backend:
+    name: 🔍 Lint Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          pip install black ruff mypy
+
+      - name: Run Black (format check)
+        run: |
+          cd backend
+          black --check .
+
+      - name: Run Ruff (linting)
+        run: |
+          cd backend
+          ruff check .
+
+      - name: Run MyPy (type checking)
+        run: |
+          cd backend
+          mypy . --config-file=../mypy.ini || true
+
+  lint-frontend:
+    name: 🔍 Lint Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run ESLint
+        run: |
+          cd frontend
+          npm run lint
+
+      - name: Run TypeScript check
+        run: |
+          cd frontend
+          npm run type-check || npx tsc --noEmit
+
+  # ============================================
+  # SECURITY SCANNING
+  # ============================================
+  security-backend:
+    name: 🔒 Security Scan (Backend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          pip install safety bandit
+
+      - name: Run Safety (vulnerability scan)
+        run: |
+          cd backend
+          safety check --json || true
+
+      - name: Run Bandit (security issues)
+        run: |
+          cd backend
+          bandit -r . -ll -f json -o bandit-report.json || true
+
+      - name: Upload Security Reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: security-reports-backend
+          path: backend/bandit-report.json
+
+  security-frontend:
+    name: 🔒 Security Scan (Frontend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run npm audit
+        run: |
+          cd frontend
+          npm audit --audit-level=high || true
+
+  # ============================================
+  # UNIT TESTS
+  # ============================================
+  test-backend:
+    name: 🧪 Test Backend
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: aurumai_test
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: aurumai_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-asyncio
+
+      - name: Run tests
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: aurumai_test
+          DB_PASSWORD: test_password
+          DB_NAME: aurumai_test
+          TSDB_HOST: localhost
+          TSDB_PORT: 5432
+          TSDB_USER: aurumai_test
+          TSDB_PASSWORD: test_password
+          TSDB_NAME: aurumai_test
+          MQTT_BROKER_HOST: localhost
+          MQTT_PASSWORD: test_password
+          SECRET_KEY: test_secret_key_minimum_32_characters_long_for_testing
+        run: |
+          cd backend
+          pytest tests/test_smoke.py -v --cov=. --cov-report=xml
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./backend/coverage.xml
+          flags: backend
+          name: backend-coverage
+
+  test-frontend:
+    name: 🧪 Test Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd frontend
+          npm test -- --coverage || echo "No tests configured yet"
+
+  # ============================================
+  # BUILD DOCKER IMAGES
+  # ============================================
+  build-backend:
+    name: 🐳 Build Backend Image
+    runs-on: ubuntu-latest
+    needs: [lint-backend, test-backend, security-backend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile.prod
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/backend:latest
+            ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  build-frontend:
+    name: 🐳 Build Frontend Image
+    runs-on: ubuntu-latest
+    needs: [lint-frontend, test-frontend, security-frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile.prod
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/frontend:latest
+            ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ============================================
+  # DEPLOY TO STAGING
+  # ============================================
+  deploy-staging:
+    name: 🚀 Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: staging
+      url: https://staging.aurumai.com
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloud Run (Backend)
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: aurumai-backend-staging
+          image: ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
+          region: us-central1
+          env_vars: |
+            ENVIRONMENT=staging
+            LOG_LEVEL=INFO
+        # Descomentar cuando tengas GCP configurado
+        # credentials: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Deploy to Cloud Run (Frontend)
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: aurumai-frontend-staging
+          image: ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+          region: us-central1
+        # Descomentar cuando tengas GCP configurado
+        # credentials: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Run smoke tests
+        run: |
+          echo "Running smoke tests against staging..."
+          curl -f https://staging.aurumai.com/health || exit 1
+          curl -f https://staging.aurumai.com/api/v1/health || exit 1
+
+  # ============================================
+  # NOTIFICATIONS
+  # ============================================
+  notify:
+    name: 📢 Notify Results
+    runs-on: ubuntu-latest
+    needs: [lint-backend, lint-frontend, test-backend, test-frontend]
+    if: always()
+    steps:
+      - name: Check job status
+        run: |
+          echo "Lint Backend: ${{ needs.lint-backend.result }}"
+          echo "Lint Frontend: ${{ needs.lint-frontend.result }}"
+          echo "Test Backend: ${{ needs.test-backend.result }}"
+          echo "Test Frontend: ${{ needs.test-frontend.result }}"
+
+      - name: Post to Slack
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "❌ CI/CD Failed for ${{ github.repository }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*CI/CD Pipeline Failed*\n\n*Repository:* ${{ github.repository }}\n*Branch:* ${{ github.ref }}\n*Commit:* ${{ github.sha }}\n*Author:* ${{ github.actor }}\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

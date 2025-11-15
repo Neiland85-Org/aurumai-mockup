@@ -1,0 +1,38 @@
+# Grafana Setup & Configuration
+
+version: "1"
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      timeInterval: "5s"
+      httpMethod: POST
+
+  - name: PostgreSQL
+    type: postgres
+    url: ${DB_HOST}:${DB_PORT}
+    database: ${DB_NAME}
+    user: ${DB_USER}
+    secureJsonData:
+      password: ${DB_PASSWORD}
+    jsonData:
+      sslmode: "require"
+      maxOpenConns: 10
+      maxIdleConns: 2
+      connMaxLifetime: 14400
+
+  - name: TimescaleDB
+    type: postgres
+    url: ${TSDB_HOST}:${TSDB_PORT}
+    database: ${TSDB_NAME}
+    user: ${TSDB_USER}
+    secureJsonData:
+      password: ${TSDB_PASSWORD}
+    jsonData:
+      sslmode: "require"
+      timescaledb: true
