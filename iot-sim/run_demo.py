@@ -23,8 +23,7 @@ from typing import Dict, Any
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'edge-sim'))
 
 from generator_simplified import TruckSimulator
-# Edge simulator will be imported from ../edge-sim/main_simplified.py
-# For now, we'll use a local implementation
+from main_simplified import EdgeSimulator
 
 
 def iot_thread_function(

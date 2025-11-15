@@ -1,3 +1,4 @@
+
 """
 Application Settings & Configuration
 
@@ -7,13 +8,14 @@ Loads from environment variables with .env file support.
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
+import os
 
+_env_file = os.environ.get("ENV_FILE", ".env")
 
 class Settings(BaseSettings):
     """Main application settings"""
-
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", case_sensitive=False
+        env_file=_env_file, env_file_encoding="utf-8", case_sensitive=False, extra="ignore"
     )
 
     # Application
@@ -108,4 +110,16 @@ class Settings(BaseSettings):
 
 
 # Global settings instance
-settings = Settings()
+try:
+    settings = Settings()
+except Exception as e:
+    import sys
+    from pydantic import ValidationError
+    print(f"Error cargando configuración: {e}", file=sys.stderr)
+    if isinstance(e, ValidationError):
+        print("Variables faltantes o inválidas:", file=sys.stderr)
+        for err in e.errors():
+            loc = '.'.join(str(x) for x in err['loc'])
+            msg = err['msg']
+            print(f"- {loc}: {msg}", file=sys.stderr)
+    settings = None
