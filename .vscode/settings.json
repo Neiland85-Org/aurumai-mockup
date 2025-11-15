@@ -1,0 +1,25 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}",
+    "${workspaceFolder}/backend",
+    "${workspaceFolder}/backend/api",
+    "${workspaceFolder}/backend/application",
+    "${workspaceFolder}/backend/domain",
+    "${workspaceFolder}/backend/infrastructure",
+    "${workspaceFolder}/edge-sim",
+    "${workspaceFolder}/iot-sim"
+  ],
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.testing.pytestArgs": ["backend"],
+  "python.testing.pytestEnabled": true,
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "never"
+  },
+  "extensions.autoUpdate": false,
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.inlayHints.variableTypes": false
+}

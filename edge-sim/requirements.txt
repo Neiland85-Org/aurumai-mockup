@@ -1,5 +1,14 @@
+# Edge Simulator - Simplified Version
+# For synchronous HTTP requests
+requests>=2.31.0
+
+# Optional: Keep for compatibility with original version
 fastapi>=0.109.0
 uvicorn>=0.27.0
+# Edge Simulator - Simplified Version
+# Minimal dependencies required by edge-sim/main_simplified.py
+
 httpx>=0.26.0
+
 pydantic>=2.5.0
 python-dotenv>=1.0.0

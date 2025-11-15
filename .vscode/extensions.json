@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-toolsai.jupyter",
+    "GitHub.copilot", 
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-vscode.makefile-tools"
+  ],
+  "unwantedRecommendations": [
+    "GitHub.copilot-chat", 
+    "GitHub.copilot-labs",
+    "miguelsolorio.symbols"
+  ],
+  // Nota: Ajusta esta lista según tus necesidades. Remueve entradas de unwantedRecommendations si las requieres.
+}
