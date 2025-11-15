@@ -28,7 +28,7 @@ async def predict(
             timestamp=prediction.timestamp,
             risk_score=prediction.risk_score,
             failure_probability=prediction.failure_probability,
-            confidence=prediction.confidence,
+            confidence=prediction.confidence if prediction.confidence is not None else 0.85,
             next_maintenance_hours=prediction.maintenance_hours,
         )
 

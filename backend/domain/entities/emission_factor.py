@@ -7,7 +7,7 @@ Supports versioning and multiple methodologies (IPCC, country-specific, custom).
 
 from dataclasses import dataclass, field
 from datetime import datetime, date
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 from uuid import UUID, uuid4
 from enum import Enum
 
@@ -52,7 +52,7 @@ class EmissionFactor:
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
     is_active: bool = True
-    metadata: Dict[str, any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self):
         """Calculate total CO2eq factor using GWP100"""
@@ -79,7 +79,7 @@ class EmissionFactor:
         valid_from: Optional[date] = None,
         valid_to: Optional[date] = None,
         version: str = "1.0",
-        metadata: Optional[Dict[str, any]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> "EmissionFactor":
         """Factory method to create a new emission factor"""
         now = datetime.utcnow()

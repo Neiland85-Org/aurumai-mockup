@@ -6,7 +6,7 @@ Represents a mine, plant, factory, or any physical location where assets operate
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 from uuid import UUID, uuid4
 
 
@@ -41,7 +41,7 @@ class Site:
     created_at: datetime
     updated_at: datetime
     is_active: bool = True
-    metadata: Dict[str, any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     @staticmethod
     def create(

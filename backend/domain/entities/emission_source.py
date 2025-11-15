@@ -6,7 +6,7 @@ Represents sources of greenhouse gas emissions (mobile, fixed, electricity, proc
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 from uuid import UUID, uuid4
 from enum import Enum
 
@@ -55,7 +55,7 @@ class EmissionSource:
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
     is_active: bool = True
-    metadata: Dict[str, any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     @staticmethod
     def create(
@@ -69,7 +69,7 @@ class EmissionSource:
         fuel_type: Optional[str] = None,
         capacity: Optional[float] = None,
         capacity_unit: Optional[str] = None,
-        metadata: Optional[Dict[str, any]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> "EmissionSource":
         """Factory method to create a new emission source"""
         now = datetime.utcnow()

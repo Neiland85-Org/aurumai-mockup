@@ -6,7 +6,7 @@ Represents significant events in the system (maintenance, failures, operations).
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 from uuid import UUID, uuid4
 from enum import Enum
 
@@ -47,7 +47,7 @@ class Event:
     performed_by: Optional[str] = None
     cost: Optional[float] = None
     related_alert_id: Optional[UUID] = None
-    metadata: Dict[str, any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
     created_at: datetime = field(default_factory=datetime.utcnow)
 
     @staticmethod
@@ -63,7 +63,7 @@ class Event:
         performed_by: Optional[str] = None,
         cost: Optional[float] = None,
         related_alert_id: Optional[UUID] = None,
-        metadata: Optional[Dict[str, any]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> "Event":
         """Factory method to create a new event"""
         return Event(

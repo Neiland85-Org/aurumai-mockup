@@ -2,9 +2,9 @@
 FeatureVector Value Object - Engineered features for ML
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Optional
 from uuid import UUID
 
 
@@ -21,7 +21,7 @@ class FeatureVector:
     timestamp: datetime
     window_size_seconds: int
     features: Dict[str, float]  # feature_name -> value
-    feature_names: List[str] = None
+    feature_names: Optional[List[str]] = None
 
     def __post_init__(self):
         """Initialize feature names list"""
@@ -34,7 +34,7 @@ class FeatureVector:
 
     def to_array(self) -> List[float]:
         """Convert to ordered array for ML model"""
-        return [self.features.get(name, 0.0) for name in self.feature_names]
+        return [self.features.get(name, 0.0) for name in (self.feature_names or [])]
 
     def feature_count(self) -> int:
         """Get number of features"""

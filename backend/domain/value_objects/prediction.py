@@ -2,9 +2,9 @@
 Prediction Value Object - ML model predictions
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 from uuid import UUID
 
 
@@ -27,7 +27,7 @@ class Prediction:
     predicted_value: Optional[float] = None
     predicted_class: Optional[str] = None
     time_to_event_hours: Optional[float] = None
-    metadata: Dict[str, any] = None
+    metadata: Optional[Dict[str, Any]] = None
 
     def is_high_risk(self, threshold: float = 0.7) -> bool:
         """Check if prediction indicates high risk"""

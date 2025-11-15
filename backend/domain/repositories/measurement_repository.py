@@ -4,7 +4,7 @@ Measurement Repository Interface
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List, Dict
+from typing import List, Dict, Optional, Any
 from uuid import UUID
 from domain.value_objects import TimeSeriesPoint, Measurement
 
@@ -56,3 +56,24 @@ class IMeasurementRepository(ABC):
     ) -> List[Dict]:
         """Get aggregated measurements (avg, min, max) per interval"""
         pass
+
+    # Aliases for compatibility with use cases
+    async def get_latest_raw_measurement(self, machine_id: str) -> Optional[Dict]:
+        """Get latest raw measurement for a machine"""
+        # This should be implemented by concrete repositories
+        return None
+
+    async def save_raw_measurement(self, machine_id: str, data: Dict) -> bool:
+        """Save raw measurement data"""
+        # This should be implemented by concrete repositories
+        return False
+
+    async def get_latest_features(self, machine_id: str) -> Optional[Any]:
+        """Get latest feature vector for a machine"""
+        # This should be implemented by concrete repositories
+        return None
+
+    async def save_feature_vector(self, machine_id: str, features: Dict) -> bool:
+        """Save feature vector"""
+        # This should be implemented by concrete repositories
+        return False

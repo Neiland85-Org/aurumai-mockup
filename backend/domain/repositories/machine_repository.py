@@ -44,3 +44,18 @@ class IMachineRepository(ABC):
     async def delete(self, machine_id: UUID) -> bool:
         """Delete a machine"""
         pass
+
+    # Aliases for compatibility with use cases
+    async def get_by_id(self, machine_id: str) -> Optional[Machine]:
+        """Alias for find_by_id (accepts string)"""
+        try:
+            uuid_id = UUID(machine_id) if isinstance(machine_id, str) else machine_id
+            return await self.find_by_id(uuid_id)
+        except (ValueError, AttributeError):
+            return None
+
+    async def get_all(self, skip: int = 0, limit: int = 100) -> List[Machine]:
+        """Get all machines (default implementation)"""
+        # This should be implemented by concrete repositories
+        # For now, return empty list - subclasses should override
+        return []

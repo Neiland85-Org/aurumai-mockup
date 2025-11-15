@@ -7,7 +7,7 @@ Tenants are isolated from each other and have their own configuration.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Any
 from uuid import UUID, uuid4
 
 
@@ -40,7 +40,7 @@ class Tenant:
     created_at: datetime
     updated_at: datetime
     is_active: bool = True
-    metadata: Dict[str, any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     @staticmethod
     def create(

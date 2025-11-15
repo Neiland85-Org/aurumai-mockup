@@ -6,7 +6,7 @@ Represents calculated emissions for a given activity and time period.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 from uuid import UUID, uuid4
 
 
@@ -37,7 +37,7 @@ class EmissionRecord:
     calculation_method: str = "direct"  # direct, estimated, modeled
     confidence_level: float = 1.0  # 0.0 to 1.0
     created_at: datetime = field(default_factory=datetime.utcnow)
-    metadata: Dict[str, any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     @staticmethod
     def create(
@@ -57,7 +57,7 @@ class EmissionRecord:
         machine_id: Optional[UUID] = None,
         calculation_method: str = "direct",
         confidence_level: float = 1.0,
-        metadata: Optional[Dict[str, any]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> "EmissionRecord":
         """Factory method to create a new emission record"""
         return EmissionRecord(
