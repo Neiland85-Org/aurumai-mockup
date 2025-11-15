@@ -13,7 +13,7 @@
 # STAGE 1: BUILDER
 # Build dependencies and install packages
 # -----------------------------------------------------------------------------
-FROM python:3.11-slim AS builder
+FROM python:3.14-slim AS builder
 
 # Set environment variables for build
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -44,7 +44,7 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 # STAGE 2: RUNTIME
 # Minimal runtime image with application code
 # -----------------------------------------------------------------------------
-FROM python:3.11-slim AS runtime
+FROM python:3.14-slim AS runtime
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
