@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # In-memory storage for development
+# WARNING: The following lists are NOT thread-safe and are shared across all requests.
+# In a production ASGI environment with multiple workers or async handlers, this can lead to race conditions.
+# Do NOT use this code in production. Use a thread-safe collection or a proper database instead.
 telemetry_store: List[Dict[str, Any]] = []
 features_store: List[Dict[str, Any]] = []
 
