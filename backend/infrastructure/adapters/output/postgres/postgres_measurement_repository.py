@@ -58,7 +58,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         model = result.scalar_one_or_none()
 
         if model:
-            return self._raw_model_to_entity(model)
+                return self._raw_model_to_entity(model)
         return None
 
     async def get_latest_features(self, machine_id: str) -> Optional[FeatureVector]:
@@ -73,7 +73,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         model = result.scalar_one_or_none()
 
         if model:
-            return self._feature_model_to_entity(model)
+                return self._feature_model_to_entity(model)
         return None
 
     async def get_raw_measurements_range(
@@ -124,18 +124,41 @@ class PostgresMeasurementRepository(IMeasurementRepository):
 
     def _raw_model_to_entity(self, model: RawMeasurementModel) -> RawMeasurement:
         """Convert SQLAlchemy model to domain entity"""
+        # Conversión segura de metrics a Dict[str, float]
+        metrics = getattr(model, 'metrics', {})
+        if isinstance(metrics, dict):
+            metrics = {k.decode() if isinstance(k, bytes) else str(k): float(v.decode() if isinstance(v, bytes) else v) for k, v in metrics.items()}
+        else:
+            metrics = {}
+        # Asegura que timestamp sea un valor datetime
+        ts = getattr(model, 'timestamp', None)
+        if ts is None:
+            raise ValueError("El campo timestamp no puede ser None")
+        if hasattr(ts, 'value'):
+            ts = ts.value
         return RawMeasurement(
-            machine_id=model.machine_id,
-            timestamp=model.timestamp,
-            metrics=model.metrics,
+            machine_id=str(model.machine_id),
+            timestamp=ts,
+            metrics=metrics,
         )
 
     def _feature_model_to_entity(self, model: FeatureModel) -> FeatureVector:
         """Convert SQLAlchemy model to domain entity"""
+        # Conversión segura de features a Dict[str, float]
+        features = getattr(model, 'features', {})
+        if isinstance(features, dict):
+            features = {k.decode() if isinstance(k, bytes) else str(k): float(v.decode() if isinstance(v, bytes) else v) for k, v in features.items()}
+        else:
+            features = {}
+        ts = getattr(model, 'timestamp', None)
+        if ts is None:
+            raise ValueError("El campo timestamp no puede ser None")
+        if hasattr(ts, 'value'):
+            ts = ts.value
         return FeatureVector(
-            machine_id=model.machine_id,
-            timestamp=model.timestamp,
-            features=model.features,
+            machine_id=str(model.machine_id),
+            timestamp=ts,
+            features=features,
         )
 
     async def save_measurement(self, measurement: Measurement) -> bool:

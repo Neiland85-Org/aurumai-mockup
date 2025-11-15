@@ -2,18 +2,19 @@
 API Tests for the Ingest Endpoints
 """
 
-import pytest
-from fastapi.testclient import TestClient
-from unittest.mock import Mock
-
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..', 'backend')))
 from app import app
 from api.dependencies import get_ingest_telemetry_use_case
+import pytest
+from fastapi.testclient import TestClient
+from unittest.mock import AsyncMock
 
 # Create a test client
 client = TestClient(app)
 
-# Mock the use case
-mock_ingest_use_case = Mock()
+mock_ingest_use_case = AsyncMock()
 
 def override_get_ingest_telemetry_use_case():
     return mock_ingest_use_case

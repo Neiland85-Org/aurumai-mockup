@@ -6,8 +6,8 @@ Initializes the application, includes routers, and sets up middleware.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# from api.routers import ingest, machines, predict, esg
-from api.routers import ingest_simple, machines_simple, predict_simple, esg_simple
+from api.routers import ingest, machines, predict, esg
+# from api.routers import ingest_simple, machines_simple, predict_simple, esg_simple
 from infrastructure.config.settings import settings
 # from infrastructure.db.postgres_config import init_database
 
@@ -27,16 +27,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API routers - Using simple in-memory version for development
-app.include_router(ingest_simple.router, prefix="/ingest", tags=["Ingest"])
-app.include_router(machines_simple.router, prefix="/machines", tags=["Machines"])
-app.include_router(predict_simple.router, prefix="/predict", tags=["Prediction"])
-app.include_router(esg_simple.router, prefix="/esg", tags=["ESG"])
-# Original routers (commented out due to Postgres dependencies)
-# app.include_router(ingest.router, prefix="/ingest", tags=["Ingest"])
-# app.include_router(machines.router, prefix="/machines", tags=["Machines"])
-# app.include_router(predict.router, prefix="/predict", tags=["Prediction"])
-# app.include_router(esg.router, prefix="/esg", tags=["ESG"])
+
+app.include_router(ingest.router, prefix="/ingest", tags=["Ingest"])
+app.include_router(machines.router, prefix="/machines", tags=["Machines"])
+app.include_router(predict.router, prefix="/predict", tags=["Prediction"])
+app.include_router(esg.router, prefix="/esg", tags=["ESG"])
 
 # Database initialization on startup
 @app.on_event("startup")

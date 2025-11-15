@@ -20,7 +20,8 @@ def init_db():
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS machines (
-            machine_id TEXT PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            machine_id TEXT UNIQUE NOT NULL,
             machine_type TEXT NOT NULL,
             site TEXT NOT NULL,
             status TEXT DEFAULT 'operational',
@@ -79,19 +80,6 @@ def init_db():
             failure_probability REAL NOT NULL,
             confidence REAL DEFAULT 0.85,
             next_maintenance_hours INTEGER,
-            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (machine_id) REFERENCES machines(machine_id)
-        )
-    """
-    )
-
-    # ESG records table
-    cur.execute(
-        """
-        CREATE TABLE IF NOT EXISTS esg_records (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            machine_id TEXT NOT NULL,
-            timestamp TEXT NOT NULL,
             co2eq_instant REAL NOT NULL,
             co2eq_total REAL NOT NULL,
             fuel_rate_lh REAL,
@@ -100,7 +88,7 @@ def init_db():
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (machine_id) REFERENCES machines(machine_id)
         )
-    """
+        """
     )
 
     # Insert demo machines if not exist
@@ -122,6 +110,12 @@ def init_db():
     conn.commit()
     conn.close()
     print(f"✅ Database initialized at {DB_PATH}")
+
+
+mi_lista = [
+    (1, 2),
+    (3, 4)
+]
 
 
 if __name__ == "__main__":

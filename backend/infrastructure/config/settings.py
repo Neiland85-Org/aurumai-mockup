@@ -9,11 +9,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
 
 
+
+import os
+_env_file = os.environ.get("ENV_FILE", ".env")
+
 class Settings(BaseSettings):
     """Main application settings"""
-
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", case_sensitive=False
+        env_file=_env_file, env_file_encoding="utf-8", case_sensitive=False
     )
 
     # Application
@@ -29,29 +32,29 @@ class Settings(BaseSettings):
     api_prefix: str = "/api/v1"
 
     # Database (PostgreSQL)
-    db_host: str
+    db_host: str = "localhost"
     db_port: int = 5432
-    db_user: str
-    db_password: str
-    db_name: str
+    db_user: str = "testuser"
+    db_password: str = "testpass"
+    db_name: str = "testdb"
     db_echo: bool = False
 
     # TimescaleDB
-    tsdb_host: str
+    tsdb_host: str = "localhost"
     tsdb_port: int = 5432
-    tsdb_user: str
-    tsdb_password: str
-    tsdb_name: str
+    tsdb_user: str = "testuser"
+    tsdb_password: str = "testpass"
+    tsdb_name: str = "testdb"
 
     # MQTT
-    mqtt_broker_host: str
+    mqtt_broker_host: str = "localhost"
     mqtt_broker_port: int = 1883
-    mqtt_username: str
-    mqtt_password: str
+    mqtt_username: str = "testuser"
+    mqtt_password: str = "testpass"
     mqtt_topic_prefix: str = "aurumai"
 
     # Security
-    secret_key: str
+    secret_key: str = "testsecret"
     access_token_expire_minutes: int = 30
     algorithm: str = "HS256"
 
@@ -107,5 +110,32 @@ class Settings(BaseSettings):
         return self.environment.lower() == "development"
 
 
+
 # Global settings instance
-settings = Settings()
+try:
+    settings = Settings()
+except Exception as e:
+    import sys
+    from pydantic import ValidationError
+    print(f"Error cargando configuración: {e}", file=sys.stderr)
+    if isinstance(e, ValidationError):
+        print("Variables faltantes o inválidas:", file=sys.stderr)
+        for err in e.errors():
+            loc = '.'.join(str(x) for x in err['loc'])
+            msg = err['msg']
+            print(f"- {loc}: {msg}", file=sys.stderr)
+    settings = None
+
+# Ejemplo de variables obligatorias para .env:
+# db_host=localhost
+# db_user=testuser
+# db_password=testpass
+# db_name=testdb
+# tsdb_host=localhost
+# tsdb_user=testuser
+# tsdb_password=testpass
+# tsdb_name=testdb
+# mqtt_broker_host=localhost
+# mqtt_username=testuser
+# mqtt_password=testpass
+# secret_key=testsecret

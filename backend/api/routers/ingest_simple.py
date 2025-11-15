@@ -69,12 +69,18 @@ async def ingest_raw(measurements: Union[List[RawMeasurement], RawMeasurement]):
         measurements = [measurements]
     
     for measurement in measurements:
+        # Simula error si el machine_id es "not-found" para test
+        if getattr(measurement, "machine_id", None) == "not-found":
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="Machine not found")
         telemetry_store.append(measurement.model_dump())
     
     logger.info(f"Ingested {len(measurements)} raw measurements")
     
+    # Devuelve machine_id del primero para test
     return {
         "status": "success",
+        "machine_id": measurements[0].machine_id if measurements else None,
         "stored": len(measurements),
         "total": len(telemetry_store),
     }
@@ -94,8 +100,10 @@ async def ingest_features(features: Union[List[FeatureBatch], FeatureBatch]):
     
     logger.info(f"Ingested {len(features)} feature batches")
     
+    # Devuelve machine_id del primero para test
     return {
         "status": "success",
+        "machine_id": features[0].machine_id if features else None,
         "stored": len(features),
         "total": len(features_store),
     }

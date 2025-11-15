@@ -13,15 +13,14 @@ class FeatureCalculator:
         """
         Calcula características de ventana deslizante (rolling features) para un conjunto de datos.
         """
-        # Import diferido para evitar errores de importación en entornos donde
-        # aún no está instalada la dependencia (útil para Pylance en VS Code).
+        # Import diferido para evitar errores de importación en entornos donde aún no está instalada la dependencia (útil para Pylance en VS Code).
         import pandas as pd  # type: ignore
 
         if len(data_points) < window_size:
             return {}
 
         df = pd.DataFrame(data_points)
-        
+
         # Lógica de feature engineering completamente aislada
         rolling_avg = df['value'].rolling(window=window_size).mean().iloc[-1]
         rolling_std = df['value'].rolling(window=window_size).std().iloc[-1]

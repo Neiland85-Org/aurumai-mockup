@@ -1,43 +1,6 @@
-import sys
-from pathlib import Path
-try:
-    import paho.mqtt.client as mqtt  # type: ignore
-except Exception:
-    # Minimal stub to allow editor/linters to resolve the import when paho-mqtt isn't installed.
-    class _StubClient:
-        class CallbackAPIVersion:
-            VERSION2 = 2
-
-        def __init__(self, *args, **kwargs):
-            self.on_connect = None
-            self.on_message = None
-
-        def connect(self, host, port=1883, keepalive=60, **kwargs):
-            print(f"[stub mqtt] connect to {host}:{port}")
-
-        def loop_forever(self):
-            print("[stub mqtt] loop_forever called (no-op)")
-
-        def publish(self, topic, payload=None, qos=0, retain=False, **kwargs):
-            print(f"[stub mqtt] publish to {topic}: {payload}")
-
-        def subscribe(self, topic, qos=0):
-            print(f"[stub mqtt] subscribe to {topic}")
-
-    class _MqttModule:
-        CallbackAPIVersion = _StubClient.CallbackAPIVersion
-        Client = _StubClient
-
-    mqtt = _MqttModule()
 import json
-from typing import Dict, Any
-
-# Ensure project root is on sys.path so 'src' can be imported when running this module directly.
-PROJECT_ROOT = Path(__file__).resolve().parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
-from src.application.edge_processor import EdgeProcessor
+import paho.mqtt.client as mqtt
+from paho.mqtt.enums import CallbackAPIVersion
 
 class MqttGateway:
     """
@@ -45,14 +8,15 @@ class MqttGateway:
     Gestiona la conexión, suscripción y publicación de mensajes.
     Delega la lógica de negocio al EdgeProcessor.
     """
-    def __init__(self, broker_address: str, processor: EdgeProcessor):
+
+    def __init__(self, broker_address: str, processor):
         self._processor = processor
         self._broker_address = broker_address
-        self._client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+        self._client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2)
         self._client.on_connect = self._on_connect
         self._client.on_message = self._on_message
 
-    def _on_connect(self, client, userdata, flags, rc, properties):
+    def _on_connect(self, client, userdata, flags, rc):
         if rc == 0:
             print("🔌 Conectado exitosamente al Broker MQTT!")
             client.subscribe("aurum/telemetry/+/raw")

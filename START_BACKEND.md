@@ -5,31 +5,31 @@
 ### Opción 1: Con script (Recomendado)
 
 ```bash
-cd /Users/estudio/Projects/GitHub/MOCKUPs/aurumai-mockup/backend
+cd backend
 chmod +x start_backend.sh
 ./start_backend.sh
-```
+```bash
 
 ### Opción 2: Comando directo
 
 ```bash
-cd /Users/estudio/Projects/GitHub/MOCKUPs/aurumai-mockup/backend
+cd backend
 source .venv/bin/activate
 python -m uvicorn app:app --reload --host 0.0.0.0
-```
+```bash
 
 ## Verificación
 
 Una vez iniciado, deberías ver:
 
-```
+```bash
 INFO:     Will watch for changes in these directories: ['/Users/estudio/Projects/GitHub/MOCKUPs/aurumai-mockup/backend']
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 INFO:     Started reloader process [xxxxx] using WatchFiles
 INFO:     Started server process [xxxxx]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
-```
+```bash
 
 ## Probar el Backend
 
@@ -89,7 +89,7 @@ python3 test_endpoints.py
 
 ## Estado del Frontend
 
-Una vez el backend esté corriendo en **http://localhost:8000**, el frontend en **http://localhost:3001** debería conectarse automáticamente y mostrar los datos.
+Una vez el backend esté corriendo en **[Backend local](http://localhost:8000)**, el frontend en **[Frontend local](http://localhost:3001)** debería conectarse automáticamente y mostrar los datos.
 
 ## Troubleshooting
 

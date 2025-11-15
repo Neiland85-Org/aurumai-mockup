@@ -135,13 +135,32 @@ class PostgresESGRepository(IESGRepository):
 
     def _model_to_entity(self, model: ESGRecordModel) -> ESGRecord:
         """Convert SQLAlchemy model to domain entity"""
+        def get_value(attr):
+            val = getattr(model, attr, None)
+            if val is None:
+                return None
+            if hasattr(val, 'value'):
+                return val.value
+            return val
+
+        def safe_float(val):
+            if val is None:
+                return None
+            return float(val)
+
+        instant_co2eq_kg = safe_float(get_value('instant_co2eq_kg'))
+        if instant_co2eq_kg is None:
+            instant_co2eq_kg = 0.0
+        cumulative_co2eq_kg = safe_float(get_value('cumulative_co2eq_kg'))
+        if cumulative_co2eq_kg is None:
+            cumulative_co2eq_kg = 0.0
         return ESGRecord(
-            machine_id=model.machine_id,
-            timestamp=cast(datetime, model.timestamp),
-            instant_co2eq_kg=model.instant_co2eq_kg,
-            cumulative_co2eq_kg=model.cumulative_co2eq_kg,
-            fuel_rate_lh=model.fuel_rate_lh,
-            power_consumption_kw=model.power_consumption_kw,
-            efficiency_score=model.efficiency_score,
-            metadata=model.metadata_json or {},
+            machine_id=str(get_value('machine_id')),
+            timestamp=cast(datetime, get_value('timestamp')),
+            instant_co2eq_kg=instant_co2eq_kg,
+            cumulative_co2eq_kg=cumulative_co2eq_kg,
+            fuel_rate_lh=safe_float(get_value('fuel_rate_lh')),
+            power_consumption_kw=safe_float(get_value('power_consumption_kw')),
+            efficiency_score=safe_float(get_value('efficiency_score')),
+            metadata=getattr(model, 'metadata_json', {}) or {},
         )
