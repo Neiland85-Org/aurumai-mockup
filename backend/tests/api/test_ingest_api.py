@@ -4,7 +4,7 @@ API Tests for the Ingest Endpoints
 
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import AsyncMock
+from unittest.mock import Mock
 
 from app import app
 from api.dependencies import get_ingest_telemetry_use_case
@@ -13,7 +13,7 @@ from api.dependencies import get_ingest_telemetry_use_case
 client = TestClient(app)
 
 # Mock the use case
-mock_ingest_use_case = AsyncMock()
+mock_ingest_use_case = Mock()
 
 def override_get_ingest_telemetry_use_case():
     return mock_ingest_use_case
@@ -47,7 +47,7 @@ def test_ingest_raw_success():
     assert response.status_code == 200
     assert response.json()["status"] == "success"
     assert response.json()["machine_id"] == "test-machine"
-    mock_ingest_use_case.execute_raw.assert_awaited_once()
+    mock_ingest_use_case.execute_raw.assert_called_once()
 
 def test_ingest_raw_machine_not_found():
     """
@@ -67,7 +67,7 @@ def test_ingest_raw_machine_not_found():
     # Assert
     assert response.status_code == 404
     assert "Machine test-machine not found" in response.json()["detail"]
-    mock_ingest_use_case.execute_raw.assert_awaited_once()
+    mock_ingest_use_case.execute_raw.assert_called_once()
 
 def test_ingest_features_success():
     """
@@ -90,4 +90,4 @@ def test_ingest_features_success():
     # Assert
     assert response.status_code == 200
     assert response.json()["status"] == "success"
-    mock_ingest_use_case.execute_features.assert_awaited_once()
+    mock_ingest_use_case.execute_features.assert_called_once()
