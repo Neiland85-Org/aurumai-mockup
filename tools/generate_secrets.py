@@ -3,24 +3,29 @@
 Secret Key Generator for AurumAI Platform
 Generates cryptographically secure keys for different environments.
 
+SECURITY WARNING: This tool generates sensitive information.
+Never commit generated .env files to version control.
+
 Usage:
     python tools/generate_secrets.py
     python tools/generate_secrets.py --length 64
+    python tools/generate_secrets.py --save --confirm-security
 """
 
 import argparse
 import secrets
 import string
 from pathlib import Path
+from typing import Optional
 
 
 def generate_secret_key(length: int = 32) -> str:
     """
     Generate a cryptographically secure secret key.
-    
+
     Args:
         length: Length of the key (default 32 characters)
-        
+
     Returns:
         URL-safe base64 encoded string
     """
@@ -30,10 +35,10 @@ def generate_secret_key(length: int = 32) -> str:
 def generate_password(length: int = 16) -> str:
     """
     Generate a strong password with mixed characters.
-    
+
     Args:
         length: Length of the password (default 16 characters)
-        
+
     Returns:
         Strong password with uppercase, lowercase, digits, and symbols
     """
@@ -42,20 +47,26 @@ def generate_password(length: int = 16) -> str:
     return password
 
 
-def create_env_template(env_type: str = "development") -> str:
+def create_env_template(env_type: str = "development", use_placeholders: bool = False) -> str:
     """
-    Create .env template with generated secrets.
-    
+    Create .env template with generated secrets or placeholders.
+
     Args:
         env_type: Environment type (development, staging, production)
-        
+        use_placeholders: If True, use <CHANGE_ME> placeholders instead of real secrets
+
     Returns:
         .env file content as string
     """
-    secret_key = generate_secret_key(32)
-    db_password = generate_password(20)
-    mqtt_password = generate_password(16)
-    
+    if use_placeholders:
+        secret_key = "<CHANGE_ME_SECRET_KEY>"
+        db_password = "<CHANGE_ME_DB_PASSWORD>"
+        mqtt_password = "<CHANGE_ME_MQTT_PASSWORD>"
+    else:
+        secret_key = generate_secret_key(32)
+        db_password = generate_password(20)
+        mqtt_password = generate_password(16)
+
     template = f"""# AurumAI Platform - {env_type.upper()} Environment
 # Generated on: {Path(__file__).stat().st_mtime}
 # WARNING: Keep this file secret! Never commit to git!
@@ -124,6 +135,47 @@ FEATURE_ANALYTICS=true
     return template
 
 
+def save_env_file_securely(env_content: str, env_file: Path, env_type: str) -> None:
+    """
+    Save environment file with security checks.
+
+    Args:
+        env_content: Content to save
+        env_file: File path to save to
+        env_type: Environment type for warnings
+    """
+    # Security check: Ensure file is in .gitignore
+    gitignore_path = Path(".gitignore")
+    if gitignore_path.exists():
+        gitignore_content = gitignore_path.read_text()
+        if not any(pattern in gitignore_content for pattern in [".env", "*.env", f"{env_file.name}"]):
+            print("⚠️  WARNING: .env files may not be properly excluded from git!")
+            print("   Please ensure your .gitignore includes:")
+            print("   .env")
+            print("   .env.*")
+            print()
+
+    # Write file with secure permissions (if possible)
+    env_file.write_text(env_content)
+
+    # Try to set restrictive permissions (Unix-like systems only)
+    try:
+        env_file.chmod(0o600)  # Owner read/write only
+    except OSError:
+        pass  # Windows or permission denied, skip
+
+    print(f"✅ Saved to {env_file}")
+    print()
+    print("🔒 SECURITY REMINDERS:")
+    print(f"   • File permissions set to 600 (owner read/write only)")
+    print(f"   • Ensure {env_file} is in .gitignore")
+    print(f"   • Never commit this file to version control")
+    if env_type == "production":
+        print(f"   • Use a secret management system (AWS/GCP/Azure Secrets)")
+        print(f"   • Rotate these secrets every 90 days")
+    print()
+
+
 def main():
     """Main function to generate and display secrets."""
     parser = argparse.ArgumentParser(
@@ -145,69 +197,107 @@ def main():
     parser.add_argument(
         "--save",
         action="store_true",
-        help="Save to .env.{env} file"
+        help="Save to .env.{env} file (requires --confirm-security)"
     )
-    
+    parser.add_argument(
+        "--confirm-security",
+        action="store_true",
+        help="Confirm understanding of security implications"
+    )
+    parser.add_argument(
+        "--placeholders",
+        action="store_true",
+        help="Generate template with <CHANGE_ME> placeholders instead of real secrets"
+    )
+
     args = parser.parse_args()
-    
+
     print("=" * 60)
     print("🔐 AurumAI Platform - Secret Key Generator")
     print("=" * 60)
     print()
-    
+
+    if args.save and not args.confirm_security:
+        print("❌ ERROR: --save requires --confirm-security flag")
+        print()
+        print("Security requirement: You must acknowledge that you're saving sensitive")
+        print("information to disk. This tool generates REAL secrets that should never")
+        print("be committed to version control.")
+        print()
+        print("Usage: python tools/generate_secrets.py --save --confirm-security")
+        return 1
+
     # Generate individual secrets
-    secret_key = generate_secret_key(args.length)
-    db_password = generate_password(20)
-    mqtt_password = generate_password(16)
-    
-    print(f"Environment: {args.env}")
-    print()
-    print("Generated Secrets:")
-    print("-" * 60)
-    print(f"SECRET_KEY:     {secret_key}")
-    print(f"DB_PASSWORD:    {db_password}")
-    print(f"MQTT_PASSWORD:  {mqtt_password}")
-    print("-" * 60)
-    print()
-    
+    if not args.placeholders:
+        secret_key = generate_secret_key(args.length)
+        db_password = generate_password(20)
+        mqtt_password = generate_password(16)
+
+        print(f"Environment: {args.env}")
+        print()
+        print("🔑 Generated Secrets:")
+        print("-" * 60)
+        print(f"SECRET_KEY:     {secret_key}")
+        print(f"DB_PASSWORD:    {db_password}")
+        print(f"MQTT_PASSWORD:  {mqtt_password}")
+        print("-" * 60)
+        print()
+    else:
+        print(f"Environment: {args.env} (placeholders)")
+        print()
+        print("📝 Template with placeholders:")
+        print("-" * 60)
+        print("SECRET_KEY:     <CHANGE_ME_SECRET_KEY>")
+        print("DB_PASSWORD:    <CHANGE_ME_DB_PASSWORD>")
+        print("MQTT_PASSWORD:  <CHANGE_ME_MQTT_PASSWORD>")
+        print("-" * 60)
+        print()
+
     # Generate full .env template
-    env_content = create_env_template(args.env)
-    
+    env_content = create_env_template(args.env, use_placeholders=args.placeholders)
+
     if args.save:
         env_file = Path(f".env.{args.env}")
-        
+
         if env_file.exists():
             response = input(f"⚠️  {env_file} already exists. Overwrite? (y/N): ")
             if response.lower() != 'y':
                 print("❌ Cancelled. File not modified.")
-                return
-        
-        env_file.write_text(env_content)
-        print(f"✅ Saved to {env_file}")
-        print()
-        print("⚠️  IMPORTANT:")
-        print(f"   1. Review {env_file} and adjust settings as needed")
-        print(f"   2. Copy to .env for local development:")
-        print(f"      cp {env_file} backend/.env")
+                return 0
+
+        save_env_file_securely(env_content, env_file, args.env)
+        print("💡 Next steps:")
+        print(f"   1. Review {env_file} and customize values")
+        if not args.placeholders:
+            print(f"   2. Copy to backend/.env for local development:")
+            print(f"      cp {env_file} backend/.env")
         print(f"   3. NEVER commit .env files to git!")
         print()
     else:
-        print("Full .env template:")
+        print("📄 Full .env template:")
         print("=" * 60)
         print(env_content)
         print("=" * 60)
         print()
-        print("💡 Tip: Use --save to write to .env.{env} file")
-        print("   Example: python tools/generate_secrets.py --env production --save")
-    
+        if not args.placeholders:
+            print("💡 Tip: Use --save --confirm-security to write to .env.{env} file")
+            print("   Example: python tools/generate_secrets.py --env production --save --confirm-security")
+        else:
+            print("💡 Tip: Use --save --placeholders to create template file")
+            print("   Example: python tools/generate_secrets.py --placeholders --save --confirm-security")
+
     print()
-    print("🔒 Security Reminders:")
+    print("🔒 Security Best Practices:")
     print("   • Store production secrets in a secure vault (AWS/GCP/Azure)")
     print("   • Rotate secrets periodically (every 90 days recommended)")
     print("   • Use different secrets for each environment")
     print("   • Never share secrets via email or chat")
+    if args.placeholders:
+        print("   • Replace <CHANGE_ME> placeholders with actual secrets")
     print()
+
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    exit(main())

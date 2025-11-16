@@ -12,8 +12,8 @@ logs/
 .env.production
 .env.staging
 .env.test
+.env.development
 !.env.example
-!.env.development  # Safe development defaults can be tracked
 
 # Databases (mantener las .db ya versionadas)
 *.db

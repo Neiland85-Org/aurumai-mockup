@@ -1,6 +1,6 @@
 name: CI/CD Pipeline
 
-"on":
+on:
   push:
     branches: [main, develop]
   pull_request:
@@ -155,7 +155,7 @@ jobs:
   # UNIT TESTS
   # ============================================
   test-backend:
-    name: 🧪 Test Backend
+    name: �� Test Backend
     runs-on: ubuntu-latest
     # Temporarily disabled PostgreSQL service for mock-only testing
     # services:
