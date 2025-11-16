@@ -8,7 +8,7 @@ Supports versioning and multiple methodologies (IPCC, country-specific, custom).
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 from uuid import UUID, uuid4
 
 
@@ -44,10 +44,10 @@ class EmissionFactor:
     n2o_factor: float = 0.0  # kg N2O per activity unit
     co2eq_factor: float = 0.0  # Total kg CO2eq per activity unit (calculated)
     source: EmissionFactorSource = EmissionFactorSource.IPCC_2019
-    country: Optional[str] = None  # ISO country code
-    region: Optional[str] = None
+    country: str | None = None  # ISO country code
+    region: str | None = None
     valid_from: date = field(default_factory=lambda: date(2024, 1, 1))
-    valid_to: Optional[date] = None
+    valid_to: date | None = None
     version: str = "1.0"
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
@@ -72,12 +72,12 @@ class EmissionFactor:
         ch4_factor: float = 0.0,
         n2o_factor: float = 0.0,
         source: EmissionFactorSource = EmissionFactorSource.IPCC_2019,
-        country: Optional[str] = None,
-        region: Optional[str] = None,
-        valid_from: Optional[date] = None,
-        valid_to: Optional[date] = None,
+        country: str | None = None,
+        region: str | None = None,
+        valid_from: date | None = None,
+        valid_to: date | None = None,
         version: str = "1.0",
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: Dict[str, Any | None] = None,
     ) -> "EmissionFactor":
         """Factory method to create a new emission factor"""
         now = datetime.utcnow()

@@ -3,7 +3,7 @@ Use Case: Get Machine Metrics
 Retrieves comprehensive metrics and status for machines
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from domain.entities.machine import Machine
 from domain.repositories.esg_repository import IESGRepository
@@ -206,9 +206,9 @@ class GetMachineMetricsUseCase:
     async def update_machine(
         self,
         machine_id: str,
-        machine_type: Optional[str] = None,
-        location: Optional[str] = None,
-        operational: Optional[bool] = None,
+        machine_type: str | None = None,
+        location: str | None = None,
+        operational: bool | None = None,
     ) -> Machine:
         """
         Update machine information.

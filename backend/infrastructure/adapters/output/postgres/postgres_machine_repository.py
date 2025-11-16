@@ -5,7 +5,7 @@ Concrete PostgreSQL implementation of IMachineRepository
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List, Optional, Sequence
+from typing import List, Sequence
 from uuid import UUID
 
 from sqlalchemy import select
@@ -22,7 +22,7 @@ class PostgresMachineRepository(IMachineRepository):
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def find_by_id(self, machine_id: str) -> Optional[Machine]:
+    async def find_by_id(self, machine_id: str) -> Machine | None:
         stmt = select(MachineModel).where(MachineModel.machine_id == machine_id)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
@@ -96,7 +96,7 @@ class PostgresMachineRepository(IMachineRepository):
             operational=bool(entity.operational),
         )
 
-    async def find_by_code(self, tenant_id: UUID, code: str) -> Optional[Machine]:
+    async def find_by_code(self, tenant_id: UUID, code: str) -> Machine | None:
         raise NotImplementedError
 
     async def find_by_site(self, site_id: UUID, skip: int = 0, limit: int = 100) -> List[Machine]:

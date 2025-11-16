@@ -5,7 +5,7 @@ Provides typed, consistent error responses across all endpoints.
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, ClassVar, Optional
+from typing import Any, ClassVar
 
 from pydantic import BaseModel, Field
 
@@ -109,12 +109,10 @@ ERROR_CODE_TO_STATUS: dict[ErrorCode, HTTPStatusCode] = {
 class ErrorDetails(BaseModel):
     """Optional detailed error information."""
 
-    field: Optional[str] = Field(default=None, description="Field that caused the error")
-    constraint: Optional[str] = Field(default=None, description="Constraint that was violated")
-    provided_value: Optional[Any] = Field(default=None, description="Value that was provided")
-    expected_format: Optional[str] = Field(
-        default=None, description="Expected format for the field"
-    )
+    field: str | None = Field(default=None, description="Field that caused the error")
+    constraint: str | None = Field(default=None, description="Constraint that was violated")
+    provided_value: Any | None = Field(default=None, description="Value that was provided")
+    expected_format: str | None = Field(default=None, description="Expected format for the field")
 
 
 class ErrorResponse(BaseModel):
@@ -126,11 +124,11 @@ class ErrorResponse(BaseModel):
     status_code: int = Field(..., description="HTTP status code", ge=400, le=599)
     error_code: ErrorCode = Field(..., description="Machine-readable error code")
     message: str = Field(..., description="Human-readable error message")
-    details: Optional[ErrorDetails] = Field(None, description="Optional detailed error information")
+    details: ErrorDetails | None = Field(None, description="Optional detailed error information")
     timestamp: datetime = Field(
         default_factory=datetime.utcnow, description="Error occurrence timestamp"
     )
-    request_id: Optional[str] = Field(None, description="Request ID for tracing")
+    request_id: str | None = Field(None, description="Request ID for tracing")
 
     class Config:
         json_schema_extra: ClassVar[dict[str, Any]] = {
@@ -201,8 +199,8 @@ class ApplicationError(Exception):
         self,
         message: str,
         error_code: ErrorCode,
-        status_code: Optional[int] = None,
-        details: Optional[ErrorDetails] = None,
+        status_code: int | None = None,
+        details: ErrorDetails | None = None,
     ) -> None:
         self.message = message
         self.error_code = error_code
@@ -212,7 +210,7 @@ class ApplicationError(Exception):
         self.details = details
         super().__init__(message)
 
-    def to_error_response(self, request_id: Optional[str] = None) -> ErrorResponse:
+    def to_error_response(self, request_id: str | None = None) -> ErrorResponse:
         """Convert to ErrorResponse for API response."""
         return ErrorResponse(
             status_code=self.status_code,
@@ -229,10 +227,10 @@ class ValidationException(ApplicationError):
     def __init__(
         self,
         message: str,
-        field: Optional[str] = None,
-        constraint: Optional[str] = None,
-        provided_value: Optional[Any] = None,
-        expected_format: Optional[str] = None,
+        field: str | None = None,
+        constraint: str | None = None,
+        provided_value: Any | None = None,
+        expected_format: str | None = None,
     ) -> None:
         details = ErrorDetails(
             field=field,
@@ -255,7 +253,7 @@ class ResourceNotFoundException(ApplicationError):
         self,
         message: str,
         resource_type: str = "resource",
-        resource_id: Optional[str] = None,
+        resource_id: str | None = None,
     ) -> None:
         error_code = ErrorCode.NOT_FOUND
         if resource_type == "machine":
@@ -306,7 +304,7 @@ class DatabaseException(ApplicationError):
 class ExternalServiceException(ApplicationError):
     """Raised when external services fail."""
 
-    def __init__(self, message: str, service_name: Optional[str] = None) -> None:
+    def __init__(self, message: str, service_name: str | None = None) -> None:
         details = None
         if service_name:
             details = ErrorDetails(field="service", provided_value=service_name)

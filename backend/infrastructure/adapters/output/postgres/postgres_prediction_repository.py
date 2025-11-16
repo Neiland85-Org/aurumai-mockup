@@ -3,7 +3,7 @@ Concrete PostgreSQL implementation of IPredictionRepository
 """
 
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -37,7 +37,7 @@ class PostgresPredictionRepository(IPredictionRepository):
 
         return self._model_to_entity(model)
 
-    async def get_latest(self, machine_id: str) -> Optional[Prediction]:
+    async def get_latest(self, machine_id: str) -> Prediction | None:
         """Get latest prediction for machine"""
         stmt = (
             select(PredictionModel)

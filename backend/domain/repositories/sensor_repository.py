@@ -3,7 +3,7 @@ Sensor Repository Interface
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 
 from domain.entities import Sensor
@@ -18,7 +18,7 @@ class ISensorRepository(ABC):
         pass
 
     @abstractmethod
-    async def find_by_id(self, sensor_id: UUID) -> Optional[Sensor]:
+    async def find_by_id(self, sensor_id: UUID) -> Sensor | None:
         """Find sensor by ID"""
         pass
 

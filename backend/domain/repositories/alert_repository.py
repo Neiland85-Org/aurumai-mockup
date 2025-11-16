@@ -3,7 +3,7 @@ Alert Repository Interface
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 
 from domain.entities import Alert, AlertLevel, AlertStatus
@@ -18,7 +18,7 @@ class IAlertRepository(ABC):
         pass
 
     @abstractmethod
-    async def find_by_id(self, alert_id: UUID) -> Optional[Alert]:
+    async def find_by_id(self, alert_id: UUID) -> Alert | None:
         """Find alert by ID"""
         pass
 
@@ -26,7 +26,7 @@ class IAlertRepository(ABC):
     async def find_by_machine(
         self,
         machine_id: UUID,
-        status: Optional[AlertStatus] = None,
+        status: AlertStatus | None = None,
         skip: int = 0,
         limit: int = 100,
     ) -> List[Alert]:
@@ -37,7 +37,7 @@ class IAlertRepository(ABC):
     async def find_by_site(
         self,
         site_id: UUID,
-        level: Optional[AlertLevel] = None,
+        level: AlertLevel | None = None,
         skip: int = 0,
         limit: int = 100,
     ) -> List[Alert]:

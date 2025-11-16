@@ -5,7 +5,7 @@ Enables end-to-end request tracing across services
 
 from __future__ import annotations
 
-from typing import Any, AsyncGenerator, Optional
+from typing import Any, AsyncGenerator
 
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
@@ -34,7 +34,7 @@ def setup_tracing(
     service_name: str = "aurumai-backend",
     service_version: str = "1.0.0",
     environment: str = "development",
-    otlp_endpoint: Optional[str] = None,
+    otlp_endpoint: str | None = None,
     console_export: bool = False,
 ) -> TracerProvider:
     """
@@ -181,7 +181,7 @@ def set_span_attributes(attributes: dict[str, Any]) -> None:
         span.set_attribute(key, value)
 
 
-def set_span_status(success: bool, description: Optional[str] = None) -> None:
+def set_span_status(success: bool, description: str | None = None) -> None:
     """
     Set the status of the current span.
 
@@ -203,7 +203,7 @@ def set_span_status(success: bool, description: Optional[str] = None) -> None:
         span.set_status(Status(StatusCode.ERROR, description))
 
 
-def record_exception(exception: Exception, attributes: Optional[dict[str, Any]] = None) -> None:
+def record_exception(exception: Exception, attributes: dict[str, Any | None] = None) -> None:
     """
     Record an exception in the current span.
 
@@ -282,8 +282,8 @@ class TracedOperation:
     def __init__(
         self,
         operation_name: str,
-        attributes: Optional[dict[str, Any]] = None,
-        tracer_name: Optional[str] = None,
+        attributes: dict[str, Any | None] = None,
+        tracer_name: str | None = None,
     ) -> None:
         """
         Initialize traced operation.
@@ -296,7 +296,7 @@ class TracedOperation:
         self.operation_name = operation_name
         self.attributes = attributes or {}
         self.tracer = get_tracer(tracer_name or __name__)
-        self.span: Optional[Span] = None
+        self.span: Span | None = None
 
     def __enter__(self) -> Span:
         """Start the span"""
@@ -324,7 +324,7 @@ class TracedOperation:
 
 async def traced_async_operation(
     operation_name: str,
-    attributes: Optional[dict[str, Any]] = None,
+    attributes: dict[str, Any | None] = None,
 ) -> AsyncGenerator[Span, None]:
     """
     Async context manager for creating custom spans.
@@ -357,7 +357,7 @@ async def traced_async_operation(
 # ============================================================================
 
 
-def get_trace_id() -> Optional[str]:
+def get_trace_id() -> str | None:
     """
     Get the current trace ID as a hex string.
 
@@ -374,7 +374,7 @@ def get_trace_id() -> Optional[str]:
     return None
 
 
-def get_span_id() -> Optional[str]:
+def get_span_id() -> str | None:
     """
     Get the current span ID as a hex string.
 

@@ -5,7 +5,7 @@ Handles machine information and metrics retrieval with comprehensive error handl
 
 import logging
 from datetime import datetime
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends
 
@@ -133,7 +133,7 @@ async def get_machine_metrics(
                 last_timestamp = None
 
         # Extract prediction
-        prediction: Optional[PredictionResponse] = None
+        prediction: PredictionResponse | None = None
         if (
             metrics.get("latest_prediction")
             and metrics["latest_prediction"].get("risk_score") is not None

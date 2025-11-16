@@ -4,7 +4,6 @@ Executes ML prediction for a machine and stores the result
 """
 
 from datetime import datetime
-from typing import Optional
 
 from domain.entities.prediction import Prediction
 from domain.repositories.machine_repository import IMachineRepository
@@ -105,7 +104,7 @@ class RunPredictionUseCase:
         history = await self.prediction_repo.get_history(machine_id, limit)
         return list(history)
 
-    async def get_latest(self, machine_id: str) -> Optional[Prediction]:
+    async def get_latest(self, machine_id: str) -> Prediction | None:
         """
         Get latest prediction for a machine.
 

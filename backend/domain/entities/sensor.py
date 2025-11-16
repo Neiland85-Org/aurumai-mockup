@@ -6,7 +6,7 @@ Represents physical or virtual sensors attached to machines.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 from uuid import UUID, uuid4
 
 
@@ -14,13 +14,13 @@ from uuid import UUID, uuid4
 class SensorSpec:
     """Technical specifications of a sensor"""
 
-    manufacturer: Optional[str] = None
-    model: Optional[str] = None
-    serial_number: Optional[str] = None
-    min_range: Optional[float] = None
-    max_range: Optional[float] = None
-    accuracy: Optional[float] = None
-    sampling_rate_hz: Optional[float] = None
+    manufacturer: str | None = None
+    model: str | None = None
+    serial_number: str | None = None
+    min_range: float | None = None
+    max_range: float | None = None
+    accuracy: float | None = None
+    sampling_rate_hz: float | None = None
 
 
 @dataclass
@@ -38,7 +38,7 @@ class Sensor:
     sensor_type: str  # vibration, temperature, pressure, rpm, power, flow, co2, nox, etc.
     unit: str  # mm/s, °C, bar, rpm, kW, l/h, ppm, etc.
     protocol: str  # modbus, opcua, mqtt, lora, canbus, analog
-    address: Optional[str] = None  # Protocol-specific address/tag
+    address: str | None = None  # Protocol-specific address/tag
     spec: SensorSpec = field(default_factory=SensorSpec)
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
@@ -52,8 +52,8 @@ class Sensor:
         sensor_type: str,
         unit: str,
         protocol: str,
-        address: Optional[str] = None,
-        spec: Optional[SensorSpec] = None,
+        address: str | None = None,
+        spec: SensorSpec | None = None,
     ) -> "Sensor":
         """Factory method to create a new sensor"""
         now = datetime.utcnow()

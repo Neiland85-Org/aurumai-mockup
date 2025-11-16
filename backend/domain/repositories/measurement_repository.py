@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Mapping, Optional, Sequence
+from typing import Mapping, Sequence
 from uuid import UUID
 
 from domain.entities.measurement import FeatureVector, RawMeasurement
@@ -65,7 +65,7 @@ class IMeasurementRepository(ABC):
         pass
 
     # Aliases for compatibility with use cases
-    async def get_latest_raw_measurement(self, machine_id: str) -> Optional[RawMeasurement]:
+    async def get_latest_raw_measurement(self, machine_id: str) -> RawMeasurement | None:
         """Get latest raw measurement for a machine"""
         # This should be implemented by concrete repositories
         return None
@@ -75,7 +75,7 @@ class IMeasurementRepository(ABC):
         # This should be implemented by concrete repositories
         return measurement
 
-    async def get_latest_features(self, machine_id: str) -> Optional[FeatureVector]:
+    async def get_latest_features(self, machine_id: str) -> FeatureVector | None:
         """Get latest feature vector for a machine"""
         # This should be implemented by concrete repositories
         return None

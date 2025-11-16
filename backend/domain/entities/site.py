@@ -6,7 +6,7 @@ Represents a mine, plant, factory, or any physical location where assets operate
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 from uuid import UUID, uuid4
 
 
@@ -16,9 +16,9 @@ class SiteLocation:
 
     latitude: float
     longitude: float
-    altitude: Optional[float] = None
-    address: Optional[str] = None
-    city: Optional[str] = None
+    altitude: float | None = None
+    address: str | None = None
+    city: str | None = None
     country: str = ""
 
 

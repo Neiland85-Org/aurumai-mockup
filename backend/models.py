@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Dict
 
 from pydantic import BaseModel, Field
 
@@ -26,7 +26,7 @@ class PredictionResponse(BaseModel):
     risk_score: float = Field(..., ge=0.0, le=1.0, description="Failure risk score 0-1")
     failure_probability: float = Field(..., ge=0.0, le=1.0, description="Probability of failure")
     confidence: float = Field(default=0.85, ge=0.0, le=1.0)
-    maintenance_hours: Optional[int] = None
+    maintenance_hours: int | None = None
 
 
 class ESGRequest(BaseModel):
@@ -38,18 +38,18 @@ class ESGResponse(BaseModel):
     timestamp: datetime
     instant_co2eq_kg: float = Field(..., description="Instant CO2eq in kg")
     cumulative_co2eq_kg: float = Field(..., description="Total accumulated CO2eq in kg")
-    fuel_rate_lh: Optional[float] = Field(None, description="Current fuel rate in l/h")
-    kwh: Optional[float] = Field(None, description="Current power consumption in kWh")
+    fuel_rate_lh: float | None = Field(None, description="Current fuel rate in l/h")
+    kwh: float | None = Field(None, description="Current power consumption in kWh")
     scope: str = Field(default="scope1", description="Emission scope")
 
 
 class MachineMetrics(BaseModel):
     machine_id: str
     current_status: str
-    last_measurement: Optional[datetime] = None
+    last_measurement: datetime | None = None
     metrics: Dict[str, float]
     alerts_count: int = 0
-    predictions: Optional[PredictionResponse] = None
+    predictions: PredictionResponse | None = None
 
 
 class MachineInfo(BaseModel):
@@ -57,4 +57,4 @@ class MachineInfo(BaseModel):
     machine_type: str
     site: str
     status: str
-    commissioned_date: Optional[datetime] = None
+    commissioned_date: datetime | None = None

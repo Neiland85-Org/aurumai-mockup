@@ -4,7 +4,7 @@ FeatureVector Value Object - Engineered features for ML
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List
 from uuid import UUID
 
 
@@ -21,7 +21,7 @@ class FeatureVector:
     timestamp: datetime
     window_size_seconds: int
     features: Dict[str, float]  # feature_name -> value
-    feature_names: Optional[List[str]] = None
+    feature_names: List[str | None] = None
 
     def __post_init__(self) -> None:
         """Initialize feature names list"""
