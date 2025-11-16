@@ -205,7 +205,8 @@ class Settings(BaseSettings):
 # Global settings instance
 settings: Settings
 try:
-    settings = Settings()
+    # type: ignore[call-arg] - BaseSettings loads from environment, not constructor args
+    settings = Settings()  # type: ignore[call-arg]
 except Exception as e:  # pragma: no cover - configuration errors must surface early
     import sys
 

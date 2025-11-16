@@ -285,43 +285,45 @@ jobs:
   # ============================================
   # DEPLOY TO STAGING
   # ============================================
-  deploy-staging:
-    name: 🚀 Deploy to Staging
-    runs-on: ubuntu-latest
-    needs: [build-backend, build-frontend]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    environment:
-      name: staging
-      url: https://staging.aurumai.com
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy to Cloud Run (Backend)
-        uses: google-github-actions/deploy-cloudrun@v1
-        with:
-          service: aurumai-backend-staging
-          image: ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
-          region: us-central1
-          env_vars: |
-            ENVIRONMENT=staging
-            LOG_LEVEL=INFO
-        # Descomentar cuando tengas GCP configurado
-        # credentials: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Deploy to Cloud Run (Frontend)
-        uses: google-github-actions/deploy-cloudrun@v1
-        with:
-          service: aurumai-frontend-staging
-          image: ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
-          region: us-central1
-        # Descomentar cuando tengas GCP configurado
-        # credentials: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Run smoke tests
-        run: |
-          echo "Running smoke tests against staging..."
-          curl -f https://staging.aurumai.com/health || exit 1
-          curl -f https://staging.aurumai.com/api/v1/health || exit 1
+  # NOTA: Deploy comentado temporalmente hasta configurar environment 'staging' en GitHub
+  # Para habilitar: Settings → Environments → New environment → "staging"
+  # deploy-staging:
+  #   name: 🚀 Deploy to Staging
+  #   runs-on: ubuntu-latest
+  #   needs: [build-backend, build-frontend]
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  #   environment:
+  #     name: staging
+  #     url: https://staging.aurumai.com
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #
+  #     - name: Deploy to Cloud Run (Backend)
+  #       uses: google-github-actions/deploy-cloudrun@v1
+  #       with:
+  #         service: aurumai-backend-staging
+  #         image: ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
+  #         region: us-central1
+  #         env_vars: |
+  #           ENVIRONMENT=staging
+  #           LOG_LEVEL=INFO
+  #       # Descomentar cuando tengas GCP configurado
+  #       # credentials: ${{ secrets.GCP_SA_KEY }}
+  #
+  #     - name: Deploy to Cloud Run (Frontend)
+  #       uses: google-github-actions/deploy-cloudrun@v1
+  #       with:
+  #         service: aurumai-frontend-staging
+  #         image: ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+  #         region: us-central1
+  #       # Descomentar cuando tengas GCP configurado
+  #       # credentials: ${{ secrets.GCP_SA_KEY }}
+  #
+  #     - name: Run smoke tests
+  #       run: |
+  #         echo "Running smoke tests against staging..."
+  #         curl -f https://staging.aurumai.com/health || exit 1
+  #         curl -f https://staging.aurumai.com/api/v1/health || exit 1
 
   # ============================================
   # NOTIFICATIONS
