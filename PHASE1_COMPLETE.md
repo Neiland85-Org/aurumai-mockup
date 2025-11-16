@@ -12,7 +12,8 @@ Migrar los endpoints actuales de arquitectura monolítica a **arquitectura hexag
 
 ### 1. Infraestructura de Base de Datos PostgreSQL + TimescaleDB
 
-#### Archivos Creados:
+#### Archivos Creados
+
 - **backend/infrastructure/db/postgres_config.py** - Configuración async de PostgreSQL con TimescaleDB
   - AsyncEngine con SQLAlchemy 2.0
   - Session factory con async/await support
@@ -29,8 +30,10 @@ Migrar los endpoints actuales de arquitectura monolítica a **arquitectura hexag
 
 ### 2. Entidades de Dominio
 
-#### Archivos Creados:
+#### Archivos Creados
+
 - **backend/domain/entities/machine.py**
+
   ```python
   @dataclass
   class Machine:
@@ -45,6 +48,7 @@ Migrar los endpoints actuales de arquitectura monolítica a **arquitectura hexag
   - `FeatureVector` - Features ingenieradas
 
 - **backend/domain/entities/prediction.py**
+
   ```python
   @dataclass
   class Prediction:
@@ -58,6 +62,7 @@ Migrar los endpoints actuales de arquitectura monolítica a **arquitectura hexag
   ```
 
 - **backend/domain/entities/esg.py**
+
   ```python
   @dataclass
   class ESGRecord:
@@ -71,7 +76,8 @@ Migrar los endpoints actuales de arquitectura monolítica a **arquitectura hexag
 
 ### 3. Servicios de Dominio
 
-#### Archivos Creados:
+#### Archivos Creados
+
 - **backend/domain/services/ml_service.py** - Interfaz IMLService
 - **backend/domain/services/ml_service_impl.py** - Implementación con heurísticas
   - Motor ML mock pero creíble
@@ -86,7 +92,8 @@ Migrar los endpoints actuales de arquitectura monolítica a **arquitectura hexag
 
 ### 4. Repositorios Concretos (PostgreSQL)
 
-#### Archivos Creados:
+#### Archivos Creados
+
 - **backend/infrastructure/adapters/output/postgres/postgres_machine_repository.py**
   - Implementa `IMachineRepository`
   - CRUD completo para máquinas
@@ -109,8 +116,10 @@ Migrar los endpoints actuales de arquitectura monolítica a **arquitectura hexag
 
 ### 5. Casos de Uso (Application Layer)
 
-#### Archivos Creados:
+#### Archivos Creados
+
 - **backend/application/use_cases/ingest/ingest_telemetry_use_case.py**
+
   ```python
   class IngestTelemetryUseCase:
       async def execute_raw(machine_id, timestamp, metrics)
@@ -119,6 +128,7 @@ Migrar los endpoints actuales de arquitectura monolítica a **arquitectura hexag
   ```
 
 - **backend/application/use_cases/prediction/run_prediction_use_case.py**
+
   ```python
   class RunPredictionUseCase:
       async def execute(machine_id) -> Prediction
@@ -127,6 +137,7 @@ Migrar los endpoints actuales de arquitectura monolítica a **arquitectura hexag
   ```
 
 - **backend/application/use_cases/esg/calculate_esg_use_case.py**
+
   ```python
   class CalculateESGUseCase:
       async def execute(machine_id) -> ESGRecord
@@ -135,6 +146,7 @@ Migrar los endpoints actuales de arquitectura monolítica a **arquitectura hexag
   ```
 
 - **backend/application/use_cases/machines/get_machine_metrics_use_case.py**
+
   ```python
   class GetMachineMetricsUseCase:
       async def execute(machine_id)
@@ -145,7 +157,8 @@ Migrar los endpoints actuales de arquitectura monolítica a **arquitectura hexag
 
 ### 6. Dependency Injection
 
-#### Archivo Creado:
+#### Archivo Creado
+
 - **backend/api/dependencies.py**
   - Factory functions para cada use case
   - Inyección automática de repositorios y servicios
@@ -160,7 +173,8 @@ async def get_ingest_telemetry_use_case(db: AsyncSession = Depends(get_db)):
 
 ### 7. Routers Refactorizados
 
-#### Archivos Refactorizados:
+#### Archivos Refactorizados
+
 - **backend/api/routers/ingest.py** ✅ REFACTORIZADO
   - POST /ingest/raw - Usa IngestTelemetryUseCase
   - POST /ingest/features - Usa IngestTelemetryUseCase
@@ -180,8 +194,10 @@ async def get_ingest_telemetry_use_case(db: AsyncSession = Depends(get_db)):
 
 ### 8. Docker Compose
 
-#### Archivo Actualizado:
+#### Archivo Actualizado
+
 - **docker-compose.yml** ✅ POSTGRESQL + TIMESCALEDB
+
   ```yaml
   services:
     postgres:
@@ -206,6 +222,7 @@ async def get_ingest_telemetry_use_case(db: AsyncSession = Depends(get_db)):
 ## 📊 Comparación ANTES vs DESPUÉS
 
 ### ANTES (Arquitectura Monolítica)
+
 ```python
 # Router con lógica de negocio embebida
 @router.post("/predict/")
@@ -226,6 +243,7 @@ async def predict(machine_id: str):
 ```
 
 **Problemas**:
+
 - ❌ Lógica de negocio mezclada con infraestructura
 - ❌ Imposible testear sin base de datos
 - ❌ Difícil cambiar de SQLite a PostgreSQL
@@ -233,6 +251,7 @@ async def predict(machine_id: str):
 - ❌ Código no reutilizable
 
 ### DESPUÉS (Arquitectura Hexagonal)
+
 ```python
 # Router (delgado, solo maneja HTTP)
 @router.post("/", response_model=PredictionResponse)
@@ -271,6 +290,7 @@ class PostgresPredictionRepository(IPredictionRepository):
 ```
 
 **Beneficios**:
+
 - ✅ Separación clara de responsabilidades
 - ✅ Fácil de testear (mock de repositorios)
 - ✅ Cambiar base de datos solo afecta repositorios
@@ -330,6 +350,7 @@ class PostgresPredictionRepository(IPredictionRepository):
 ## 🚀 Próximos Pasos
 
 **Fase 2: Expansión de Endpoints (Semana 2-3)**
+
 - Implementar endpoints de alertas (10 endpoints)
 - Implementar endpoints de anomalías (8 endpoints)
 - Implementar endpoints de mantenimiento (7 endpoints)
@@ -337,6 +358,7 @@ class PostgresPredictionRepository(IPredictionRepository):
 - Total: 31 endpoints nuevos
 
 **Fase 3: Features Avanzadas (Semana 4-5)**
+
 - Multi-tenancy support
 - Authentication & Authorization
 - WebSockets para real-time
@@ -344,6 +366,7 @@ class PostgresPredictionRepository(IPredictionRepository):
 - Total: 22 endpoints nuevos
 
 **Fase 4: Analytics & Admin (Semana 6-7)**
+
 - Analytics dashboard
 - Admin panel
 - Audit logs

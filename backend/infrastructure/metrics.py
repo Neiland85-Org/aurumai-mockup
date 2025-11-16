@@ -6,7 +6,7 @@ Centralized metrics collection for observability
 import asyncio
 import functools
 import time
-from typing import Callable, Dict, Optional, TypeVar
+from typing import Callable, Dict, TypeVar
 
 from prometheus_client import (
     REGISTRY,
@@ -233,7 +233,7 @@ def track_ingestion(
     data_type: str,
     duration: float,
     success: bool = True,
-    error_type: Optional[str] = None,
+    error_type: str | None = None,
 ) -> None:
     """
     Track data ingestion metrics.
@@ -252,7 +252,7 @@ def track_ingestion(
         data_ingestion_errors_total.labels(machine_id=machine_id, error_type=error_type).inc()
 
 
-def track_circuit_breaker(name: str, state: str, success: Optional[bool] = None) -> None:
+def track_circuit_breaker(name: str, state: str, success: bool | None = None) -> None:
     """
     Track circuit breaker metrics.
 
@@ -313,7 +313,7 @@ def track_validation_error(field: str, constraint: str) -> None:
 
 
 def track_time(
-    metric: Histogram, labels: Optional[Dict[str, str]] = None
+    metric: Histogram, labels: Dict[str, str] | None = None
 ) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
     Decorator to track function execution time.

@@ -484,6 +484,7 @@ rm backend/infrastructure/db/database.py
    ```
 
 3. **✅ Fix: .vscode/settings.json**
+
    ```bash
    # Cambiar formatter de "ms-python.python" a "ms-python.black-formatter"
    # O instalar extensión: code --install-extension ms-python.black-formatter
@@ -512,6 +513,7 @@ rm backend/infrastructure/db/database.py
    ```
 
 6. **🧹 Limpieza: Eliminar archivos temporales**
+
    ```bash
    rm TYPESCRIPT_VALIDATION.md
    ```
@@ -526,6 +528,7 @@ rm backend/infrastructure/db/database.py
    ```
 
 8. **🎨 Refactor: Extraer ErrorFallback component**
+
    ```bash
    # Mover UI de ErrorBoundary.tsx a componente separado
    ```
@@ -603,11 +606,11 @@ echo "✅ Todas las validaciones pasaron!"
 
 ## ✅ VEREDICTO FINAL
 
-### Antes de aplicar fixes:
+### Antes de aplicar fixes
 
 ❌ **NO COMMITEAR** - 3 errores críticos detectados
 
-### Después de aplicar fixes:
+### Después de aplicar fixes
 
 ✅ **APTO PARA COMMIT** con las siguientes condiciones:
 
@@ -616,11 +619,11 @@ echo "✅ Todas las validaciones pasaron!"
 3. ✅ Ejecutar tests: `pytest backend/tests/test_smoke.py`
 4. ✅ Verificar build: `npm run build` (frontend)
 
-### Calidad del código:
+### Calidad del código
 
 🌟 **EXCELENTE** - La arquitectura hexagonal está bien implementada, los tipos son estrictos, y el error handling es robusto.
 
-### Deuda técnica:
+### Deuda técnica
 
 ⚠️ **BAJA** - Solo la duplicación de routers `*_simple.py` requiere clarificación.
 

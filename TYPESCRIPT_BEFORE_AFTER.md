@@ -19,6 +19,7 @@ export async function getMachines() {
 ```
 
 **Problemas:**
+
 - ❌ `fetchJSON()` retorna `Promise<any>`
 - ❌ `getMachines()` retorna `any`
 - ❌ Callers no saben qué estructura esperar
@@ -51,6 +52,7 @@ export async function getPrediction(machineId: string): Promise<Prediction> {
 ```
 
 **Mejoras:**
+
 - ✅ `fetchJSON<T>()` es genérica, totalmente reutilizable
 - ✅ `getMachines()` retorna `Promise<Machine[]>` explícito
 - ✅ Callers saben exactamente qué obtienen
@@ -104,6 +106,7 @@ export default function HomePage() {
 ```
 
 **Problemas:**
+
 - ❌ `machines` inferred como `unknown[]` (no es específico)
 - ❌ `.map((m: any) => ...)` - casting explícito a `any`
 - ❌ Typos en propiedades no se detectan
@@ -156,6 +159,7 @@ export default function HomePage(): ReactElement {
 ```
 
 **Mejoras:**
+
 - ✅ `machines: Machine[]` - tipo específico y reutilizable
 - ✅ `.map((m: Machine) => ...)` - no necesita `any`, se infiere
 - ✅ Typos detectados en compilación: `m.machi_id` → ERROR
@@ -209,6 +213,7 @@ export default function PredictivePage(): ReactElement {
 ```
 
 **Mejoras:**
+
 - ✅ Unión tipada: `useState<Prediction | null>(null)`
 - ✅ Variable `riskColor: string` tipada explícitamente
 - ✅ Estados coherentes y claros
@@ -246,6 +251,7 @@ export default MetricCard;
 ```
 
 **Problemas:**
+
 - ❌ `React.FC` es deprecado (Next.js 17+)
 - ❌ Import `React` innecesario
 - ❌ Interfaz genérica `Props` (no descriptiva)
@@ -284,6 +290,7 @@ export default function MetricCard({
 ```
 
 **Mejoras:**
+
 - ✅ Función con return type `ReactElement` explícito
 - ✅ Sin `React` import (ya no requerido)
 - ✅ Interfaz nombrada `MetricCardProps` (clara)
@@ -353,6 +360,7 @@ export default function LineChart({
 ```
 
 **Mejoras:**
+
 - ✅ Interfaz `Point` para claridad
 - ✅ Todas variables locales tipadas: `maxVal: number`, etc.
 - ✅ Array tipos explícito: `points: Point[]`
@@ -377,12 +385,14 @@ export default function LineChart({
 ## 🎯 Resumen de Impacto
 
 ### Para el Desarrollador
+
 - ✅ **IDE Intellisense:** 100% preciso (antes ~30%)
 - ✅ **Errores en compilación:** Se detectan antes de runtime
 - ✅ **Refactoring seguro:** Cambios se propagan automáticamente
 - ✅ **Menos debugging:** Menos bugs sutiles
 
 ### Para el Proyecto
+
 - ✅ **Mantenibilidad:** Tipos sirven como documentación
 - ✅ **Onboarding:** Nuevos devs entienden estructura rápidamente
 - ✅ **CI/CD:** Errores de tipo bloqueados en pre-commit

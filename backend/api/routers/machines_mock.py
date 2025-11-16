@@ -5,7 +5,7 @@ This file provides sample data for development without requiring PostgreSQL.
 """
 
 import logging
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from fastapi import APIRouter, Request

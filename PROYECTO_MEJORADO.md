@@ -13,6 +13,7 @@ El proyecto ha sido mejorado y completado exitosamente. Ahora tienes un **mockup
 **Ubicación**: `backend/`
 
 **Componentes principales**:
+
 - ✅ `app.py` - Aplicación FastAPI con CORS configurado
 - ✅ `models.py` - Modelos Pydantic para validación
 - ✅ `infrastructure/db/database.py` - Setup SQLite con tablas operacionales
@@ -25,6 +26,7 @@ El proyecto ha sido mejorado y completado exitosamente. Ahora tienes un **mockup
 - ✅ `services/esg_engine.py` - Calculadora ESG con factores IPCC
 
 **Endpoints disponibles**:
+
 ```
 POST /ingest/raw          - Ingerir datos raw
 POST /ingest/features     - Ingestar features engineered
@@ -38,6 +40,7 @@ GET  /esg/history/{id}      - Historial ESG
 ```
 
 **Base de datos**:
+
 - SQLite con 5 tablas operacionales
 - 3 máquinas pre-cargadas (TRUCK-21, MILL-3, BOILER-7)
 - Índices optimizados para queries temporales
@@ -47,6 +50,7 @@ GET  /esg/history/{id}      - Historial ESG
 **Ubicación**: `iot-sim/`
 
 **Características**:
+
 - ✅ Simula 3 máquinas industriales con perfiles realistas
 - ✅ Envía telemetría cada 3 segundos
 - ✅ Métricas específicas por tipo de máquina:
@@ -60,6 +64,7 @@ GET  /esg/history/{id}      - Historial ESG
 - ✅ Detección inteligente de anomalías por tipo de máquina
 
 **Módulos**:
+
 - `config.py` - Configuración de máquinas y rangos
 - `anomalies.py` - Generación de anomalías realistas
 - `generator.py` - Motor de simulación asíncrono
@@ -69,6 +74,7 @@ GET  /esg/history/{id}      - Historial ESG
 **Ubicación**: `edge-sim/`
 
 **Características**:
+
 - ✅ Recibe telemetría del IoT Simulator
 - ✅ Buffer local en memoria (store & forward)
 - ✅ Feature engineering básico:
@@ -79,6 +85,7 @@ GET  /esg/history/{id}      - Historial ESG
 - ✅ API REST para health checks
 
 **Módulos**:
+
 - `main.py` - Servidor FastAPI del edge
 - `buffer.py` - Buffer thread-safe
 - `features.py` - Feature engineering
@@ -90,6 +97,7 @@ GET  /esg/history/{id}      - Historial ESG
 **Ubicación**: `frontend/`
 
 **Vistas implementadas**:
+
 1. ✅ **Overview** (`pages/index.tsx`)
    - Lista de máquinas operacionales
    - Navegación a otras vistas
@@ -109,12 +117,14 @@ GET  /esg/history/{id}      - Historial ESG
    - Actualización cada 5s
 
 **Componentes**:
+
 - ✅ `MachineCard.tsx` - Tarjeta de máquina
 - ✅ `MetricCard.tsx` - Tarjeta de métrica
 - ✅ `LineChart.tsx` - Gráfico SVG simple
 - ✅ `api.ts` - Cliente API REST
 
 **Estilos**:
+
 - TailwindCSS configurado
 - Paleta oscura profesional (negro, gris, amarillo, verde)
 - Diseño responsive
@@ -124,17 +134,20 @@ GET  /esg/history/{id}      - Historial ESG
 **Archivo**: `docker-compose.yml`
 
 **Servicios**:
+
 - ✅ `backend` - FastAPI backend (port 8000)
 - ✅ `edge-sim` - Edge node (port 9000)
 - ✅ `iot-sim` - IoT simulator (background)
 - ✅ `frontend` - Next.js dashboard (port 3000)
 
 **Networking**:
+
 - Red privada `aurumai-network`
 - Health checks configurados
 - Dependencias correctas entre servicios
 
 **Volúmenes**:
+
 - `backend-data` para persistencia de DB
 
 ### 6. Servicios Inteligentes
@@ -142,6 +155,7 @@ GET  /esg/history/{id}      - Historial ESG
 #### ML Engine (`services/ml_engine.py`)
 
 **Características**:
+
 - Modelo fake pero creíble basado en heurísticas
 - Risk score basado en:
   - Vibración (↑ vibración = ↑ riesgo)
@@ -155,6 +169,7 @@ GET  /esg/history/{id}      - Historial ESG
 #### ESG Calculator (`services/esg_engine.py`)
 
 **Características**:
+
 - Factores de emisión IPCC/EPA:
   - Diesel: 2.68 kg CO₂/litro
   - Electricidad LATAM: 0.45 kg CO₂/kWh
@@ -240,6 +255,7 @@ open http://localhost:8000/docs
 Ver [START_DEMO.md](./START_DEMO.md) para script completo de presentación (10-15 min).
 
 **Flujo recomendado**:
+
 1. Overview → Mostrar las 3 máquinas
 2. Predictive → Demostrar ML en tiempo real
 3. ESG → Mostrar cálculo de emisiones
@@ -252,6 +268,7 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 ## 🎯 Casos de Uso Demostrados
 
 ### 1. Mantenimiento Predictivo
+
 - ✅ Ingesta de telemetría en tiempo real
 - ✅ Feature engineering automático
 - ✅ Predicción de fallos
@@ -259,6 +276,7 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 - ✅ Alertas basadas en umbrales
 
 ### 2. ESG / Carbono
+
 - ✅ Cálculo CO₂eq instantáneo
 - ✅ Tracking acumulado de emisiones
 - ✅ Factores de emisión estándar (IPCC/EPA)
@@ -266,6 +284,7 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 - ✅ Identificación de mayores emisores
 
 ### 3. Monitoreo Operacional
+
 - ✅ Dashboard en tiempo real
 - ✅ Vista multi-máquina
 - ✅ Métricas operacionales clave
@@ -274,22 +293,26 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 ## 🔧 Tecnologías Usadas
 
 ### Backend
+
 - **FastAPI** 0.109+ - Framework web async
 - **Pydantic** 2.5+ - Validación de datos
 - **SQLite** - Base de datos (mockup)
 - **Python** 3.11+
 
 ### Frontend
+
 - **Next.js** 14+ - Framework React
 - **TailwindCSS** 3.4+ - Styling
 - **TypeScript** - Type safety
 
 ### Simuladores
+
 - **httpx** - Cliente HTTP async
 - **asyncio** - Concurrencia
 - **Python** 3.11+
 
 ### Infraestructura
+
 - **Docker** & **Docker Compose**
 - **SQLite** (mockup) → PostgreSQL + TimescaleDB (producción)
 
@@ -307,6 +330,7 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 ## 🎓 Arquitectura Aplicada
 
 ### Principios Seguidos
+
 - ✅ **Arquitectura Hexagonal** (Ports & Adapters)
 - ✅ **Domain-Driven Design** (entidades ricas)
 - ✅ **Separation of Concerns** (dominio vs infraestructura)
@@ -314,6 +338,7 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 - ✅ **Multi-tenant ready** (aunque simplificado en mockup)
 
 ### Escalabilidad
+
 - ✅ De SQLite → PostgreSQL sin cambios en dominio
 - ✅ De 3 máquinas → 10,000 máquinas sin refactor
 - ✅ De ML fake → ML real (solo cambiar servicios)
@@ -322,12 +347,14 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 ## ⚡ Próximos Pasos Sugeridos
 
 ### Corto Plazo (1-2 semanas)
+
 1. [ ] Probar la demo con stakeholders reales
 2. [ ] Recopilar feedback de usuarios
 3. [ ] Ajustar UI según feedback
 4. [ ] Añadir más máquinas simuladas si necesario
 
 ### Medio Plazo (1-2 meses)
+
 1. [ ] Migrar a PostgreSQL + TimescaleDB
 2. [ ] Implementar autenticación (JWT)
 3. [ ] Entrenar modelos ML reales
@@ -335,6 +362,7 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 5. [ ] Setup CI/CD pipeline
 
 ### Largo Plazo (3-6 meses)
+
 1. [ ] Desplegar en producción (AWS/Azure)
 2. [ ] Conectar sensores reales (MQTT/OPC-UA)
 3. [ ] Implementar multi-tenant real
@@ -344,6 +372,7 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 ## 🏆 Logros del Proyecto
 
 ### ✅ Funcionalidad
+
 - Backend REST API completamente operacional
 - Frontend dashboard responsive y funcional
 - Simuladores realistas con anomalías programadas
@@ -351,6 +380,7 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 - Docker Compose listo para demo
 
 ### ✅ Calidad
+
 - Código limpio y profesional
 - Arquitectura escalable
 - Documentación completa
@@ -358,6 +388,7 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 - Separación clara de responsabilidades
 
 ### ✅ Presentabilidad
+
 - UI minimalista y profesional
 - Datos realistas (no juguete)
 - Flujo demo claro
@@ -367,6 +398,7 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 ## 📞 Soporte
 
 ### Documentación Disponible
+
 - [README.md](./README.md) - Quick start
 - [SETUP.md](./SETUP.md) - Setup detallado
 - [START_DEMO.md](./START_DEMO.md) - Guía de presentación
@@ -375,6 +407,7 @@ Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
 - [STATUS.md](./STATUS.md) - Estado del proyecto
 
 ### Troubleshooting
+
 Ver sección de troubleshooting en [SETUP.md](./SETUP.md#troubleshooting)
 
 ## 🎉 Conclusión
@@ -382,6 +415,7 @@ Ver sección de troubleshooting en [SETUP.md](./SETUP.md#troubleshooting)
 El proyecto **AurumAI Mockup Demo** está **100% completo y funcional**.
 
 Tienes en tus manos:
+
 - ✅ Un mockup demo profesional listo para presentar
 - ✅ Arquitectura sólida preparada para escalar
 - ✅ Código limpio y bien documentado
@@ -389,6 +423,7 @@ Tienes en tus manos:
 - ✅ Flujo de demo comercial definido
 
 **Ya puedes**:
+
 - Presentarlo a inversores
 - Mostrarlo a clientes industriales
 - Usarlo como base para el producto real

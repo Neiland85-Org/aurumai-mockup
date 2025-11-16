@@ -6,17 +6,20 @@
 ## ✅ Soluciones Implementadas
 
 ### 1️⃣ Backend Lint (Black) - FIXED
+
 - Ejecutado `black .` en 24 archivos
 - Todos los archivos formateados correctamente
 - CI check: ✅ PASS
 
 ### 2️⃣ Frontend Lint (ESLint) - FIXED  
+
 - ESLint downgrade: v9.39.1 → v8.57.0
 - Config simplificada: solo `next/core-web-vitals`
 - Links HTML → Next.js Link components (4 fixes)
 - CI check: ✅ PASS (0 errors, 2 warnings)
 
 ### 3️⃣ Security Scan - FIXED
+
 - upload-artifact: v3 → v4
 - GitHub Action actualizada
 - CI check: ✅ PASS

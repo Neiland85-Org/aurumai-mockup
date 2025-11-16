@@ -213,14 +213,14 @@ TOTAL DEMO FUNCIONAL:    2.5-4.5 semanas ⚡
 
 ## 🎯 Decisión Recomendada
 
-### ✅ Usar Versión Simplificada Para:
+### ✅ Usar Versión Simplificada Para
 
 - Mockup demo inicial
 - Validación de arquitectura
 - Presentaciones a stakeholders
 - Pruebas de concepto
 
-### ⏰ Migrar a Versión Completa Para:
+### ⏰ Migrar a Versión Completa Para
 
 - MVP en producción
 - Sites con conectividad pobre
