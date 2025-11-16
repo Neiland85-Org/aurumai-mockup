@@ -113,9 +113,7 @@ class ErrorDetails(BaseModel):
     field: str | None = Field(default=None, description="Field that caused the error")
     constraint: str | None = Field(default=None, description="Constraint that was violated")
     provided_value: Any = Field(default=None, description="Value that was provided")
-    expected_format: str | None = Field(
-        default=None, description="Expected format for the field"
-    )
+    expected_format: str | None = Field(default=None, description="Expected format for the field")
 
 
 class ErrorResponse(BaseModel):
