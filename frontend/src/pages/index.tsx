@@ -1,4 +1,5 @@
 import { useEffect, useState, ReactElement } from 'react';
+import Link from 'next/link';
 import MachineCard from '../components/MachineCard';
 import { API_BASE } from '../lib/api';
 import type { Machine } from '@/types';
@@ -110,18 +111,18 @@ export default function HomePage(): ReactElement {
       )}
 
       <div className="flex gap-4 mt-8">
-        <a
+        <Link
           href="/predictive"
           className="bg-yellow-600 hover:bg-yellow-700 px-6 py-3 rounded-lg font-semibold transition"
         >
           Predictive Maintenance
-        </a>
-        <a
+        </Link>
+        <Link
           href="/esg"
           className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold transition"
         >
           ESG / Carbon
-        </a>
+        </Link>
       </div>
     </div>
   );
