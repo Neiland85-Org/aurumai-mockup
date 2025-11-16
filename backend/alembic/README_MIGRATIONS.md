@@ -398,7 +398,7 @@ If you encounter issues:
 1. Check this README
 2. Review Alembic logs: `alembic upgrade head --verbose`
 3. Check application logs: `make logs`
-4. Ask the team in Slack
+4. Ask the team via email
 5. Create an issue in the repository
 
 ---

@@ -50,7 +50,7 @@ cryptography: (sin instalar directamente)
 7. **build-backend** - Docker build + push a GHCR
 8. **build-frontend** - Docker build + push a GHCR
 9. **deploy-staging** - Cloud Run deployment
-10. **notify** - Slack notifications on failure
+10. **notify** - Email notifications on failure
 
 ✅ **Triggers:**
 
@@ -374,7 +374,7 @@ Signup + conectar Prometheus
 - ✅ Tests con coverage
 - ✅ Docker build y push a GHCR
 - ✅ Deploy automático a staging
-- ✅ Notificaciones Slack
+- ✅ Notificaciones por email
 
 **Beneficios:**
 

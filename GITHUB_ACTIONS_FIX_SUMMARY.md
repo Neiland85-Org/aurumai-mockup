@@ -156,7 +156,7 @@ deploy-staging:
 | build-backend      | ✅     | Docker image                |
 | build-frontend     | ✅     | Docker image                |
 | **deploy-staging** | ⏸️     | **Comentado temporalmente** |
-| notify             | ✅     | Slack notifications         |
+| notify             | ✅     | Email notifications         |
 
 ### Workflow Trigger
 

@@ -259,7 +259,6 @@ find $BACKUP_DIR -name "backup_*.sql.gz" -mtime +7 -delete
   - Database connections > 80%
   - Disk space < 20%
   - Memory usage > 90%
-- [ ] Integración con Slack/PagerDuty
 - [ ] Runbook para cada alerta
 
 **Ejemplo alert rule:**

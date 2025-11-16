@@ -91,7 +91,7 @@ The tool generates:
 
 5. **Never share secrets via:**
    - Email
-   - Chat (Slack, Teams, Discord)
+   - Chat (Teams, Discord)
    - Screenshots
    - Video recordings
    - Public repositories

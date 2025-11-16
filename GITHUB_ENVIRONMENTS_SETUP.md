@@ -177,7 +177,7 @@ Secrets:
    ↓
 8. Smoke Tests: Verifica health endpoints
    ↓
-9. Notificación: Slack (si configurado)
+9. Notificación: Email (si configurado)
 ```
 
 ### Sin Environment (Estado Actual):

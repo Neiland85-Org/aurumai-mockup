@@ -247,12 +247,6 @@ groups:
 Configurar en Grafana UI:
 
 ```bash
-# Slack
-1. Alerting → Notification channels
-2. New channel → Slack
-3. Webhook URL: https://hooks.slack.com/services/YOUR/WEBHOOK/URL
-4. Test y Save
-
 # Email
 1. Alerting → Notification channels
 2. New channel → Email

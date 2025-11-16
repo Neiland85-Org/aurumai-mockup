@@ -273,7 +273,7 @@ open https://github.com/Neiland85-Org/aurumai-mockup/actions
 
 - Staging a Cloud Run
 - Smoke tests post-deploy
-- Slack notifications
+- Notificaciones por email
 
 ---
 

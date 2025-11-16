@@ -159,6 +159,7 @@ iot-sim/
 ```
 
 **Máquinas a simular:**
+
 - TRUCK-21 (mining truck)
 - MILL-3 (grinding mill)
 - BOILER-7 (industrial boiler)
@@ -226,22 +227,26 @@ frontend/
 ### 3.2 Componentes clave (5-7 días)
 
 **Dashboard Principal:**
+
 - Vista general de máquinas
 - KPIs: máquinas activas, alertas abiertas, CO₂ hoy
 - Mapa de site
 
 **Vista Predictiva:**
+
 - Gráfico de vibración, temperatura, RPM en tiempo real
 - Tarjeta "Riesgo de fallo" con ML score
 - Histórico de predicciones
 
 **Vista ESG:**
+
 - CO₂eq instantáneo y acumulado
 - Desglose por scope (1, 2, 3)
 - Gráfico de emisiones por máquina
 - Export de reporte PDF/Excel
 
 **Lista de Máquinas:**
+
 - Tabla con filtros
 - Estado operacional
 - Última predicción
@@ -342,6 +347,7 @@ volumes:
 ### 4.2 Dockerfiles
 
 Crear Dockerfiles para:
+
 - backend/Dockerfile
 - frontend/Dockerfile
 - edge-sim/Dockerfile
@@ -394,7 +400,7 @@ scripts/
 - Prometheus + Grafana
 - OpenTelemetry tracing
 - Structured logging (ELK stack)
-- Alerting (PagerDuty, Slack)
+- Alerting (PagerDuty)
 
 ### 6.3 Seguridad
 
@@ -414,6 +420,7 @@ scripts/
 ## Priorización por Valor
 
 ### Alta prioridad (para demo funcional)
+
 1. ✅ Domain layer completo
 2. 🔄 Application use cases básicos
 3. 🔄 API REST funcional
@@ -422,6 +429,7 @@ scripts/
 6. 🔄 Docker Compose
 
 ### Media prioridad (para MVP)
+
 1. ML engine real
 2. ESG calculator avanzado
 3. Dashboard completo
@@ -429,6 +437,7 @@ scripts/
 5. Documentación de API
 
 ### Baja prioridad (para producción)
+
 1. Kubernetes
 2. Multi-región activa
 3. Integraciones externas
@@ -437,15 +446,15 @@ scripts/
 
 ## Estimaciones Totales
 
-| Fase | Descripción | Tiempo estimado |
-|------|-------------|-----------------|
-| ✅ 0 | Arquitectura & Domain | **Completado** |
-| 1 | Backend MVP | 1-2 semanas |
-| 2 | Edge & IoT Simulators | 1 semana |
-| 3 | Frontend Dashboard | 1-2 semanas |
-| 4 | Docker & Deployment | 2-3 días |
-| 5 | ML Real & ESG Avanzado | 2-3 semanas |
-| 6 | Producción | 3-6 meses |
+| Fase | Descripción            | Tiempo estimado |
+| ---- | ---------------------- | --------------- |
+| ✅ 0 | Arquitectura & Domain  | **Completado**  |
+| 1    | Backend MVP            | 1-2 semanas     |
+| 2    | Edge & IoT Simulators  | 1 semana        |
+| 3    | Frontend Dashboard     | 1-2 semanas     |
+| 4    | Docker & Deployment    | 2-3 días        |
+| 5    | ML Real & ESG Avanzado | 2-3 semanas     |
+| 6    | Producción             | 3-6 meses       |
 
 **Total para demo funcional:** 3-5 semanas
 **Total para MVP completo:** 2-3 meses
@@ -454,18 +463,21 @@ scripts/
 ## Próximos Pasos Inmediatos
 
 ### Esta semana
+
 1. Implementar use cases de aplicación (IngestTelemetry, ComputePrediction, CalculateEmissions)
 2. Crear repositorios PostgreSQL básicos
 3. Implementar routers FastAPI (ingest, machines, metrics)
 4. Configurar base de datos con SQLAlchemy
 
 ### Próxima semana
+
 1. ML Engine fake funcional
 2. ESG Calculator con factores básicos
 3. Completar API REST
 4. Iniciar IoT simulator
 
 ### Semana 3
+
 1. Edge simulator funcional
 2. Integración MQTT
 3. Iniciar frontend Next.js
