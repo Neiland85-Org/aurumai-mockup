@@ -68,6 +68,7 @@
 ### Dependencias Instaladas
 
 **Backend:**
+
 - `tenacity==8.2.3` - Reintentos con backoff exponencial
 - `pybreaker==1.0.2` - Circuit breakers
 - `opentelemetry-api==1.22.0` - API de tracing
@@ -76,6 +77,7 @@
 - `opentelemetry-exporter-otlp==1.22.0` - Exportador OTLP
 
 **IoT Simulator:**
+
 - `python-json-logger>=2.0.7` - Logging JSON
 - `tenacity>=8.2.3` - Reintentos
 - `pybreaker>=1.0.2` - Circuit breakers
@@ -148,12 +150,15 @@ iot-sim/observability.py (350 líneas)
 ### Backend
 
 **Validación 1: Imports**
+
 ```bash
 python -c "from app import app; print('✅ Backend imports OK')"
 ```
+
 **Resultado:** ✅ Exitoso
 
 **Output de Logs JSON:**
+
 ```json
 {"timestamp": "2025-11-15T16:28:12.fZ", "severity": "INFO", "logger": "root", 
  "message": "Initializing AurumAI Backend", "app_name": "AurumAI Platform", 
@@ -161,18 +166,21 @@ python -c "from app import app; print('✅ Backend imports OK')"
 ```
 
 **Validación 2: Endpoints**
+
 ```bash
 curl http://localhost:8000/metrics | head -20
 curl http://localhost:8000/health | jq
 ```
 
 **Resultado:** ✅ Exitoso
+
 - `/metrics`: Formato Prometheus con métricas Python GC + http_requests_total
 - `/health`: JSON con status, features, observability config
 
 ### IoT Simulator
 
 **Validación 1: Imports**
+
 ```bash
 python -c "from observability import setup_logging, create_circuit_breaker; \
            from generator_simplified import TruckSimulator, HTTPPublisher; \
@@ -180,6 +188,7 @@ python -c "from observability import setup_logging, create_circuit_breaker; \
 ```
 
 **Resultado:** ✅ Exitoso
+
 ```
 ✅ IoT Simulator imports OK
 ✅ Observability infrastructure loaded
@@ -192,18 +201,21 @@ python -c "from observability import setup_logging, create_circuit_breaker; \
 ### 1. Logging Estructurado JSON
 
 **Backend:**
+
 - Formato: JSON one-line per log
 - Campos: timestamp (ISO 8601), severity, logger, message, environment, line, function
 - Contexto: request_id, machine_id, user_id (via ContextVars)
 - Destino: stdout (listo para shipping a ELK/Loki/CloudWatch)
 
 **IoT Simulator:**
+
 - Formato: JSON one-line per log
 - Campos: timestamp, severity, logger, message, environment, machine_id, sample_number
 - Contexto: Tracking de muestras individuales
 - Destino: stdout
 
 **Ejemplo de Log:**
+
 ```json
 {
   "timestamp": "2025-11-15T16:35:12.fZ",
@@ -221,12 +233,14 @@ python -c "from observability import setup_logging, create_circuit_breaker; \
 ### 2. Retry Policies con Backoff Exponencial
 
 **Configuración:**
+
 - Max attempts: 3 (1 original + 2 retries)
 - Base delay: 1.0s
 - Max delay: 30.0s
 - Multiplier: 2.0 (backoff exponencial)
 
 **Secuencia de Retry:**
+
 ```
 Intento 1: 0s (original)
 Intento 2: 1s (base_delay * 2^0)
@@ -235,17 +249,20 @@ Intento 3: 2s (base_delay * 2^1)
 ```
 
 **Aplicado a:**
+
 - Backend: Operaciones críticas (DB, ML, HTTP)
 - IoT Sim: HTTP POST al backend
 
 ### 3. Circuit Breakers
 
 **Estados:**
+
 - **CLOSED:** Operación normal, requests pasan
 - **OPEN:** Demasiados fallos, requests bloqueados (fail fast)
 - **HALF_OPEN:** Probando recuperación, requests limitados
 
 **Transiciones:**
+
 ```
 CLOSED ─(fail_max=5)→ OPEN ─(timeout=60s)→ HALF_OPEN
   ↑                                            │
@@ -254,11 +271,13 @@ CLOSED ─(fail_max=5)→ OPEN ─(timeout=60s)→ HALF_OPEN
 ```
 
 **Configuración:**
+
 - Fail max: 5 consecutive failures
 - Timeout: 60s antes de intentar recuperación
 - Logging: Cada cambio de estado se registra
 
 **Beneficios:**
+
 - Protege backend de cascadas de fallos
 - Fail fast cuando backend está caído
 - Recuperación automática
@@ -285,6 +304,7 @@ CLOSED ─(fail_max=5)→ OPEN ─(timeout=60s)→ HALF_OPEN
 ### 5. OpenTelemetry Tracing (Backend)
 
 **Features:**
+
 - Instrumentación automática de FastAPI
 - Propagación W3C Trace Context
 - Exportador OTLP (compatible con Jaeger/Grafana Tempo)
@@ -292,6 +312,7 @@ CLOSED ─(fail_max=5)→ OPEN ─(timeout=60s)→ HALF_OPEN
 - Correlación trace_id en logs
 
 **Activación:**
+
 ```python
 # settings.py
 tracing_enabled = True
@@ -299,6 +320,7 @@ tracing_otlp_endpoint = "http://localhost:4317"
 ```
 
 **Uso:**
+
 ```python
 @traced_operation(name="process_data", attributes={"machine_id": "TRUCK-21"})
 def process_data(data):
@@ -308,6 +330,7 @@ def process_data(data):
 ### 6. Timeouts Configurables
 
 **Backend:**
+
 - Connect: 5.0s
 - Read: 30.0s
 - Write: 30.0s
@@ -315,12 +338,14 @@ def process_data(data):
 - DB: 30.0s
 
 **IoT Simulator:**
+
 - Connect: 5.0s
 - Read: 30.0s
 - Write: 30.0s
 - Pool: 5.0s
 
 **Beneficios:**
+
 - Evita conexiones colgadas
 - Modos de fallo predecibles
 - Configurables por entorno
@@ -332,6 +357,7 @@ def process_data(data):
 ### Antes (Sin Observabilidad)
 
 **Problemas:**
+
 - ❌ Logs sin estructura (texto plano, difícil de parsear)
 - ❌ Sin retry: Fallos transitorios causan pérdida de datos
 - ❌ Sin circuit breaker: Cascadas de fallos saturan backend
@@ -339,14 +365,17 @@ def process_data(data):
 - ❌ Sin tracing: Debugging de latencia muy difícil
 
 **Debugging:**
+
 ```
 2025-11-15 16:30:00 ERROR: Failed to process request
 ```
+
 ¿Qué request? ¿Qué máquina? ¿Qué tipo de error?
 
 ### Después (Con Observabilidad) ✅
 
 **Beneficios:**
+
 - ✅ Logs JSON estructurados (correlación por request_id, machine_id)
 - ✅ Retry automático: 3 intentos ante fallos transitorios
 - ✅ Circuit breaker: Protección contra cascadas de fallos
@@ -354,6 +383,7 @@ def process_data(data):
 - ✅ Tracing distribuido: Visibilidad end-to-end de requests
 
 **Debugging:**
+
 ```json
 {
   "timestamp": "2025-11-15T16:30:00.fZ",
@@ -368,6 +398,7 @@ def process_data(data):
   "span_id": "00f067aa0ba902b7"
 }
 ```
+
 ¡Contexto completo!
 
 ---
@@ -397,7 +428,7 @@ def process_data(data):
 
 ### Medio Plazo (1 semana)
 
-4. **Levantar Stack de Observabilidad**
+1. **Levantar Stack de Observabilidad**
    - Docker Compose con:
      - Prometheus (scrapear `/metrics`)
      - Jaeger (recibir trazas OTLP)
@@ -405,13 +436,14 @@ def process_data(data):
    - Configurar scrape_configs en Prometheus
    - Habilitar `tracing_enabled=True` en backend
 
-5. **Crear Dashboards de Grafana**
+2. **Crear Dashboards de Grafana**
    - **Overview Dashboard:** CPU, memoria, requests/s, latencia P95
    - **ML Dashboard:** Predicciones/s, latencia ML, risk scores
    - **Ingestion Dashboard:** Samples/s, fallos, circuit breaker states
    - **Infrastructure Dashboard:** DB queries, retry attempts, errors
 
-6. **Configurar Alertas de Prometheus**
+3. **Configurar Alertas de Prometheus**
+
    ```yaml
    groups:
      - name: aurumai-alerts
@@ -429,14 +461,14 @@ def process_data(data):
 
 ### Largo Plazo (1 mes)
 
-7. **Log Aggregation & Search**
+1. **Log Aggregation & Search**
    - **Opción A:** ELK Stack (Elasticsearch + Logstash + Kibana)
    - **Opción B:** Grafana Loki + Promtail
    - **Opción C:** AWS CloudWatch Logs (si en AWS)
    - Ship JSON logs desde stdout a aggregator
    - Crear queries guardadas para debugging común
 
-8. **SLO/SLI Tracking**
+2. **SLO/SLI Tracking**
    - Definir SLIs:
      - Latency P95 < 500ms
      - Error rate < 0.1%
@@ -444,7 +476,7 @@ def process_data(data):
    - Configurar SLO dashboards en Grafana
    - Alertas basadas en error budgets
 
-9. **Automated Testing de Resilience**
+3. **Automated Testing de Resilience**
    - Chaos engineering scripts:
      - Simular latencia aleatoria
      - Simular fallos de backend (50% requests)
@@ -473,6 +505,7 @@ def process_data(data):
 **Problema:** Pydantic 2.5.3 requiere `typing_extensions.TypedDict` en Python < 3.12
 
 **Solución:**
+
 ```python
 # ANTES:
 from typing import TypedDict
@@ -488,6 +521,7 @@ from typing_extensions import TypedDict
 **Problema:** Uso de `str | None` (PEP 604) en Python 3.11
 
 **Solución:**
+
 ```python
 # ANTES:
 def function(param: str | None = None):
@@ -504,6 +538,7 @@ def function(param: Optional[str] = None):
 **Problema:** Sin logs, difícil saber cuándo circuit breaker abre/cierra
 
 **Solución:** Extender `CircuitBreaker` con listeners para logging automático:
+
 ```python
 class ResilientCircuitBreaker(CircuitBreaker):
     def __init__(self, ...):
@@ -519,6 +554,7 @@ class ResilientCircuitBreaker(CircuitBreaker):
 **Problema:** Necesidad de propagar `request_id`, `machine_id` en logs
 
 **Solución:** Usar `ContextVar` (thread-safe, async-safe):
+
 ```python
 from contextvars import ContextVar
 
@@ -569,7 +605,8 @@ git commit -m "docs: add comprehensive observability documentation"
 
 ## ✅ Checklist Final
 
-### Backend
+### Checklist Backend
+
 - [x] Infraestructura creada (4 módulos)
 - [x] Dependencias instaladas (6 paquetes)
 - [x] Configuración actualizada (settings.py)
@@ -579,7 +616,8 @@ git commit -m "docs: add comprehensive observability documentation"
 - [x] Validación exitosa (imports + endpoints)
 - [x] Documentación completa
 
-### IoT Simulator
+### Checklist IoT Simulator
+
 - [x] Infraestructura creada (observability.py)
 - [x] Dependencias instaladas (3 paquetes)
 - [x] generator_simplified.py refactorizado
@@ -587,17 +625,20 @@ git commit -m "docs: add comprehensive observability documentation"
 - [x] Validación exitosa (imports)
 - [x] Documentación completa
 
-### Edge Simulator
+### Checklist Edge Simulator
+
 - [ ] Infraestructura aplicada
 - [ ] Refactorización completada
 - [ ] Validación exitosa
 
-### Testing
+### Checklist Testing
+
 - [ ] End-to-end backend + simuladores
 - [ ] Circuit breaker scenarios
 - [ ] Load testing
 
-### Monitoreo
+### Checklist Monitoreo
+
 - [ ] Prometheus configurado
 - [ ] Jaeger configurado
 - [ ] Grafana dashboards creados

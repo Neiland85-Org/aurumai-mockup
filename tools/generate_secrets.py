@@ -227,20 +227,39 @@ def main():
         print("Usage: python tools/generate_secrets.py --save --confirm-security")
         return 1
 
+    # Security check: Warn about production secrets
+    if args.env == "production" and not args.placeholders:
+        print("🚨 PRODUCTION ENVIRONMENT DETECTED!")
+        print("   Generating real secrets for production is HIGHLY discouraged.")
+        print("   Use a secret management system instead (AWS/GCP/Azure Secrets).")
+        print()
+        confirm_prod = input("Are you sure you want to generate real production secrets? (no/YES): ")
+        if confirm_prod != "YES":
+            print("❌ Cancelled. Use --placeholders for production templates.")
+            return 1
+
     # Generate individual secrets
     if not args.placeholders:
         secret_key = generate_secret_key(args.length)
         db_password = generate_password(20)
         mqtt_password = generate_password(16)
 
+        print("🚨 SECURITY WARNING: The following secrets will be displayed in plain text!")
+        print("   Never share this output or commit it to version control.")
+        print("   Use --placeholders for safe template generation.")
+        print()
+
         print(f"Environment: {args.env}")
         print()
         print("🔑 Generated Secrets:")
         print("-" * 60)
-        print(f"SECRET_KEY:     {secret_key}")
-        print(f"DB_PASSWORD:    {db_password}")
-        print(f"MQTT_PASSWORD:  {mqtt_password}")
+        print(f"SECRET_KEY:     {secret_key[:8]}****")
+        print(f"DB_PASSWORD:    {db_password[:8]}****")
+        print(f"MQTT_PASSWORD:  {mqtt_password[:8]}****")
         print("-" * 60)
+        print()
+        print("⚠️  IMPORTANT: Store these secrets securely (vault, secret manager)")
+        print("   Never use them in development without proper access controls")
         print()
     else:
         print(f"Environment: {args.env} (placeholders)")

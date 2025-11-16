@@ -306,7 +306,7 @@ logger.error(json.dumps({
 
 ## 🧪 VALIDACIONES
 
-### Frontend
+### Frontend (Validaciones)
 
 ```bash
 ✅ npx tsc --noEmit
@@ -317,7 +317,7 @@ logger.error(json.dumps({
    9 files unchanged (no changes needed)
 ```
 
-### Backend
+### Backend (Validaciones)
 
 ```bash
 ✅ Script: validate_backend.py
