@@ -26,7 +26,7 @@ class PredictionResponse(BaseModel):
     risk_score: float = Field(..., ge=0.0, le=1.0, description="Failure risk score 0-1")
     failure_probability: float = Field(..., ge=0.0, le=1.0, description="Probability of failure")
     confidence: float = Field(default=0.85, ge=0.0, le=1.0)
-    next_maintenance_hours: Optional[int] = None
+    maintenance_hours: Optional[int] = None
 
 
 class ESGRequest(BaseModel):
@@ -36,8 +36,8 @@ class ESGRequest(BaseModel):
 class ESGResponse(BaseModel):
     machine_id: str
     timestamp: datetime
-    co2eq_instant: float = Field(..., description="Instant CO2eq in kg")
-    co2eq_total: float = Field(..., description="Total accumulated CO2eq in kg")
+    instant_co2eq_kg: float = Field(..., description="Instant CO2eq in kg")
+    cumulative_co2eq_kg: float = Field(..., description="Total accumulated CO2eq in kg")
     fuel_rate_lh: Optional[float] = Field(None, description="Current fuel rate in l/h")
     kwh: Optional[float] = Field(None, description="Current power consumption in kWh")
     scope: str = Field(default="scope1", description="Emission scope")

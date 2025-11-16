@@ -7,23 +7,28 @@ import type { Machine, ESGData } from '@/types';
 
 export default function ESGPage(): ReactElement {
   const [machines, setMachines] = useState<Machine[]>([]);
-  const [selectedMachine, setSelectedMachine] = useState<string>('TRUCK-21');
+  const [selectedMachine, setSelectedMachine] = useState<string>('');
   const [esgData, setEsgData] = useState<ESGData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { error: showError } = useToast();
-  const abortControllerRef = new AbortController();
 
   // Fetch machines on mount
   useEffect(() => {
+    let cancelled = false;
+
     const fetchMachines = async (): Promise<void> => {
       try {
-        const result = await getMachines({
-          signal: abortControllerRef.signal,
-        });
+        const result = await getMachines();
+
+        if (cancelled) return;
 
         if (result.ok) {
           setMachines(result.value);
+          // Auto-select first machine if none selected
+          if (result.value.length > 0 && !selectedMachine) {
+            setSelectedMachine(result.value[0].machine_id);
+          }
         } else {
           const failure = result as { ok: false; error: unknown };
           const errorMsg = getErrorMessage(failure.error);
@@ -32,23 +37,29 @@ export default function ESGPage(): ReactElement {
           console.error('Error fetching machines:', failure.error);
         }
       } catch (err) {
+        if (cancelled) return;
         const errorMsg = getErrorMessage(err);
         setError(errorMsg);
         console.error('Unexpected error fetching machines:', err);
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
     fetchMachines();
 
     return () => {
-      abortControllerRef.abort();
+      cancelled = true;
     };
   }, [showError]);
 
   // Fetch ESG data at intervals
   useEffect(() => {
+    // Don't fetch if no machine selected
+    if (!selectedMachine) return;
+
     let isMounted = true;
     let interval: NodeJS.Timeout;
 

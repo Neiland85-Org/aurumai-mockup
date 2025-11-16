@@ -18,6 +18,8 @@ from api.exception_handlers import (
     validation_error_handler,
 )
 from api.routers import esg, ingest, machines, predict
+# TEMPORARY: Use mock routers for development without database
+from api.routers import machines_mock, esg_mock, predict_mock
 from infrastructure.config.settings import settings
 from infrastructure.logging import setup_logging, get_logger
 from infrastructure.metrics import get_metrics, system_info
@@ -88,9 +90,14 @@ app.add_exception_handler(RequestValidationError, validation_error_handler)
 app.add_exception_handler(Exception, general_exception_handler)
 
 app.include_router(ingest.router, prefix="/ingest", tags=["Ingest"])
-app.include_router(machines.router, prefix="/machines", tags=["Machines"])
-app.include_router(predict.router, prefix="/predict", tags=["Prediction"])
-app.include_router(esg.router, prefix="/esg", tags=["ESG"])
+# TEMPORARY: Use mock endpoints (no database required)
+app.include_router(machines_mock.router, prefix="/machines", tags=["Machines"])
+app.include_router(predict_mock.router, prefix="/predict", tags=["Prediction"])
+app.include_router(esg_mock.router, prefix="/esg", tags=["ESG"])
+# Real routers (require database):
+# app.include_router(machines.router, prefix="/machines", tags=["Machines"])
+# app.include_router(predict.router, prefix="/predict", tags=["Prediction"])
+# app.include_router(esg.router, prefix="/esg", tags=["ESG"])
 
 
 # Database initialization on startup

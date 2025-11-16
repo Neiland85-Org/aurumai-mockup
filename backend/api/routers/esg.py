@@ -99,8 +99,8 @@ async def get_current_esg(
         return ESGResponse(
             machine_id=esg_record.machine_id,
             timestamp=esg_record.timestamp,
-            co2eq_instant=esg_record.instant_co2eq_kg,
-            co2eq_total=esg_record.cumulative_co2eq_kg,
+            instant_co2eq_kg=esg_record.instant_co2eq_kg,
+            cumulative_co2eq_kg=esg_record.cumulative_co2eq_kg,
             fuel_rate_lh=esg_record.fuel_rate_lh,
             kwh=esg_record.power_consumption_kw,
             scope=esg_record.metadata.get("dominant_scope", "scope1"),

@@ -1,52 +1,52 @@
-import { useEffect, useState, ReactElement, useCallback } from 'react';
+import { useEffect, useState, ReactElement } from 'react';
 import MachineCard from '../components/MachineCard';
-import { getMachines } from '../lib/api';
-import { useToast } from '@/components/Toast';
-import { getErrorMessage } from '@/types/errors';
+import { API_BASE } from '../lib/api';
 import type { Machine } from '@/types';
 
 export default function HomePage(): ReactElement {
   const [machines, setMachines] = useState<Machine[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { error: showError } = useToast();
-  const abortControllerRef = new AbortController();
-
-  const fetchData = useCallback(async (): Promise<void> => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const result = await getMachines({ signal: abortControllerRef.signal });
-
-      if (result.ok) {
-        setMachines(result.value);
-      } else {
-        const failure = result as { ok: false; error: unknown };
-        const errorMsg = getErrorMessage(failure.error);
-        setError(errorMsg);
-        showError(errorMsg);
-        console.error('Error fetching machines:', failure.error);
-      }
-    } catch (err) {
-      const errorMsg = getErrorMessage(err);
-      setError(errorMsg);
-      showError(errorMsg);
-      console.error('Unexpected error fetching machines:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [showError]);
 
   useEffect(() => {
-    fetchData();
+    let cancelled = false;
 
-    // Cleanup: abort requests on unmount
+    async function fetchMachines() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(`${API_BASE}/machines/`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!cancelled) {
+          setMachines(data);
+          setLoading(false);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error('Error fetching machines:', err);
+          setError(err instanceof Error ? err.message : 'Failed to load machines');
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchMachines();
+
     return () => {
-      abortControllerRef.abort();
+      cancelled = true;
     };
-  }, [fetchData]);
+  }, []);
 
+  const retryFetch = () => {
+    window.location.reload();
+  };
   if (loading) {
     return (
       <div className="min-h-screen p-8 flex items-center justify-center">
@@ -66,7 +66,7 @@ export default function HomePage(): ReactElement {
           <h2 className="text-2xl font-bold text-white mb-2">Failed to load machines</h2>
           <p className="text-gray-400 mb-6">{error}</p>
           <button
-            onClick={fetchData}
+            onClick={retryFetch}
             className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-6 rounded-lg transition"
           >
             Try again
