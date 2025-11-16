@@ -7,18 +7,16 @@ import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 
 from api.dependencies import get_ingest_telemetry_use_case
-
-# Get the global limiter from the infrastructure module
-from infrastructure.rate_limiting import limiter
 from application.use_cases import IngestTelemetryUseCase
 from application.use_cases.ingest.ingest_telemetry_use_case import (
     FeatureIngestResult,
     RawIngestResult,
 )
+
+# Get the global limiter from the infrastructure module
+from infrastructure.rate_limiting import limiter
 from models import FeatureVector, RawMeasurement
 from models_errors import (
     ComputationException,

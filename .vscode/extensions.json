@@ -3,15 +3,16 @@
     "ms-python.python",
     "ms-python.vscode-pylance",
     "ms-toolsai.jupyter",
-    "GitHub.copilot", 
+    "GitHub.copilot",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "ms-vscode.makefile-tools"
+    "ms-vscode.makefile-tools",
+    "DavidAnson.vscode-markdownlint"
   ],
   "unwantedRecommendations": [
-    "GitHub.copilot-chat", 
+    "GitHub.copilot-chat",
     "GitHub.copilot-labs",
     "miguelsolorio.symbols"
-  ],
+  ]
   // Nota: Ajusta esta lista según tus necesidades. Remueve entradas de unwantedRecommendations si las requieres.
 }

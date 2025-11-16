@@ -8,8 +8,8 @@ from .postgres_measurement_repository import PostgresMeasurementRepository
 from .postgres_prediction_repository import PostgresPredictionRepository
 
 __all__ = [
+    "PostgresESGRepository",
     "PostgresMachineRepository",
     "PostgresMeasurementRepository",
     "PostgresPredictionRepository",
-    "PostgresESGRepository",
 ]

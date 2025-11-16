@@ -15,8 +15,8 @@ from .machines import GetMachineMetricsUseCase
 from .prediction import RunPredictionUseCase
 
 __all__ = [
-    "IngestTelemetryUseCase",
-    "RunPredictionUseCase",
     "CalculateESGUseCase",
     "GetMachineMetricsUseCase",
+    "IngestTelemetryUseCase",
+    "RunPredictionUseCase",
 ]

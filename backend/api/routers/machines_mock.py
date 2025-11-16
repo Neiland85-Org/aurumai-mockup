@@ -9,13 +9,10 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from fastapi import APIRouter, Request
-from slowapi import Limiter
-from slowapi.util import get_remote_address
-
-from models import MachineInfo, MachineMetrics, PredictionResponse
 
 # Get the global limiter from the infrastructure module
 from infrastructure.rate_limiting import limiter
+from models import MachineInfo, MachineMetrics, PredictionResponse
 
 logger = logging.getLogger("aurumai")
 

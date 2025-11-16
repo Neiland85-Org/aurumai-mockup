@@ -447,7 +447,7 @@ async def with_timeout(coro: Any, timeout: float) -> Any:
     """
     try:
         return await asyncio.wait_for(coro, timeout=timeout)
-    except asyncio.TimeoutError:
+    except TimeoutError:
         logger.error(
             f"Operation timed out after {timeout}s",
             extra={"timeout": timeout},

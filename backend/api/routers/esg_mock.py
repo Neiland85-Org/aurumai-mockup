@@ -9,13 +9,11 @@ from datetime import datetime, timezone
 from typing import Any
 
 from fastapi import APIRouter, Query, Request
-from slowapi import Limiter
-from slowapi.util import get_remote_address
-
-from models import ESGResponse
 
 # Get the global limiter from the infrastructure module
 from infrastructure.rate_limiting import limiter
+from models import ESGResponse
+from models_errors import ResourceNotFoundException
 
 logger = logging.getLogger("aurumai")
 
@@ -75,8 +73,6 @@ async def get_current_esg_mock(
 
     # Validate machine exists
     if machine_id not in VALID_MACHINE_IDS:
-        from models_errors import ResourceNotFoundException
-
         raise ResourceNotFoundException(
             message=f"Machine '{machine_id}' not found in mock data",
             resource_type="machine",

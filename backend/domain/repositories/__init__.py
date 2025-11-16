@@ -15,12 +15,12 @@ from .sensor_repository import ISensorRepository
 from .tenant_repository import ITenantRepository
 
 __all__ = [
-    "ITenantRepository",
+    "IAlertRepository",
+    "IESGRepository",
+    "IEmissionRepository",
     "IMachineRepository",
-    "ISensorRepository",
     "IMeasurementRepository",
     "IPredictionRepository",
-    "IESGRepository",
-    "IAlertRepository",
-    "IEmissionRepository",
+    "ISensorRepository",
+    "ITenantRepository",
 ]

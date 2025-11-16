@@ -54,7 +54,7 @@ Según el schema JSON de GitHub Actions proporcionado:
 - ❌ Environment 'staging' NO configurado en GitHub repo
 - ❌ Settings → Environments → (vacío)
 
-### ¿Por qué falló?
+### ¿Por qué falló
 
 GitHub Actions valida que el environment exista ANTES de ejecutar el workflow:
 

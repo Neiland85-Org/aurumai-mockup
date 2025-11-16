@@ -1,8 +1,8 @@
-# GitHub Environments Setup
+# GitHub Environments Config
 
 ## 📋 Resumen
 
-Este documento explica cómo configurar GitHub Environments para habilitar los deploys automáticos del workflow CI/CD.
+Este documento explica cómo configurar GitHub Environments para habilitar los deploys automáticos.
 
 ---
 
@@ -14,7 +14,7 @@ Este documento explica cómo configurar GitHub Environments para habilitar los d
 
 ---
 
-## 🎯 ¿Qué es un GitHub Environment?
+## 🎯 ¿Qué es un GitHub Environment
 
 Los **Environments** en GitHub Actions permiten:
 
@@ -87,7 +87,7 @@ Haz clic en **Save protection rules**
 
 Una vez creado el environment, descomenta el job `deploy-staging` en `.github/workflows/ci.yml`:
 
-### Ubicación del código:
+### Ubicación del código
 
 Busca la sección:
 
@@ -101,7 +101,7 @@ Busca la sección:
 #   ...
 ```
 
-### Cambio requerido:
+### Cambio requerido
 
 ```yaml
 # ANTES (comentado):
@@ -158,7 +158,7 @@ Secrets:
 
 ## 📊 Flujo de Trabajo Completo
 
-### Con Environment Configurado:
+### Con Environment Configurado
 
 ```
 1. Push a main/develop
@@ -180,7 +180,7 @@ Secrets:
 9. Notificación: Email (si configurado)
 ```
 
-### Sin Environment (Estado Actual):
+### Sin Environment (Estado Actual)
 
 ```
 1. Push a main/develop

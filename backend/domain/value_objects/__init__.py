@@ -9,8 +9,8 @@ from .measurement import Measurement, TimeSeriesPoint
 from .prediction import Prediction
 
 __all__ = [
-    "Measurement",
-    "TimeSeriesPoint",
     "FeatureVector",
+    "Measurement",
     "Prediction",
+    "TimeSeriesPoint",
 ]
