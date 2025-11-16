@@ -113,7 +113,9 @@ class ErrorDetails(BaseModel):
     field: Optional[str] = Field(default=None, description="Field that caused the error")
     constraint: Optional[str] = Field(default=None, description="Constraint that was violated")
     provided_value: Any = Field(default=None, description="Value that was provided")
-    expected_format: Optional[str] = Field(default=None, description="Expected format for the field")
+    expected_format: Optional[str] = Field(
+        default=None, description="Expected format for the field"
+    )
 
 
 class ErrorResponse(BaseModel):
@@ -167,7 +169,9 @@ class ValidationError(BaseModel):
     errors: List[ErrorDetails] = Field(
         default_factory=list, description="List of validation errors"
     )
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="Error timestamp")
+    timestamp: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), description="Error timestamp"
+    )
 
     class Config:
         json_schema_extra: ClassVar[Dict[str, Any]] = {

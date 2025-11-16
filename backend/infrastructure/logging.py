@@ -179,7 +179,9 @@ class LoggerAdapter(logging.LoggerAdapter):  # type: ignore[type-arg]
         >>> logger.info("Prediction completed")  # Will include service=ml_engine
     """
 
-    def process(self, msg: str, kwargs: MutableMapping[str, Any]) -> tuple[str, MutableMapping[str, Any]]:
+    def process(
+        self, msg: str, kwargs: MutableMapping[str, Any]
+    ) -> tuple[str, MutableMapping[str, Any]]:
         """Add extra fields to kwargs"""
         extra = kwargs.get("extra", {})
         extra.update(self.extra)
