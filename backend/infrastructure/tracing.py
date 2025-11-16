@@ -5,24 +5,22 @@ Enables end-to-end request tracing across services
 
 from __future__ import annotations
 
-import logging
-from typing import Any, Optional
+from typing import Any, AsyncGenerator, Optional
 
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.sdk.resources import (
-    Resource,
+    DEPLOYMENT_ENVIRONMENT,
     SERVICE_NAME,
     SERVICE_VERSION,
-    DEPLOYMENT_ENVIRONMENT,
+    Resource,
 )
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 from opentelemetry.trace import Span, Status, StatusCode
 
 from infrastructure.logging import get_logger
-
 
 logger = get_logger(__name__)
 
@@ -77,7 +75,7 @@ def setup_tracing(
             otlp_exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
             provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
             logger.info(
-                f"OpenTelemetry OTLP exporter configured",
+                "OpenTelemetry OTLP exporter configured",
                 extra={"endpoint": otlp_endpoint},
             )
         except Exception as e:
@@ -96,7 +94,7 @@ def setup_tracing(
     trace.set_tracer_provider(provider)
 
     logger.info(
-        f"OpenTelemetry tracing configured",
+        "OpenTelemetry tracing configured",
         extra={
             "service_name": service_name,
             "service_version": service_version,
@@ -272,7 +270,7 @@ def extract_trace_context(headers: dict[str, str]) -> None:
 # ============================================================================
 
 
-class traced_operation:
+class TracedOperation:
     """
     Context manager for creating custom spans.
 
@@ -327,7 +325,7 @@ class traced_operation:
 async def traced_async_operation(
     operation_name: str,
     attributes: Optional[dict[str, Any]] = None,
-):
+) -> AsyncGenerator[Span, None]:
     """
     Async context manager for creating custom spans.
 

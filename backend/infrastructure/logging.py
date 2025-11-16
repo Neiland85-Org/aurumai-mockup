@@ -10,7 +10,6 @@ from typing import Any
 
 from pythonjsonlogger import jsonlogger
 
-
 # Context variables for request-scoped logging
 request_id_ctx: ContextVar[str | None] = ContextVar("request_id", default=None)
 machine_id_ctx: ContextVar[str | None] = ContextVar("machine_id", default=None)

@@ -142,7 +142,8 @@ async def ingest_raw(
         raise
     except Exception as exc:
         logger.error(
-            f"Unexpected error ingesting raw telemetry for {meas.machine_id}: {type(exc).__name__}: {exc}"
+            f"Unexpected error ingesting raw telemetry for {meas.machine_id}: "
+            f"{type(exc).__name__}: {exc}"
         )
         raise ComputationException(
             message=f"Failed to ingest telemetry for machine '{meas.machine_id}'",

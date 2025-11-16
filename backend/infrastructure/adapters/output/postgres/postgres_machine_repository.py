@@ -46,12 +46,12 @@ class PostgresMachineRepository(IMachineRepository):
         existing = result.scalar_one_or_none()
         if existing:
             # Actualiza los campos principales
-            setattr(existing, "machine_type", machine.machine_type)
-            setattr(existing, "location", machine.location)
-            setattr(existing, "operational", machine.operational)
+            existing.machine_type = machine.machine_type
+            existing.location = machine.location
+            existing.operational = machine.operational
             # Solo actualiza updated_at si existe el campo
             if hasattr(existing, "updated_at"):
-                setattr(existing, "updated_at", datetime.utcnow())
+                existing.updated_at = datetime.utcnow()
             model = existing
         else:
             model = MachineModel(

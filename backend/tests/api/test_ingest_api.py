@@ -5,9 +5,10 @@ API Tests for the Ingest Endpoints
 from unittest.mock import AsyncMock
 
 import pytest
+from fastapi.testclient import TestClient
+
 from api.dependencies import get_ingest_telemetry_use_case
 from app import app
-from fastapi.testclient import TestClient
 
 # Create a test client
 client = TestClient(app)

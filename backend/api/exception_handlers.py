@@ -9,17 +9,15 @@ import uuid
 from datetime import datetime
 from typing import Any, Callable
 
-from fastapi import Request, Response, status
+from fastapi import Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.types import ASGIApp
 
 from models_errors import (
     ApplicationError,
     ErrorCode,
     ErrorResponse,
-    ERROR_CODE_TO_STATUS,
 )
 
 # Configure JSON logger
@@ -128,7 +126,7 @@ async def validation_error_handler(request: Request, exc: Any) -> JSONResponse:
 
     error_details = []
     for error in validation_error.errors():
-        loc = ".".join(str(l) for l in error["loc"][1:])
+        loc = ".".join(str(location_part) for location_part in error["loc"][1:])
         error_details.append(
             {
                 "field": loc,

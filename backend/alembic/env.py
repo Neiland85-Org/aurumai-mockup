@@ -1,28 +1,19 @@
-from logging.config import fileConfig
 import sys
+from logging.config import fileConfig
 from pathlib import Path
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context  # type: ignore
 
-# Add parent directory to sys.path to import our modules
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 # Import settings and Base
 from infrastructure.config.settings import settings
-from infrastructure.db.postgres_config import Base
 
 # Import all models to ensure they're registered with Base.metadata
-from infrastructure.db.models import (
-    MachineModel,
-    RawMeasurementModel,
-    FeatureModel,
-    PredictionModel,
-    ESGRecordModel,
-    AlertModel,
-)
+from infrastructure.db.postgres_config import Base
+
+# Add parent directory to sys.path to import our modules
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

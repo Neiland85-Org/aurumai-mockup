@@ -5,19 +5,18 @@ Centralized metrics collection for observability
 
 import functools
 import time
-from typing import Any, Callable, TypeVar, ParamSpec
+from typing import Callable, ParamSpec, TypeVar
 
 from prometheus_client import (
+    REGISTRY,
+    CollectorRegistry,
     Counter,
     Gauge,
     Histogram,
     generate_latest,
-    REGISTRY,
-    CollectorRegistry,
 )
 
 from infrastructure.logging import get_logger
-
 
 logger = get_logger(__name__)
 
@@ -324,7 +323,8 @@ def track_time(
         labels: Optional labels for the metric
 
     Example:
-        >>> @track_time(http_request_duration_seconds, {"method": "GET", "endpoint": "/api/machines"})
+        >>> @track_time(http_request_duration_seconds,
+        ...     {"method": "GET", "endpoint": "/api/machines"})
         ... def get_machines():
         ...     return {"machines": [...]}
     """

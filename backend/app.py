@@ -17,14 +17,13 @@ from api.exception_handlers import (
     general_exception_handler,
     validation_error_handler,
 )
-from api.routers import esg, ingest, machines, predict
 
 # TEMPORARY: Use mock routers for development without database
-from api.routers import machines_mock, esg_mock, predict_mock
+from api.routers import esg_mock, ingest, machines_mock, predict_mock
 from infrastructure.config.settings import settings
-from infrastructure.logging import setup_logging, get_logger
+from infrastructure.logging import setup_logging
 from infrastructure.metrics import get_metrics, system_info
-from infrastructure.tracing import setup_tracing, instrument_fastapi
+from infrastructure.tracing import instrument_fastapi, setup_tracing
 from models_errors import ApplicationError
 
 # from api.routers import ingest_simple, machines_simple, predict_simple, esg_simple

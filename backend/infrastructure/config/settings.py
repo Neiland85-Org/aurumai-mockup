@@ -11,9 +11,9 @@ SECURITY NOTICE:
 """
 
 import os
-from typing import List
+from typing import Any, List
 
-from pydantic import Field, field_validator
+from pydantic import Field, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _env_file = os.environ.get("ENV_FILE", ".env")
@@ -140,7 +140,7 @@ class Settings(BaseSettings):
 
     @field_validator("cors_origins", mode="before")
     @classmethod
-    def parse_cors_origins(cls, v):
+    def parse_cors_origins(cls, v: Any) -> list[str]:
         """Parse CORS origins from comma-separated string or JSON array"""
         if isinstance(v, str):
             # If it's a comma-separated string, split it
@@ -157,7 +157,7 @@ class Settings(BaseSettings):
 
     @field_validator("secret_key")
     @classmethod
-    def validate_secret_key(cls, v: str, info) -> str:
+    def validate_secret_key(cls, v: str, info: ValidationInfo) -> str:
         """Validate SECRET_KEY is strong enough for production"""
         if info.data.get("environment", "").lower() == "production":
             if len(v) < 64:
@@ -171,7 +171,7 @@ class Settings(BaseSettings):
 
     @field_validator("debug")
     @classmethod
-    def validate_debug_in_production(cls, v: bool, info) -> bool:
+    def validate_debug_in_production(cls, v: bool, info: ValidationInfo) -> bool:
         """Ensure DEBUG is False in production"""
         if info.data.get("environment", "").lower() == "production" and v:
             raise ValueError("DEBUG must be False in production environment")

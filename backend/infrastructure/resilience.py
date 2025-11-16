@@ -5,8 +5,7 @@ Implements reliability patterns for external service calls
 
 import asyncio
 import functools
-import logging
-from typing import Any, Callable, TypeVar, ParamSpec
+from typing import Any, Callable, ParamSpec, TypeVar
 
 import httpx
 from pybreaker import CircuitBreaker, CircuitBreakerError
@@ -20,7 +19,6 @@ from tenacity import (
 )
 
 from infrastructure.logging import get_logger
-
 
 logger = get_logger(__name__)
 
@@ -100,7 +98,8 @@ class RetryPolicy:
             for attempt in retryer:
                 with attempt:
                     logger.debug(
-                        f"Executing {func.__name__} (attempt {attempt.retry_state.attempt_number}/{self.max_attempts})",
+                        f"Executing {func.__name__} "
+                        f"(attempt {attempt.retry_state.attempt_number}/{self.max_attempts})",
                         extra={
                             "function": func.__name__,
                             "attempt": attempt.retry_state.attempt_number,
@@ -152,7 +151,8 @@ class RetryPolicy:
             async for attempt in retryer:
                 with attempt:
                     logger.debug(
-                        f"Executing {func.__name__} (attempt {attempt.retry_state.attempt_number}/{self.max_attempts})",
+                        f"Executing {func.__name__} "
+                        f"(attempt {attempt.retry_state.attempt_number}/{self.max_attempts})",
                         extra={
                             "function": func.__name__,
                             "attempt": attempt.retry_state.attempt_number,

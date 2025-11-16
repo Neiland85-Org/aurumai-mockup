@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from typing import Literal, Mapping, Sequence
+
 from typing_extensions import TypedDict
 
 from domain.entities.measurement import FeatureVector, RawMeasurement

@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 from typing import Annotated, Any, Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 
 from api.dependencies import get_machine_metrics_use_case
 from application.use_cases import GetMachineMetricsUseCase

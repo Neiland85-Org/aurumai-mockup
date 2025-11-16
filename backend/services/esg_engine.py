@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 from typing import Literal, Mapping
+
 from typing_extensions import TypedDict
 
 

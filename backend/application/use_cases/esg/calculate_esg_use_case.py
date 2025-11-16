@@ -6,6 +6,7 @@ Calculates carbon emissions and ESG metrics for machines
 from __future__ import annotations
 
 from datetime import datetime
+
 from typing_extensions import TypedDict
 
 from domain.entities.esg import ESGRecord
