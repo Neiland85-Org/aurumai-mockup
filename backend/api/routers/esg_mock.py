@@ -40,7 +40,7 @@ def _generate_mock_esg(machine_id: str) -> dict[str, Any]:
     variation = random.uniform(0.85, 1.15)
     instant_co2 = base_co2 * variation
     power_kw = base_power * variation
-    
+
     # Cumulative is instant * random runtime hours
     runtime_hours = random.uniform(100, 500)
     cumulative_co2 = instant_co2 * runtime_hours
@@ -64,10 +64,10 @@ async def get_current_esg_mock(
     """
     Get current mock ESG/Carbon metrics for a machine.
     Returns simulated data - no database required.
-    
+
     Args:
         machine_id: The machine to get ESG data for.
-        
+
     Returns:
         Mock ESG metrics including CO2 emissions and fuel consumption.
     """
@@ -76,6 +76,7 @@ async def get_current_esg_mock(
     # Validate machine exists
     if machine_id not in VALID_MACHINE_IDS:
         from models_errors import ResourceNotFoundException
+
         raise ResourceNotFoundException(
             message=f"Machine '{machine_id}' not found in mock data",
             resource_type="machine",
@@ -101,7 +102,7 @@ async def get_esg_summary_mock() -> dict[str, Any]:
     """
     Get aggregated mock ESG summary across all machines.
     Returns simulated data - no database required.
-    
+
     Returns:
         Dictionary with total emissions and per-machine breakdown.
     """
@@ -113,11 +114,13 @@ async def get_esg_summary_mock() -> dict[str, Any]:
     for machine_id in VALID_MACHINE_IDS:
         esg_data = _generate_mock_esg(machine_id)
         total_co2 += esg_data["cumulative_co2eq_kg"]
-        machines_data.append({
-            "machine_id": machine_id,
-            "co2eq_total": esg_data["cumulative_co2eq_kg"],
-            "scope": esg_data["scope"],
-        })
+        machines_data.append(
+            {
+                "machine_id": machine_id,
+                "co2eq_total": esg_data["cumulative_co2eq_kg"],
+                "scope": esg_data["scope"],
+            }
+        )
 
     return {
         "total_co2eq_kg": round(total_co2, 2),

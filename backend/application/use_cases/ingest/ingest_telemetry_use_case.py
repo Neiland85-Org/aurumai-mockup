@@ -147,7 +147,7 @@ class IngestTelemetryUseCase:
 
     async def execute_batch_raw(
         self,
-    measurements: Sequence[RawMeasurementInput],
+        measurements: Sequence[RawMeasurementInput],
     ) -> BatchIngestResult:
         """
         Ingest batch of raw measurements.

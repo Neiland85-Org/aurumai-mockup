@@ -20,7 +20,7 @@ user_id_ctx: ContextVar[str | None] = ContextVar("user_id", default=None)
 class ContextualJSONFormatter(jsonlogger.JsonFormatter):
     """
     JSON formatter that includes contextual fields from ContextVars.
-    
+
     Fields added automatically:
     - request_id: Unique identifier for the request
     - machine_id: Machine being processed (if applicable)
@@ -132,7 +132,9 @@ def get_logger(name: str, level: str = "INFO", environment: str = "development")
     return setup_logging(level=level, environment=environment, logger_name=name)
 
 
-def set_request_context(request_id: str | None = None, machine_id: str | None = None, user_id: str | None = None) -> None:
+def set_request_context(
+    request_id: str | None = None, machine_id: str | None = None, user_id: str | None = None
+) -> None:
     """
     Set contextual fields for the current request.
 

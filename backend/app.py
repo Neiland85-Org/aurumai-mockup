@@ -18,6 +18,7 @@ from api.exception_handlers import (
     validation_error_handler,
 )
 from api.routers import esg, ingest, machines, predict
+
 # TEMPORARY: Use mock routers for development without database
 from api.routers import machines_mock, esg_mock, predict_mock
 from infrastructure.config.settings import settings
@@ -108,16 +109,16 @@ async def startup_event() -> None:
     Initializes the database connection and tables.
     """
     logger.info("Starting AurumAI Backend...")
-    
+
     # Set system info metrics
     system_info.labels(
         version=settings.app_version,
         environment=settings.environment,
     ).set(1)
-    
+
     # TODO: Initialize database when ready
     # await init_database()
-    
+
     logger.info(
         "AurumAI Backend started successfully",
         extra={
@@ -146,11 +147,11 @@ def read_root() -> dict[str, str]:
 async def metrics() -> PlainTextResponse:
     """
     Prometheus metrics endpoint.
-    
+
     Exposes application metrics in Prometheus text format for scraping.
     Includes HTTP request metrics, database metrics, ML prediction metrics,
     circuit breaker states, retry attempts, and error rates.
-    
+
     Returns:
         PlainTextResponse: Metrics in Prometheus text format
     """
@@ -162,7 +163,7 @@ async def metrics() -> PlainTextResponse:
 def health_check() -> dict[str, Any]:
     """
     Detailed health check endpoint.
-    
+
     Returns application health status and configuration.
     """
     return {

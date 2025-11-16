@@ -62,12 +62,12 @@ async def list_machines() -> list[MachineInfo]:
     """
     List all available machines (MOCK VERSION).
     Returns sample data without database connection.
-    
+
     Returns:
         List of mock machines with basic info.
     """
     logger.info("🔧 Using MOCK machines endpoint (database not available)")
-    
+
     return [
         MachineInfo(
             machine_id=m["machine_id"],
@@ -85,26 +85,26 @@ async def get_machine_metrics(machine_id: str) -> MachineMetrics:
     """
     Get current metrics and status for a specific machine (MOCK VERSION).
     Returns sample metrics without database connection.
-    
+
     Args:
         machine_id: The ID of the machine to retrieve metrics for.
-        
+
     Returns:
         Mock machine metrics including status, measurements, and predictions.
     """
     logger.info(f"🔧 Using MOCK metrics endpoint for machine: {machine_id}")
-    
+
     # Find machine in mock data
     machine = next((m for m in MOCK_MACHINES if m["machine_id"] == machine_id), None)
-    
+
     if not machine:
         # Return default mock machine if not found
         machine = MOCK_MACHINES[0]
         machine_id = machine["machine_id"]
-    
+
     # Generate mock metrics based on machine ID
     now = datetime.utcnow()
-    
+
     # Mock metrics vary by machine type
     mock_metrics: dict[str, Any] = {
         "temperature": 45.2 + hash(machine_id) % 20,
@@ -113,7 +113,7 @@ async def get_machine_metrics(machine_id: str) -> MachineMetrics:
         "rpm": 1500 + hash(machine_id) % 500,
         "pressure": 80 + hash(machine_id) % 40,
     }
-    
+
     # Mock prediction
     risk_score = 0.2 + (hash(machine_id) % 30) / 100
     prediction = PredictionResponse(
@@ -124,10 +124,10 @@ async def get_machine_metrics(machine_id: str) -> MachineMetrics:
         confidence=0.85 + (hash(machine_id) % 10) / 100,
         maintenance_hours=240 - int(risk_score * 100),
     )
-    
+
     # Alerts based on risk
     alerts_count = 1 if risk_score > 0.4 else 0
-    
+
     return MachineMetrics(
         machine_id=machine_id,
         current_status=machine["status"],

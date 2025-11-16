@@ -12,6 +12,7 @@ from typing_extensions import TypedDict
 
 class _PredictionResultRequired(TypedDict):
     """Required fields in prediction results (must always be present)"""
+
     risk_score: float
     failure_probability: float
     maintenance_hours: int
@@ -19,6 +20,7 @@ class _PredictionResultRequired(TypedDict):
 
 class PredictionResult(_PredictionResultRequired, total=False):
     """Complete prediction result with required + optional fields"""
+
     failure_type: str | None
     confidence: float
     model_version: str

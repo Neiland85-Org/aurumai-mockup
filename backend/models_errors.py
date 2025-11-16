@@ -112,7 +112,9 @@ class ErrorDetails(BaseModel):
     field: Optional[str] = Field(default=None, description="Field that caused the error")
     constraint: Optional[str] = Field(default=None, description="Constraint that was violated")
     provided_value: Optional[Any] = Field(default=None, description="Value that was provided")
-    expected_format: Optional[str] = Field(default=None, description="Expected format for the field")
+    expected_format: Optional[str] = Field(
+        default=None, description="Expected format for the field"
+    )
 
 
 class ErrorResponse(BaseModel):
@@ -121,24 +123,14 @@ class ErrorResponse(BaseModel):
     Used consistently across all endpoints.
     """
 
-    status_code: int = Field(
-        ..., description="HTTP status code", ge=400, le=599
-    )
-    error_code: ErrorCode = Field(
-        ..., description="Machine-readable error code"
-    )
-    message: str = Field(
-        ..., description="Human-readable error message"
-    )
-    details: Optional[ErrorDetails] = Field(
-        None, description="Optional detailed error information"
-    )
+    status_code: int = Field(..., description="HTTP status code", ge=400, le=599)
+    error_code: ErrorCode = Field(..., description="Machine-readable error code")
+    message: str = Field(..., description="Human-readable error message")
+    details: Optional[ErrorDetails] = Field(None, description="Optional detailed error information")
     timestamp: datetime = Field(
         default_factory=datetime.utcnow, description="Error occurrence timestamp"
     )
-    request_id: Optional[str] = Field(
-        None, description="Request ID for tracing"
-    )
+    request_id: Optional[str] = Field(None, description="Request ID for tracing")
 
     class Config:
         json_schema_extra = {
@@ -165,6 +157,7 @@ class ErrorResponse(BaseModel):
         """Override json to ensure timestamp is ISO format."""
         data = self.dict()
         import json
+
         return json.dumps(data, default=str, **kwargs)
 
 
@@ -172,18 +165,12 @@ class ValidationError(BaseModel):
     """Validation error response for invalid input."""
 
     status_code: int = Field(400, description="HTTP status code")
-    error_code: ErrorCode = Field(
-        ErrorCode.VALIDATION_ERROR, description="Error code"
-    )
-    message: str = Field(
-        "Validation failed", description="Error message"
-    )
+    error_code: ErrorCode = Field(ErrorCode.VALIDATION_ERROR, description="Error code")
+    message: str = Field("Validation failed", description="Error message")
     errors: list[ErrorDetails] = Field(
         default_factory=list, description="List of validation errors"
     )
-    timestamp: datetime = Field(
-        default_factory=datetime.utcnow, description="Error timestamp"
-    )
+    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Error timestamp")
 
     class Config:
         json_schema_extra = {

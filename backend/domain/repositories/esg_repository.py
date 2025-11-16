@@ -48,8 +48,8 @@ class IESGRepository(ABC):
     @abstractmethod
     async def get_summary_stats(
         self,
-    start_time: datetime | None = None,
-    end_time: datetime | None = None,
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
     ) -> Mapping[str, float]:
         """Aggregate metrics (sum/avg/max) over ESG measurements"""
         raise NotImplementedError

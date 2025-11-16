@@ -21,7 +21,7 @@ _env_file = os.environ.get("ENV_FILE", ".env")
 
 class Settings(BaseSettings):
     """Main application settings
-    
+
     Critical variables (SECRET_KEY, DB_PASSWORD) have NO defaults
     and will raise ValidationError if not provided in environment.
     """
@@ -73,9 +73,7 @@ class Settings(BaseSettings):
     # Security
     # CRITICAL: SECRET_KEY is REQUIRED (no default)
     secret_key: str = Field(
-        ..., 
-        min_length=32,
-        description="Secret key for JWT/sessions (REQUIRED, min 32 chars)"
+        ..., min_length=32, description="Secret key for JWT/sessions (REQUIRED, min 32 chars)"
     )
     access_token_expire_minutes: int = 30
     algorithm: str = "HS256"
@@ -121,15 +119,15 @@ class Settings(BaseSettings):
 
     # Resilience - Timeouts
     timeout_connect: float = 5.0  # Connection timeout in seconds
-    timeout_read: float = 30.0    # Read timeout in seconds
-    timeout_write: float = 30.0   # Write timeout in seconds
-    timeout_pool: float = 5.0     # Pool timeout in seconds
-    timeout_db: float = 30.0      # Database timeout in seconds
+    timeout_read: float = 30.0  # Read timeout in seconds
+    timeout_write: float = 30.0  # Write timeout in seconds
+    timeout_pool: float = 5.0  # Pool timeout in seconds
+    timeout_db: float = 30.0  # Database timeout in seconds
 
     # CORS
     cors_origins: List[str] = Field(
         default=["http://localhost:3000", "http://localhost:8000"],
-        description="Comma-separated list of allowed CORS origins"
+        description="Comma-separated list of allowed CORS origins",
     )
     cors_allow_credentials: bool = True
 
@@ -151,6 +149,7 @@ class Settings(BaseSettings):
             # If it's a JSON array string, parse it
             elif v.startswith("["):
                 import json
+
                 return json.loads(v)
             # Single origin
             return [v]
@@ -219,5 +218,8 @@ except Exception as e:  # pragma: no cover - configuration errors must surface e
             loc = ".".join(str(x) for x in err["loc"])
             msg = err["msg"]
             print(f"- {loc}: {msg}", file=sys.stderr)
-    print("\n💡 Asegúrate de que el archivo .env existe y contiene todas las variables requeridas", file=sys.stderr)
+    print(
+        "\n💡 Asegúrate de que el archivo .env existe y contiene todas las variables requeridas",
+        file=sys.stderr,
+    )
     sys.exit(1)

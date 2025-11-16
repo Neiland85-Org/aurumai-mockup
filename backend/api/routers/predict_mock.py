@@ -31,10 +31,10 @@ def _generate_mock_prediction(machine_id: str) -> dict[str, Any]:
 
     # Add variation
     risk_score = max(0.0, min(1.0, base_risk + random.uniform(-0.1, 0.1)))
-    
+
     # Failure probability is usually lower than risk score
     failure_prob = risk_score * random.uniform(0.6, 0.9)
-    
+
     # Maintenance hours based on risk
     if risk_score > 0.6:
         maintenance_hours = random.randint(24, 72)  # Soon
@@ -58,10 +58,10 @@ async def predict_mock(
     """
     Get mock predictive maintenance analysis for a machine.
     Returns simulated data - no database required.
-    
+
     Args:
         machine_id: The machine to get predictions for.
-        
+
     Returns:
         Mock prediction with risk score, failure probability, and maintenance schedule.
     """
@@ -70,6 +70,7 @@ async def predict_mock(
     # Validate machine exists
     if machine_id not in VALID_MACHINE_IDS:
         from models_errors import ResourceNotFoundException
+
         raise ResourceNotFoundException(
             message=f"Machine '{machine_id}' not found in mock data",
             resource_type="machine",
@@ -86,7 +87,15 @@ async def predict_mock(
         "maintenance_hours": prediction["maintenance_hours"],
         "confidence": prediction["confidence"],
         "recommendations": [
-            f"Monitor {machine_id} for unusual vibrations" if prediction["risk_score"] > 0.5 else f"{machine_id} operating normally",
-            "Schedule maintenance" if prediction["maintenance_hours"] < 100 else "Continue regular monitoring",
+            (
+                f"Monitor {machine_id} for unusual vibrations"
+                if prediction["risk_score"] > 0.5
+                else f"{machine_id} operating normally"
+            ),
+            (
+                "Schedule maintenance"
+                if prediction["maintenance_hours"] < 100
+                else "Continue regular monitoring"
+            ),
         ],
     }

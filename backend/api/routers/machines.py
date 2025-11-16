@@ -64,10 +64,10 @@ async def list_machines(
     """
     List all available machines.
     Uses hexagonal architecture with dependency injection.
-    
+
     Returns:
         List of all registered machines with basic info.
-        
+
     Raises:
         ComputationException: If retrieving machines fails.
     """
@@ -103,13 +103,13 @@ async def get_machine_metrics(
     """
     Get current metrics and status for a specific machine.
     Uses hexagonal architecture with dependency injection.
-    
+
     Args:
         machine_id: The ID of the machine to retrieve metrics for.
-        
+
     Returns:
         Current machine metrics including status, measurements, and predictions.
-        
+
     Raises:
         ValidationException: If machine_id is invalid.
         ResourceNotFoundException: If machine is not found.
@@ -126,14 +126,10 @@ async def get_machine_metrics(
         latest_metrics: dict[str, Any] = {}
         if metrics.get("latest_measurement"):
             try:
-                last_timestamp = datetime.fromisoformat(
-                    metrics["latest_measurement"]["timestamp"]
-                )
+                last_timestamp = datetime.fromisoformat(metrics["latest_measurement"]["timestamp"])
                 latest_metrics = metrics["latest_measurement"]["metrics"]
             except (ValueError, KeyError) as exc:
-                logger.warning(
-                    f"Invalid measurement data for {machine_id}: {exc}"
-                )
+                logger.warning(f"Invalid measurement data for {machine_id}: {exc}")
                 last_timestamp = None
 
         # Extract prediction
@@ -153,9 +149,7 @@ async def get_machine_metrics(
                     next_maintenance_hours=pred_data.get("maintenance_hours"),
                 )
             except (ValueError, KeyError) as exc:
-                logger.warning(
-                    f"Invalid prediction data for {machine_id}: {exc}"
-                )
+                logger.warning(f"Invalid prediction data for {machine_id}: {exc}")
                 prediction = None
 
         # Count alerts based on risk score
@@ -167,9 +161,7 @@ async def get_machine_metrics(
 
         return MachineMetrics(
             machine_id=machine_id,
-            current_status=(
-                "operational" if metrics["machine"]["operational"] else "down"
-            ),
+            current_status=("operational" if metrics["machine"]["operational"] else "down"),
             last_measurement=last_timestamp,
             metrics=latest_metrics,
             alerts_count=alerts_count,

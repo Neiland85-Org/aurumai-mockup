@@ -105,13 +105,13 @@ async def ingest_raw(
     """
     Ingest raw telemetry data from IoT devices/Edge nodes.
     Uses hexagonal architecture with dependency injection.
-    
+
     Args:
         meas: Raw measurement with machine_id, timestamp, and metrics dict.
-        
+
     Returns:
         Result of ingestion including status and any warnings.
-        
+
     Raises:
         ValidationException: If measurement data is invalid.
         ResourceNotFoundException: If machine not found.
@@ -126,9 +126,7 @@ async def ingest_raw(
             timestamp=meas.timestamp,
             metrics=meas.metrics,
         )
-        logger.info(
-            f"Raw telemetry ingested for machine {meas.machine_id}: {result['message']}"
-        )
+        logger.info(f"Raw telemetry ingested for machine {meas.machine_id}: {result['message']}")
         return result
 
     except (ResourceNotFoundException, ValidationException):
@@ -160,13 +158,13 @@ async def ingest_features(
     """
     Ingest feature-engineered data from Edge nodes.
     Uses hexagonal architecture with dependency injection.
-    
+
     Args:
         vec: Feature vector with machine_id, timestamp, and features dict.
-        
+
     Returns:
         Result of ingestion including status and any warnings.
-        
+
     Raises:
         ValidationException: If feature data is invalid.
         ResourceNotFoundException: If machine not found.
@@ -181,9 +179,7 @@ async def ingest_features(
             timestamp=vec.timestamp,
             features=vec.features,
         )
-        logger.info(
-            f"Feature vector ingested for machine {vec.machine_id}: {result['message']}"
-        )
+        logger.info(f"Feature vector ingested for machine {vec.machine_id}: {result['message']}")
         return result
 
     except (ResourceNotFoundException, ValidationException):
