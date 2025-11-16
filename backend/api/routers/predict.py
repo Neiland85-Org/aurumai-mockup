@@ -101,7 +101,9 @@ async def predict(
             timestamp=prediction.timestamp,
             risk_score=prediction.risk_score,
             failure_probability=prediction.failure_probability,
-            confidence=prediction.confidence if prediction.confidence is not None else 0.85,
+            confidence=(
+                prediction.confidence if prediction.confidence is not None else 0.85
+            ),
             next_maintenance_hours=prediction.maintenance_hours,
         )
 
@@ -117,7 +119,9 @@ async def predict(
     except ComputationException:
         raise
     except Exception as exc:
-        logger.error(f"Unexpected error predicting {machine_id}: {type(exc).__name__}: {exc}")
+        logger.error(
+            f"Unexpected error predicting {machine_id}: {type(exc).__name__}: {exc}"
+        )
         raise ComputationException(
             message=f"Failed to generate prediction for machine '{machine_id}'",
             error_code=ErrorCode.PREDICTION_FAILED,

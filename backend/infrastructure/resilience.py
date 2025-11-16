@@ -121,7 +121,9 @@ class RetryPolicy:
         # This should never be reached, but keeps type checker happy
         raise RuntimeError("Retry logic failed unexpectedly")
 
-    async def execute_async(self, func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
+    async def execute_async(
+        self, func: Callable[P, T], *args: P.args, **kwargs: P.kwargs
+    ) -> T:
         """
         Execute async function with retry policy.
 
@@ -191,7 +193,9 @@ def with_retry(
     """
 
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
-        policy = RetryPolicy(max_attempts=max_attempts, base_delay=base_delay, max_delay=max_delay)
+        policy = RetryPolicy(
+            max_attempts=max_attempts, base_delay=base_delay, max_delay=max_delay
+        )
 
         @functools.wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
@@ -219,7 +223,9 @@ def with_async_retry(
     """
 
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
-        policy = RetryPolicy(max_attempts=max_attempts, base_delay=base_delay, max_delay=max_delay)
+        policy = RetryPolicy(
+            max_attempts=max_attempts, base_delay=base_delay, max_delay=max_delay
+        )
 
         @functools.wraps(func)
         async def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
@@ -282,7 +288,9 @@ class ResilientCircuitBreaker(CircuitBreaker):
         # Add listeners for state changes
         self.add_listener(self._on_state_change)
 
-    def _on_state_change(self, breaker: CircuitBreaker, old_state: str, new_state: str) -> None:
+    def _on_state_change(
+        self, breaker: CircuitBreaker, old_state: str, new_state: str
+    ) -> None:
         """Log circuit breaker state changes"""
         logger.warning(
             f"Circuit breaker '{breaker.name}' state changed: {old_state} -> {new_state}",
@@ -328,7 +336,9 @@ class ResilientCircuitBreaker(CircuitBreaker):
             )
             raise
 
-    async def call_async(self, func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
+    async def call_async(
+        self, func: Callable[P, T], *args: P.args, **kwargs: P.kwargs
+    ) -> T:
         """
         Execute async function through circuit breaker.
 

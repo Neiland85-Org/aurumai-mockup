@@ -99,7 +99,9 @@ class PostgresMachineRepository(IMachineRepository):
     async def find_by_code(self, tenant_id: UUID, code: str) -> Optional[Machine]:
         raise NotImplementedError
 
-    async def find_by_site(self, site_id: UUID, skip: int = 0, limit: int = 100) -> List[Machine]:
+    async def find_by_site(
+        self, site_id: UUID, skip: int = 0, limit: int = 100
+    ) -> List[Machine]:
         raise NotImplementedError
 
     async def find_by_tenant(

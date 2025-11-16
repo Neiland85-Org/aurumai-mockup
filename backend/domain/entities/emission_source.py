@@ -47,7 +47,9 @@ class EmissionSource:
     code: str
     source_type: EmissionSourceType
     scope: EmissionScope
-    fuel_type: Optional[str] = None  # diesel, gasoline, natural_gas, coal, electric, etc.
+    fuel_type: Optional[str] = (
+        None  # diesel, gasoline, natural_gas, coal, electric, etc.
+    )
     capacity: Optional[float] = None
     capacity_unit: Optional[str] = None
     created_at: datetime = field(default_factory=datetime.utcnow)

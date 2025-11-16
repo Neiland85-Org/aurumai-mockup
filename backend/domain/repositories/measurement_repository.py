@@ -65,7 +65,9 @@ class IMeasurementRepository(ABC):
         pass
 
     # Aliases for compatibility with use cases
-    async def get_latest_raw_measurement(self, machine_id: str) -> Optional[RawMeasurement]:
+    async def get_latest_raw_measurement(
+        self, machine_id: str
+    ) -> Optional[RawMeasurement]:
         """Get latest raw measurement for a machine"""
         # This should be implemented by concrete repositories
         return None

@@ -73,7 +73,9 @@ class Settings(BaseSettings):
     # Security
     # CRITICAL: SECRET_KEY is REQUIRED (no default)
     secret_key: str = Field(
-        ..., min_length=32, description="Secret key for JWT/sessions (REQUIRED, min 32 chars)"
+        ...,
+        min_length=32,
+        description="Secret key for JWT/sessions (REQUIRED, min 32 chars)",
     )
     access_token_expire_minutes: int = 30
     algorithm: str = "HS256"

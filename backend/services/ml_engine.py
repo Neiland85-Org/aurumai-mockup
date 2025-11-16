@@ -56,7 +56,9 @@ def run_prediction(
 
     # Extract key features if available
     vibration = float(features.get("vibration") or features.get("raw_vibration") or 3.0)
-    temperature = float(features.get("temperature") or features.get("raw_temperature") or 85.0)
+    temperature = float(
+        features.get("temperature") or features.get("raw_temperature") or 85.0
+    )
     rpm = float(features.get("rpm") or features.get("raw_rpm") or 1600.0)
 
     # Risk modifiers based on features

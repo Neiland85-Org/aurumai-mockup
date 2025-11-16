@@ -220,7 +220,9 @@ async def get_esg_summary(
     except ComputationException:
         raise
     except Exception as exc:
-        logger.error(f"Unexpected error calculating ESG summary: {type(exc).__name__}: {exc}")
+        logger.error(
+            f"Unexpected error calculating ESG summary: {type(exc).__name__}: {exc}"
+        )
         raise ComputationException(
             message="Failed to calculate ESG summary",
             error_code=ErrorCode.ESG_CALCULATION_ERROR,

@@ -25,7 +25,9 @@ class IPredictionRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_history(self, machine_id: str, limit: int = 50) -> Sequence[Prediction]:
+    async def get_history(
+        self, machine_id: str, limit: int = 50
+    ) -> Sequence[Prediction]:
         """Fetch last N predictions for a machine"""
         raise NotImplementedError
 

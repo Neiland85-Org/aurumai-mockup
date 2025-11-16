@@ -25,7 +25,9 @@ class IESGRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_history(self, machine_id: str, limit: int = 100) -> Sequence[ESGRecord]:
+    async def get_history(
+        self, machine_id: str, limit: int = 100
+    ) -> Sequence[ESGRecord]:
         """Fetch last N ESG records for a machine"""
         raise NotImplementedError
 

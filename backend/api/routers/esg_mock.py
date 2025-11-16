@@ -71,7 +71,9 @@ async def get_current_esg_mock(
     Returns:
         Mock ESG metrics including CO2 emissions and fuel consumption.
     """
-    logger.info(f"🔧 Using MOCK ESG endpoint for '{machine_id}' (database not available)")
+    logger.info(
+        f"🔧 Using MOCK ESG endpoint for '{machine_id}' (database not available)"
+    )
 
     # Validate machine exists
     if machine_id not in VALID_MACHINE_IDS:

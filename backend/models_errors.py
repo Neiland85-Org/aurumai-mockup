@@ -109,9 +109,15 @@ ERROR_CODE_TO_STATUS: dict[ErrorCode, HTTPStatusCode] = {
 class ErrorDetails(BaseModel):
     """Optional detailed error information."""
 
-    field: Optional[str] = Field(default=None, description="Field that caused the error")
-    constraint: Optional[str] = Field(default=None, description="Constraint that was violated")
-    provided_value: Optional[Any] = Field(default=None, description="Value that was provided")
+    field: Optional[str] = Field(
+        default=None, description="Field that caused the error"
+    )
+    constraint: Optional[str] = Field(
+        default=None, description="Constraint that was violated"
+    )
+    provided_value: Optional[Any] = Field(
+        default=None, description="Value that was provided"
+    )
     expected_format: Optional[str] = Field(
         default=None, description="Expected format for the field"
     )
@@ -126,7 +132,9 @@ class ErrorResponse(BaseModel):
     status_code: int = Field(..., description="HTTP status code", ge=400, le=599)
     error_code: ErrorCode = Field(..., description="Machine-readable error code")
     message: str = Field(..., description="Human-readable error message")
-    details: Optional[ErrorDetails] = Field(None, description="Optional detailed error information")
+    details: Optional[ErrorDetails] = Field(
+        None, description="Optional detailed error information"
+    )
     timestamp: datetime = Field(
         default_factory=datetime.utcnow, description="Error occurrence timestamp"
     )
@@ -170,7 +178,9 @@ class ValidationError(BaseModel):
     errors: list[ErrorDetails] = Field(
         default_factory=list, description="List of validation errors"
     )
-    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Error timestamp")
+    timestamp: datetime = Field(
+        default_factory=datetime.utcnow, description="Error timestamp"
+    )
 
     class Config:
         json_schema_extra: ClassVar[dict[str, Any]] = {

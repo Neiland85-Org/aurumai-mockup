@@ -20,7 +20,9 @@ def override_get_ingest_telemetry_use_case() -> AsyncMock:
     return mock_ingest_use_case
 
 
-app.dependency_overrides[get_ingest_telemetry_use_case] = override_get_ingest_telemetry_use_case
+app.dependency_overrides[get_ingest_telemetry_use_case] = (
+    override_get_ingest_telemetry_use_case
+)
 
 
 @pytest.fixture(autouse=True)
@@ -62,7 +64,9 @@ def test_ingest_raw_machine_not_found() -> None:
     Test ingestion when the machine ID is not found.
     """
     # Arrange
-    mock_ingest_use_case.execute_raw.side_effect = ValueError("Machine test-machine not found")
+    mock_ingest_use_case.execute_raw.side_effect = ValueError(
+        "Machine test-machine not found"
+    )
     payload = {
         "machine_id": "test-machine",
         "timestamp": "2025-11-15T10:00:00Z",

@@ -183,7 +183,9 @@ def track_request(method: str, endpoint: str, status_code: int) -> None:
         endpoint: API endpoint path
         status_code: HTTP status code
     """
-    http_requests_total.labels(method=method, endpoint=endpoint, status_code=status_code).inc()
+    http_requests_total.labels(
+        method=method, endpoint=endpoint, status_code=status_code
+    ).inc()
 
 
 def track_request_duration(method: str, endpoint: str, duration: float) -> None:
@@ -195,7 +197,9 @@ def track_request_duration(method: str, endpoint: str, duration: float) -> None:
         endpoint: API endpoint path
         duration: Duration in seconds
     """
-    http_request_duration_seconds.labels(method=method, endpoint=endpoint).observe(duration)
+    http_request_duration_seconds.labels(method=method, endpoint=endpoint).observe(
+        duration
+    )
 
 
 def track_db_query(operation: str, table: str, duration: float) -> None:
@@ -223,7 +227,9 @@ def track_prediction(
         duration: Prediction duration in seconds
         risk_score: Predicted risk score (0.0-1.0)
     """
-    ml_predictions_total.labels(machine_type=machine_type, model_version=model_version).inc()
+    ml_predictions_total.labels(
+        machine_type=machine_type, model_version=model_version
+    ).inc()
     ml_prediction_duration_seconds.labels(machine_type=machine_type).observe(duration)
     ml_prediction_risk_score.labels(machine_type=machine_type).observe(risk_score)
 
@@ -249,7 +255,9 @@ def track_ingestion(
     data_ingestion_duration_seconds.labels(data_type=data_type).observe(duration)
 
     if not success and error_type:
-        data_ingestion_errors_total.labels(machine_id=machine_id, error_type=error_type).inc()
+        data_ingestion_errors_total.labels(
+            machine_id=machine_id, error_type=error_type
+        ).inc()
 
 
 def track_circuit_breaker(name: str, state: str, success: bool | None = None) -> None:
@@ -270,7 +278,9 @@ def track_circuit_breaker(name: str, state: str, success: bool | None = None) ->
         circuit_breaker_failures_total.labels(name=name).inc()
 
 
-def track_retry(function: str, attempt_number: int, final_failure: bool = False) -> None:
+def track_retry(
+    function: str, attempt_number: int, final_failure: bool = False
+) -> None:
     """
     Track retry metrics.
 
@@ -279,7 +289,9 @@ def track_retry(function: str, attempt_number: int, final_failure: bool = False)
         attempt_number: Retry attempt number
         final_failure: Whether all retries failed
     """
-    retry_attempts_total.labels(function=function, attempt_number=str(attempt_number)).inc()
+    retry_attempts_total.labels(
+        function=function, attempt_number=str(attempt_number)
+    ).inc()
 
     if final_failure:
         retry_failures_total.labels(function=function).inc()

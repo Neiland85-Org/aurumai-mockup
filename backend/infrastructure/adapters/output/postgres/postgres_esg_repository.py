@@ -177,7 +177,9 @@ class PostgresESGRepository(IESGRepository):
             instant_co2eq_kg=instant_co2eq_kg,
             cumulative_co2eq_kg=cumulative_co2eq_kg,
             fuel_rate_lh=fuel_rate_lh if fuel_rate_lh != 0.0 else None,
-            power_consumption_kw=power_consumption_kw if power_consumption_kw != 0.0 else None,
+            power_consumption_kw=(
+                power_consumption_kw if power_consumption_kw != 0.0 else None
+            ),
             efficiency_score=efficiency_score if efficiency_score != 0.0 else None,
             metadata=metadata,
         )
