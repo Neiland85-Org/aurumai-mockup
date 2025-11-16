@@ -7,7 +7,7 @@ Represents sources of greenhouse gas emissions (mobile, fixed, electricity, proc
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Union
 from uuid import UUID, uuid4
 
 
@@ -42,14 +42,14 @@ class EmissionSource:
     id: UUID
     tenant_id: UUID
     site_id: UUID
-    machine_id: UUID | None  # None for site-level sources
+    machine_id: Optional[UUID]  # None for site-level sources
     name: str
     code: str
     source_type: EmissionSourceType
     scope: EmissionScope
-    fuel_type: str | None = None  # diesel, gasoline, natural_gas, coal, electric, etc.
-    capacity: float | None = None
-    capacity_unit: str | None = None
+    fuel_type: Optional[str] = None  # diesel, gasoline, natural_gas, coal, electric, etc.
+    capacity: Optional[float] = None
+    capacity_unit: Optional[str] = None
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     is_active: bool = True
@@ -63,11 +63,11 @@ class EmissionSource:
         code: str,
         source_type: EmissionSourceType,
         scope: EmissionScope,
-        machine_id: UUID | None = None,
-        fuel_type: str | None = None,
-        capacity: float | None = None,
-        capacity_unit: str | None = None,
-        metadata: dict[str, Any] | None = None,
+        machine_id: Optional[UUID] = None,
+        fuel_type: Optional[str] = None,
+        capacity: Optional[float] = None,
+        capacity_unit: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> "EmissionSource":
         """Factory method to create a new emission source"""
         now = datetime.now(timezone.utc)

@@ -5,7 +5,7 @@ Represents ML prediction results for predictive maintenance
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict
+from typing import Dict, Mapping, Optional
 
 
 @dataclass
@@ -20,10 +20,10 @@ class Prediction:
     risk_score: float
     failure_probability: float
     maintenance_hours: int
-    failure_type: str | None = None
-    confidence: float | None = None
-    model_version: str | None = None
-    features_used: Dict[str, float | None] = None
+    failure_type: Optional[str] = None
+    confidence: Optional[float] = None
+    model_version: Optional[str] = None
+    features_used: Optional[Mapping[str, float]] = None
 
     def __post_init__(self) -> None:
         """Validate prediction data"""

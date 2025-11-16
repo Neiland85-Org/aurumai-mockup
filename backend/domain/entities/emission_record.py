@@ -6,7 +6,7 @@ Represents calculated emissions for a given activity and time period.
 
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Union
 from uuid import UUID, uuid4
 
 
@@ -24,7 +24,7 @@ class EmissionRecord:
     site_id: UUID
     emission_source_id: UUID
     emission_factor_id: UUID
-    machine_id: UUID | None
+    machine_id: Optional[UUID]
     timestamp: datetime
     period_start: datetime
     period_end: datetime
@@ -54,10 +54,10 @@ class EmissionRecord:
         ch4_kg: float,
         n2o_kg: float,
         co2eq_kg: float,
-        machine_id: UUID | None = None,
+        machine_id: Optional[UUID] = None,
         calculation_method: str = "direct",
         confidence_level: float = 1.0,
-        metadata: dict[str, Any] | None = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> "EmissionRecord":
         """Factory method to create a new emission record"""
         return EmissionRecord(

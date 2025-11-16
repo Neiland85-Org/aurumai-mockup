@@ -6,7 +6,7 @@ Centralized metrics collection for observability
 import asyncio
 import functools
 import time
-from typing import Callable, ParamSpec, TypeVar
+from typing import Callable, Dict, Optional, TypeVar
 
 from prometheus_client import (
     REGISTRY,
@@ -21,7 +21,6 @@ from infrastructure.logging import get_logger
 
 logger = get_logger(__name__)
 
-P = ParamSpec("P")
 T = TypeVar("T")
 
 
@@ -234,7 +233,7 @@ def track_ingestion(
     data_type: str,
     duration: float,
     success: bool = True,
-    error_type: str | None = None,
+    error_type: Optional[str] = None,
 ) -> None:
     """
     Track data ingestion metrics.
@@ -253,7 +252,7 @@ def track_ingestion(
         data_ingestion_errors_total.labels(machine_id=machine_id, error_type=error_type).inc()
 
 
-def track_circuit_breaker(name: str, state: str, success: bool | None = None) -> None:
+def track_circuit_breaker(name: str, state: str, success: Optional[bool] = None) -> None:
     """
     Track circuit breaker metrics.
 
@@ -314,8 +313,8 @@ def track_validation_error(field: str, constraint: str) -> None:
 
 
 def track_time(
-    metric: Histogram, labels: dict[str, str] | None = None
-) -> Callable[[Callable[P, T]], Callable[P, T]]:
+    metric: Histogram, labels: Optional[Dict[str, str]] = None
+) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
     Decorator to track function execution time.
 
@@ -330,12 +329,12 @@ def track_time(
         ...     return {"machines": [...]}
     """
 
-    def decorator(func: Callable[P, T]) -> Callable[P, T]:
+    def decorator(func: Callable[..., T]) -> Callable[..., T]:
         @functools.wraps(func)
-        async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
+        async def async_wrapper(*args, **kwargs):  # type: ignore
             start = time.time()
             try:
-                result = await func(*args, **kwargs)
+                result = await func(*args, **kwargs)  # type: ignore
                 return result
             finally:
                 duration = time.time() - start
@@ -345,7 +344,7 @@ def track_time(
                     metric.observe(duration)
 
         @functools.wraps(func)
-        def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
+        def sync_wrapper(*args, **kwargs):  # type: ignore
             start = time.time()
             try:
                 result = func(*args, **kwargs)

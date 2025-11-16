@@ -6,14 +6,14 @@ Centralized logging configuration with contextual fields
 import logging
 import sys
 from contextvars import ContextVar
-from typing import Any
+from typing import Any, Dict, MutableMapping, Optional
 
 from pythonjsonlogger import jsonlogger
 
 # Context variables for request-scoped logging
-request_id_ctx: ContextVar[str | None] = ContextVar("request_id", default=None)
-machine_id_ctx: ContextVar[str | None] = ContextVar("machine_id", default=None)
-user_id_ctx: ContextVar[str | None] = ContextVar("user_id", default=None)
+request_id_ctx: ContextVar[Optional[str]] = ContextVar("request_id", default=None)
+machine_id_ctx: ContextVar[Optional[str]] = ContextVar("machine_id", default=None)
+user_id_ctx: ContextVar[Optional[str]] = ContextVar("user_id", default=None)
 
 
 class ContextualJSONFormatter(jsonlogger.JsonFormatter):
@@ -28,7 +28,8 @@ class ContextualJSONFormatter(jsonlogger.JsonFormatter):
     """
 
     def __init__(self, *args: Any, environment: str = "development", **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+        # Call parent init without type checking since it's untyped
+        super().__init__(*args, **kwargs)  # type: ignore
         self.environment = environment
 
     def add_fields(
@@ -71,7 +72,7 @@ class ContextualJSONFormatter(jsonlogger.JsonFormatter):
 def setup_logging(
     level: str = "INFO",
     environment: str = "development",
-    logger_name: str | None = None,
+    logger_name: Optional[str] = None,
 ) -> logging.Logger:
     """
     Configure structured JSON logging for the application.
@@ -132,9 +133,9 @@ def get_logger(name: str, level: str = "INFO", environment: str = "development")
 
 
 def set_request_context(
-    request_id: str | None = None,
-    machine_id: str | None = None,
-    user_id: str | None = None,
+    request_id: Optional[str] = None,
+    machine_id: Optional[str] = None,
+    user_id: Optional[str] = None,
 ) -> None:
     """
     Set contextual fields for the current request.
@@ -168,7 +169,7 @@ def clear_request_context() -> None:
     user_id_ctx.set(None)
 
 
-class LoggerAdapter(logging.LoggerAdapter):
+class LoggerAdapter(logging.LoggerAdapter):  # type: ignore[type-arg]
     """
     Logger adapter that adds extra fields to all log messages.
 
@@ -178,7 +179,7 @@ class LoggerAdapter(logging.LoggerAdapter):
         >>> logger.info("Prediction completed")  # Will include service=ml_engine
     """
 
-    def process(self, msg: str, kwargs: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+    def process(self, msg: str, kwargs: MutableMapping[str, Any]) -> tuple[str, MutableMapping[str, Any]]:
         """Add extra fields to kwargs"""
         extra = kwargs.get("extra", {})
         extra.update(self.extra)
