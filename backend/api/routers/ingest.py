@@ -52,14 +52,14 @@ def _validate_raw_measurement(meas: RawMeasurement) -> None:
     for key, value in meas.metrics.items():
         try:
             float(value)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as exc:
             raise ValidationException(
                 message=f"Metric '{key}' value must be numeric",
                 field=f"metrics.{key}",
                 constraint="type",
                 provided_value=str(value),
                 expected_format="Numeric value",
-            )
+            ) from exc
 
 
 def _validate_feature_vector(vec: FeatureVector) -> None:
@@ -87,14 +87,14 @@ def _validate_feature_vector(vec: FeatureVector) -> None:
     for key, value in vec.features.items():
         try:
             float(value)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as exc:
             raise ValidationException(
                 message=f"Feature '{key}' value must be numeric",
                 field=f"features.{key}",
                 constraint="type",
                 provided_value=str(value),
                 expected_format="Numeric value",
-            )
+            ) from exc
 
 
 @router.post("/raw")

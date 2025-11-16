@@ -5,7 +5,7 @@ Provides typed, consistent error responses across all endpoints.
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, ClassVar, Optional
 
 from pydantic import BaseModel, Field
 
@@ -133,7 +133,7 @@ class ErrorResponse(BaseModel):
     request_id: Optional[str] = Field(None, description="Request ID for tracing")
 
     class Config:
-        json_schema_extra = {
+        json_schema_extra: ClassVar[dict[str, Any]] = {
             "example": {
                 "status_code": 404,
                 "error_code": "machine_not_found",
@@ -147,13 +147,13 @@ class ErrorResponse(BaseModel):
             }
         }
 
-    def dict(self, **kwargs):  # type: ignore
+    def dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
         """Override dict to ensure timestamp is ISO format."""
         data = super().dict(**kwargs)
         data["timestamp"] = self.timestamp.isoformat() + "Z"
         return data
 
-    def json(self, **kwargs):  # type: ignore
+    def json(self, **kwargs: Any) -> str:  # type: ignore
         """Override json to ensure timestamp is ISO format."""
         data = self.dict()
         import json
@@ -173,7 +173,7 @@ class ValidationError(BaseModel):
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Error timestamp")
 
     class Config:
-        json_schema_extra = {
+        json_schema_extra: ClassVar[dict[str, Any]] = {
             "example": {
                 "status_code": 400,
                 "error_code": "validation_error",
