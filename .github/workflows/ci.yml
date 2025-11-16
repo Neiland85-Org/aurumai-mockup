@@ -321,6 +321,8 @@ jobs:
   notify:
     name: 📢 Notify Results
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: [lint-backend, lint-frontend, test-backend, test-frontend]
     if: always()
     steps:
