@@ -129,7 +129,7 @@ El CI debería pasar ahora porque:
 
 ## Notas Técnicas
 
-### ¿Por qué pytest 7.4.4 y no 8.0.0?
+### ¿Por qué pytest 7.4.4 y no 8.0.0
 
 pytest 8.0.0 tiene cambios en la API interna que causan conflictos con pytest-asyncio 0.23.3:
 
@@ -137,7 +137,7 @@ pytest 8.0.0 tiene cambios en la API interna que causan conflictos con pytest-as
 - pytest-asyncio 0.23.3 asume la API de pytest 7.x
 - La versión 0.23.5+ arregla esto, pero preferimos mantener versiones estables
 
-### ¿Por qué smoke tests?
+### ¿Por qué smoke tests
 
 Los smoke tests son ideales para CI porque:
 

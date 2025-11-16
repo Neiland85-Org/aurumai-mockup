@@ -7,7 +7,7 @@ Represents significant events in the system (maintenance, failures, operations).
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 from uuid import UUID, uuid4
 
 
@@ -43,10 +43,10 @@ class Event:
     title: str
     description: str
     occurred_at: datetime
-    duration_minutes: Optional[int] = None
-    performed_by: Optional[str] = None
-    cost: Optional[float] = None
-    related_alert_id: Optional[UUID] = None
+    duration_minutes: int | None = None
+    performed_by: str | None = None
+    cost: float | None = None
+    related_alert_id: UUID | None = None
     metadata: Dict[str, Any] = field(default_factory=dict)
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -58,12 +58,12 @@ class Event:
         event_type: EventType,
         title: str,
         description: str,
-        occurred_at: Optional[datetime] = None,
-        duration_minutes: Optional[int] = None,
-        performed_by: Optional[str] = None,
-        cost: Optional[float] = None,
-        related_alert_id: Optional[UUID] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        occurred_at: datetime | None = None,
+        duration_minutes: int | None = None,
+        performed_by: str | None = None,
+        cost: float | None = None,
+        related_alert_id: UUID | None = None,
+        metadata: Dict[str, Any] | None = None,
     ) -> "Event":
         """Factory method to create a new event"""
         return Event(

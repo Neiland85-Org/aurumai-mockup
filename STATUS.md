@@ -41,6 +41,7 @@ backend/
 #### Entidades Implementadas (9/9)
 
 **Core Entities:**
+
 - ✅ `Tenant`: Multi-tenant con configuración por región
 - ✅ `Site`: Ubicaciones físicas (minas, plantas)
 - ✅ `Machine`: Activos industriales (trucks, mills, boilers, etc.)
@@ -49,6 +50,7 @@ backend/
 - ✅ `Event`: Eventos de mantenimiento y operación
 
 **ESG Entities:**
+
 - ✅ `EmissionSource`: Fuentes de emisiones (Scope 1/2/3)
 - ✅ `EmissionFactor`: Factores IPCC/EPA/custom con versionado
 - ✅ `EmissionRecord`: Registros calculados de CO₂eq
@@ -113,6 +115,7 @@ class IngestTelemetryUseCase:
 ```
 
 Similar para:
+
 - `ComputeFeaturesUseCase`
 - `RunPredictionUseCase`
 - `RaiseAlertUseCase`
@@ -186,41 +189,49 @@ class MachineModel(Base):
 ## 🎯 Decisiones Arquitectónicas Clave (ADRs)
 
 ### ADR-001: Arquitectura Hexagonal
+
 **Decisión**: Usar arquitectura hexagonal (Ports & Adapters)
 **Razón**: Permitir cambio de frameworks sin tocar dominio
 **Consecuencias**: Más capas, pero máxima flexibilidad
 
 ### ADR-002: Domain-Driven Design
+
 **Decisión**: Modelar dominio completo antes de infraestructura
 **Razón**: Entender el negocio antes de elegir tecnología
 **Consecuencias**: Entidades ricas, lógica de negocio aislada
 
 ### ADR-003: Multi-tenant desde Día 1
+
 **Decisión**: Soporte multi-tenant en el core
 **Razón**: Escalabilidad comercial futura
 **Consecuencias**: Todas las queries incluyen tenant_id
 
 ### ADR-004: ESG como First-Class Citizen
+
 **Decisión**: ESG no es "add-on", es parte del dominio core
 **Razón**: Mismo dato sirve para predictivo y emisiones
 **Consecuencias**: EmissionSource, EmissionFactor en domain/
 
 ### ADR-005: Edge-First Design
+
 **Decisión**: Diseñar para operación offline
 **Razón**: Minas/plantas tienen conectividad pobre
 **Consecuencias**: Store & forward, buffer local, sync
 
 ### ADR-006: PostgreSQL + TimescaleDB
+
 **Decisión**: PostgreSQL para metadata, TimescaleDB para time series
 **Razón**: SQL estándar + optimización TSDB
 **Consecuencias**: Dos bases de datos, pero mejor performance
 
 ### ADR-007: MQTT como Protocolo IoT Principal
+
 **Decisión**: MQTT para ingesta de telemetría
 **Razón**: Estándar industrial, QoS, lightweight
 **Consecuencias**: Broker MQTT necesario
 
 ### ADR-008: Factores de Emisión Versionados
+
 **Decisión**: EmissionFactor con valid_from/valid_to
 **Razón**: Factores IPCC cambian, necesitamos histórico
 **Consecuencias**: Queries más complejas, auditoría completa
@@ -230,6 +241,7 @@ class MachineModel(Base):
 ## 🔥 Cosas que NO Hacer (Anti-patterns)
 
 ### ❌ NO mezclar dominio e infraestructura
+
 ```python
 # MAL ❌
 class Machine:
@@ -244,6 +256,7 @@ class Machine:
 ```
 
 ### ❌ NO poner lógica de negocio en controllers
+
 ```python
 # MAL ❌
 @router.post("/machines")
@@ -263,6 +276,7 @@ async def create_machine(
 ```
 
 ### ❌ NO hardcodear configuraciones
+
 ```python
 # MAL ❌
 DB_HOST = "localhost"
@@ -277,6 +291,7 @@ db_host = settings.db_host
 ## 🚀 Comandos Útiles
 
 ### Setup inicial
+
 ```bash
 cd backend
 python3 -m venv venv
@@ -286,6 +301,7 @@ cp .env.example .env
 ```
 
 ### Desarrollo
+
 ```bash
 # Formatear código
 black backend/
@@ -301,6 +317,7 @@ pytest backend/tests/ -v
 ```
 
 ### Future: Levantar todo
+
 ```bash
 # Desde raíz del proyecto
 docker compose up --build
@@ -311,18 +328,21 @@ docker compose up --build
 ## 📦 Dependencias Clave
 
 ### Backend Core
+
 - **FastAPI 0.109**: Web framework moderno
 - **SQLAlchemy 2.0**: ORM con async support
 - **Pydantic 2.5**: Validación y settings
 - **AsyncPG**: Async PostgreSQL driver
 
 ### ML & Analytics
+
 - **scikit-learn 1.4**: ML básico
 - **XGBoost 2.0**: Gradient boosting
 - **ONNX Runtime 1.16**: Inferencia de modelos
 - **pandas 2.2**: Manipulación de datos
 
 ### IoT & Messaging
+
 - **paho-mqtt 2.0**: Cliente MQTT
 
 ---
@@ -330,12 +350,14 @@ docker compose up --build
 ## 🎯 KPIs de Implementación
 
 ### Objetivo Semana 1-2
+
 - [ ] 5 use cases implementados
 - [ ] 3 repositorios PostgreSQL funcionando
 - [ ] API REST con 10 endpoints
 - [ ] Database migrations setup
 
 ### Objetivo Mes 1
+
 - [ ] Backend MVP completo y funcional
 - [ ] Simuladores IoT/Edge generando datos
 - [ ] ML engine fake funcionando
@@ -343,6 +365,7 @@ docker compose up --build
 - [ ] Docker Compose levantando todo
 
 ### Objetivo Mes 2-3
+
 - [ ] Frontend Next.js completo
 - [ ] ML modelos reales entrenados
 - [ ] ESG con factores IPCC completos
@@ -390,6 +413,7 @@ Una vez que tengas **un flujo completo funcionando** (aunque sea simple), replic
 El trabajo duro de diseño ya está hecho. Ahora es "solo" implementación siguiendo el patrón establecido.
 
 **Siguiente comando a ejecutar:**
+
 ```bash
 cd backend
 # Crear primer use case

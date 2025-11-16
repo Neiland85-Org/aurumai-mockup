@@ -283,7 +283,7 @@ python run_demo.py
 
 ## 🎯 Próximos Pasos (Opcional)
 
-### Para Producción:
+### Para Producción
 
 1. ⬆️ **Actualizar Python 3.9 → 3.11** en backend/.venv
 2. 🗄️ **Setup PostgreSQL + TimescaleDB**
@@ -292,7 +292,7 @@ python run_demo.py
 5. 🔐 **Configurar autenticación** (JWT)
 6. 🐳 **Docker Compose** para deploy completo
 
-### Para Desarrollo:
+### Para Desarrollo
 
 1. 📊 **Dashboard frontend** con datos reales
 2. 📈 **Gráficas time-series** (Chart.js/Recharts)

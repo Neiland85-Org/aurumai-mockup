@@ -2,7 +2,7 @@
 
 ## Hallazgos
 
-### 🎉 ¡Los endpoints YA EXISTEN!
+### 🎉 ¡Los endpoints YA EXISTEN
 
 Los endpoints `/ingest/raw` y `/ingest/features` ya están **completamente implementados** en el backend.
 

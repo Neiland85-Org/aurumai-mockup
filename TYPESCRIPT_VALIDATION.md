@@ -14,8 +14,6 @@
 
 **Total de `any` eliminadas:** 8+ → **0** ✨
 
-
-
 ---
 
 ### Requisito 2: Props de React SIEMPRE tipadas
@@ -215,7 +213,6 @@ $ npx prettier --write src
 
 #### ✅ TypeScript Compiler Check
 
-
 ```bash
 $ npx tsc --noEmit
 # Result: 0 errors, 0 warnings ✅
@@ -232,8 +229,6 @@ $ npx tsc --noEmit
 - ✅ `src/components/MachineCard.tsx` - Component tipado
 - ✅ `src/components/LineChart.tsx` - Component tipado
 - ✅ `src/pages/_app.tsx` - Page wrapper
-
-
 
 **Status:** ✅ **VALIDADO** - TypeScript compiler: 0 errores
 
@@ -300,8 +295,6 @@ $ npx tsc --noEmit
 ### Archivos Validados (sin cambios)
 
 1. ✅ `frontend/src/pages/_app.tsx` - Ya compliant
-
-
 
 ---
 

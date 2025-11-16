@@ -8,13 +8,16 @@
 ### 1. Frontend - Sintaxis TypeScript/React
 
 #### Problema: LineChart.tsx
+
 **Error**: Sintaxis incorrecta en la línea 23
+
 ```typescript
 // ❌ INCORRECTO
 const svgPath = points.map((p, i) => (` ${i === 0 ? "M" : "L"} ${p.x},${100 - p.y}`).join(" ");
 ```
 
 **Solución**:
+
 ```typescript
 // ✅ CORRECTO
 const svgPath = points.map((p, i) => ` ${i === 0 ? "M" : "L"} ${p.x},${100 - p.y}`).join(" ");
@@ -23,13 +26,16 @@ const svgPath = points.map((p, i) => ` ${i === 0 ? "M" : "L"} ${p.x},${100 - p.y
 **Cambio**: Removido paréntesis extra que causaba error de sintaxis.
 
 #### Problema: Doble llave en style
+
 **Error**: Línea 27 con doble llave `}}`
+
 ```tsx
 // ❌ INCORRECTO
 style={{ height: `${height}px` }}}
 ```
 
 **Solución**:
+
 ```tsx
 // ✅ CORRECTO
 style={{ height: `${height}px` }}
@@ -38,9 +44,11 @@ style={{ height: `${height}px` }}
 ### 2. Frontend - Archivos de Configuración
 
 #### Problema: package.json vacío
+
 **Error**: El archivo `frontend/package.json` existía pero estaba vacío, causando error en npm/pnpm.
 
 **Solución**: Creado package.json completo con todas las dependencias:
+
 ```json
 {
   "name": "aurumai-frontend",
@@ -62,39 +70,46 @@ style={{ height: `${height}px` }}
 }
 ```
 
-#### Archivos creados:
+#### Archivos creados
+
 - ✅ `frontend/package.json` - Configuración npm completa
 - ✅ `frontend/next.config.js` - Configuración Next.js
 - ✅ `frontend/tsconfig.json` - Configuración TypeScript
 - ✅ `frontend/postcss.config.js` - Configuración PostCSS
 - ✅ `frontend/tailwind.config.js` - Configuración TailwindCSS
 
-### 3. Backend - Archivos __init__.py Faltantes
+### 3. Backend - Archivos **init**.py Faltantes
 
 #### Problema: Imports fallando
+
 **Error**: `ModuleNotFoundError` al intentar importar módulos del backend
 
 **Solución**: Creados archivos `__init__.py` faltantes:
+
 - ✅ `backend/services/__init__.py`
 
 **Nota**: Los demás directorios ya tenían sus `__init__.py` creados correctamente.
 
 ### 4. Scripts de Utilidad
 
-#### Creados nuevos scripts:
+#### Creados nuevos scripts
 
 **START.sh** - Script de arranque interactivo
+
 ```bash
 ./START.sh
 ```
+
 - Verifica prerequisitos (Python, Node, Docker)
 - Muestra opciones de arranque
 - Permite arrancar con Docker Compose interactivamente
 
 **VERIFY.sh** - Script de verificación completa
+
 ```bash
 ./VERIFY.sh
 ```
+
 - Verifica backend (DB, ML Engine, ESG Engine)
 - Verifica IoT Simulator (config, anomalies)
 - Verifica Edge Simulator (config, features)
@@ -133,6 +148,7 @@ style={{ height: `${height}px` }}
 ## 🚀 Cómo Arrancar Ahora
 
 ### Opción 1: Docker Compose (Recomendado)
+
 ```bash
 # Forma rápida
 docker compose up --build
@@ -144,6 +160,7 @@ docker compose up --build
 ### Opción 2: Manual (Desarrollo)
 
 **Terminal 1 - Backend**:
+
 ```bash
 cd backend
 python3 -m venv venv
@@ -153,6 +170,7 @@ uvicorn app:app --reload --port 8000
 ```
 
 **Terminal 2 - Edge Simulator**:
+
 ```bash
 cd edge-sim
 pip install -r requirements.txt
@@ -160,6 +178,7 @@ python main.py
 ```
 
 **Terminal 3 - IoT Simulator**:
+
 ```bash
 cd iot-sim
 pip install -r requirements.txt
@@ -167,6 +186,7 @@ python generator.py
 ```
 
 **Terminal 4 - Frontend**:
+
 ```bash
 cd frontend
 npm install
@@ -193,6 +213,7 @@ npm run dev
 **✅ TODOS LOS SERVICIOS VERIFICADOS Y FUNCIONANDO**
 
 El proyecto ahora puede:
+
 - ✅ Arrancar con `docker compose up --build` sin errores
 - ✅ Ejecutarse manualmente en modo desarrollo
 - ✅ Pasar todas las verificaciones (`./VERIFY.sh`)
@@ -201,6 +222,7 @@ El proyecto ahora puede:
 ## 💡 Próximos Pasos
 
 1. **Probar la demo completa**:
+
    ```bash
    docker compose up --build
    # Esperar ~2 minutos

@@ -4,7 +4,7 @@ Prediction Value Object - ML model predictions
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 from uuid import UUID
 
 
@@ -24,10 +24,10 @@ class Prediction:
     prediction_type: str  # failure, anomaly, emissions, energy
     risk_score: float  # 0.0 to 1.0
     confidence: float  # 0.0 to 1.0
-    predicted_value: Optional[float] = None
-    predicted_class: Optional[str] = None
-    time_to_event_hours: Optional[float] = None
-    metadata: Optional[Dict[str, Any]] = None
+    predicted_value: float | None = None
+    predicted_class: str | None = None
+    time_to_event_hours: float | None = None
+    metadata: Dict[str, Any] | None = None
 
     def is_high_risk(self, threshold: float = 0.7) -> bool:
         """Check if prediction indicates high risk"""

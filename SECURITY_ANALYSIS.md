@@ -63,6 +63,7 @@ Después de actualizar 20+ paquetes Python, GitHub Dependabot todavía reporta 4
 - **CVE conocido:** CVE-2024-22195 (XSS)
 - **Severidad:** MODERATE
 - **Fix:**
+
   ```bash
   pip install --upgrade jinja2>=3.1.3
   ```
@@ -74,6 +75,7 @@ Después de actualizar 20+ paquetes Python, GitHub Dependabot todavía reporta 4
 - **CVE conocido:** CVE-2023-37920 (Certificate validation)
 - **Severidad:** HIGH
 - **Fix:**
+
   ```bash
   pip install --upgrade certifi>=2024.2.2
   ```
@@ -85,6 +87,7 @@ Después de actualizar 20+ paquetes Python, GitHub Dependabot todavía reporta 4
 - **CVE conocido:** CVE-2024-0057 (NULL pointer)
 - **Severidad:** HIGH
 - **Fix:**
+
   ```bash
   pip install --upgrade cryptography>=42.0.0
   ```
@@ -96,6 +99,7 @@ Después de actualizar 20+ paquetes Python, GitHub Dependabot todavía reporta 4
 - **CVE conocido:** CVE-2024-37891 (Request smuggling)
 - **Severidad:** MODERATE
 - **Fix:**
+
   ```bash
   pip install --upgrade urllib3>=2.2.0
   ```

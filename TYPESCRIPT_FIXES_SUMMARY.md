@@ -3,6 +3,7 @@
 ## ✅ Completado
 
 ### Archivos Creados
+
 - **`frontend/src/types/index.ts`** - Central type hub con: `Machine`, `Prediction`, `ESGData`, `MachineMetrics`, `APIError`, `APIResponse<T>`
 
 ### Archivos Corregidos
@@ -18,6 +19,7 @@
 | `components/LineChart.tsx` | Point interface, todas variables tipadas |
 
 ### Validaciones Ejecutadas
+
 ✅ TypeScript compiler: **0 errores**  
 ✅ Prettier: **5 archivos formateados**  
 ✅ `any` eliminado: **100%**  

@@ -10,6 +10,7 @@ docker compose up --build
 ```
 
 Esto levantará:
+
 - **Backend API**: [http://localhost:8000](http://localhost:8000)
 - **API Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
 - **Frontend Dashboard**: [http://localhost:3000](http://localhost:3000)
@@ -109,21 +110,25 @@ Una vez todo arrancado, verifica que funciona:
 ## 🐛 Troubleshooting
 
 ### Backend no arranca
+
 - Verifica que el puerto 8000 esté libre: `lsof -i :8000`
 - Revisa que todas las dependencias estén instaladas
 - Chequea los logs de uvicorn
 
 ### Edge no se conecta al backend
+
 - Verifica que el backend esté corriendo
 - Revisa la variable `BACKEND_HOST` en `.env`
 - En Docker, usa `backend` como host; en local usa `localhost`
 
 ### IoT no envía datos
+
 - Verifica que Edge esté corriendo
 - Revisa la variable `EDGE_HOST` en `.env`
 - Chequea los logs del simulador
 
 ### Frontend no carga datos
+
 - Verifica `NEXT_PUBLIC_API_BASE` en `.env`
 - Abre la consola del navegador para ver errores
 - Verifica CORS en el backend (ya está configurado)
@@ -159,16 +164,19 @@ Una vez todo arrancado, verifica que funciona:
 ## 📊 Datos de Demo
 
 ### Máquinas
+
 - **TRUCK-21**: Haul truck de mina de cobre
 - **MILL-3**: Grinding mill de planta de carbón (alto consumo eléctrico)
 - **BOILER-7**: Boiler industrial de generación (alto consumo combustible)
 
 ### Fases de Simulación
+
 1. **Normal** (50 ciclos): Operación estable
 2. **Drift** (50 ciclos): Degradación gradual
 3. **Failure** (continuo): Anomalías ocasionales (20% probabilidad)
 
 ### Métricas Simuladas
+
 - RPM, temperature, vibration, pressure
 - fuel_rate_lh, co2_ppm, kwh
 - Más específicas según tipo de máquina
@@ -178,6 +186,7 @@ Una vez todo arrancado, verifica que funciona:
 ### Cambiar intervalo de simulación
 
 Edita `.env`:
+
 ```
 SIM_INTERVAL_SECONDS=5  # Aumentar para más lento
 ```
@@ -185,6 +194,7 @@ SIM_INTERVAL_SECONDS=5  # Aumentar para más lento
 ### Añadir más máquinas
 
 Edita `.env`:
+
 ```
 MACHINES=TRUCK-21,MILL-3,BOILER-7,TURBINE-5
 ```
@@ -194,6 +204,7 @@ Luego añade configuración en `iot-sim/config.py`.
 ### Cambiar factores ESG
 
 Edita `backend/services/esg_engine.py`:
+
 ```python
 FACTOR_FUEL_DIESEL = 2.68  # kg CO2/l
 FACTOR_ELECTRICITY_LATAM = 0.45  # kg CO2/kWh
@@ -207,16 +218,18 @@ FACTOR_ELECTRICITY_LATAM = 0.45  # kg CO2/kWh
 - ESG usa factores IPCC simplificados
 - Todo está preparado para escalar sin cambios arquitectónicos mayores
 
-## 🎉 ¡Listo!
+## 🎉 ¡Listo
 
 Ya tienes el mockup funcional completo. Puedes presentarlo a inversores, clientes o usarlo como base para el producto real.
 
 **Para parar todo**:
+
 ```bash
 docker compose down
 ```
 
 **Para limpiar volúmenes**:
+
 ```bash
 docker compose down -v
 ```

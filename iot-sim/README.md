@@ -2,11 +2,7 @@
 
 **Status:** ✅ Production-Ready with Enterprise Observability
 
-## 📋 Overview
-
-Simplified IoT data generator for the AurumAI mockup demo. Simulates a mining truck (TRUCK-21) with progressive failure patterns and enterprise-grade observability.
-
-### Key Features
+## Key Features
 
 - 🚛 **Single Machine Simulation:** TRUCK-21 (mining truck)
 - 📊 **5 Sensors:** vibration, temperature, rpm, CO2, fuel consumption
@@ -94,17 +90,20 @@ iot-sim/
 ### Observability Settings
 
 **Retry Policy:**
+
 - Max attempts: 3
 - Base delay: 1.0s
 - Max delay: 30.0s
 - Backoff: Exponential (x2)
 
 **Circuit Breaker:**
+
 - Fail max: 5 consecutive failures
 - Timeout: 60s before recovery attempt
 - States: CLOSED → OPEN → HALF_OPEN
 
 **Timeouts:**
+
 - Connect: 5s
 - Read: 30s
 - Write: 30s
@@ -219,6 +218,7 @@ python -c "from observability import setup_logging, create_circuit_breaker; \
 ```
 
 **Expected Output:**
+
 ```
 ✅ IoT Simulator imports OK
 ✅ Observability infrastructure loaded
@@ -240,6 +240,7 @@ SAMPLES=100 INTERVAL_SECONDS=0.5 python generator_simplified.py
 ```
 
 **Expected:**
+
 - ✅ 100% success rate
 - ✅ Circuit breaker stays CLOSED
 - ✅ No retry attempts
@@ -255,6 +256,7 @@ SAMPLES=100 INTERVAL_SECONDS=0.5 python generator_simplified.py
 ```
 
 **Expected:**
+
 - ⚠️ First 5 samples: 3 retry attempts each (15 total retries)
 - 🔴 Circuit breaker opens after 5 failures
 - ⚡ Remaining 95 samples: Immediate failure (no retries)
@@ -271,6 +273,7 @@ python -m uvicorn app:app --reload
 ```
 
 **Expected:**
+
 - 🟡 Circuit breaker: OPEN → HALF_OPEN (after 60s timeout)
 - ✅ Circuit breaker: HALF_OPEN → CLOSED (after successful request)
 - ✅ Normal operation resumes
@@ -282,24 +285,31 @@ python -m uvicorn app:app --reload
 ### Key Metrics (from JSON logs)
 
 **1. Publish Success Rate**
+
 ```
 success_count / total_samples * 100
 ```
+
 Target: > 99%
 
 **2. Circuit Breaker State**
+
 ```
 grep "Circuit breaker state changed" logs.json
 ```
+
 Alert: state="open" for > 5 minutes
 
 **3. Retry Attempts**
+
 ```
 grep "Retrying" logs.json | wc -l
 ```
+
 Alert: > 10/minute
 
 **4. HTTP Errors**
+
 ```
 grep "severity\":\"ERROR" logs.json | jq '.error_type' | sort | uniq -c
 ```
@@ -307,21 +317,25 @@ grep "severity\":\"ERROR" logs.json | jq '.error_type' | sort | uniq -c
 ### Sample Log Queries
 
 **All errors:**
+
 ```bash
 cat logs.json | jq 'select(.severity=="ERROR")'
 ```
 
 **Circuit breaker events:**
+
 ```bash
 cat logs.json | jq 'select(.message | contains("Circuit breaker"))'
 ```
 
 **Retry attempts:**
+
 ```bash
 cat logs.json | jq 'select(.message | contains("Retrying"))'
 ```
 
 **Samples by status:**
+
 ```bash
 cat logs.json | jq 'select(.status) | .status' | sort | uniq -c
 ```
@@ -333,11 +347,13 @@ cat logs.json | jq 'select(.status) | .status' | sort | uniq -c
 ### Issue: Connection Refused
 
 **Error:**
+
 ```json
 {"severity": "ERROR", "message": "HTTP error publishing data", "error": "Connection refused"}
 ```
 
 **Solution:**
+
 ```bash
 # Ensure backend is running
 cd backend
@@ -347,16 +363,19 @@ python -m uvicorn app:app --reload
 ### Issue: Circuit Breaker Always Open
 
 **Error:**
+
 ```json
 {"severity": "WARNING", "message": "Circuit breaker open - backend unavailable"}
 ```
 
 **Causes:**
+
 1. Backend is down
 2. Backend URL is incorrect
 3. Network connectivity issue
 
 **Solution:**
+
 ```bash
 # Check backend health
 curl http://localhost:8000/health
@@ -371,11 +390,13 @@ echo $BACKEND_URL
 ### Issue: Import Error (pybreaker not found)
 
 **Error:**
+
 ```
 ModuleNotFoundError: No module named 'pybreaker'
 ```
 
 **Solution:**
+
 ```bash
 cd iot-sim
 source ../backend/.venv/bin/activate
@@ -387,11 +408,13 @@ pip install -r requirements.txt
 **Symptom:** Many retry attempts in logs
 
 **Causes:**
+
 1. Backend overloaded
 2. Network latency
 3. Timeout too short
 
 **Solution:**
+
 ```python
 # Increase timeout in observability.py
 timeout = create_timeout_config(
@@ -412,6 +435,7 @@ data = simulator.generate_sample()
 ```
 
 **Returns:**
+
 ```python
 {
     "machine_id": str,

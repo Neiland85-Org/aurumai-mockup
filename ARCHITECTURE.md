@@ -147,46 +147,55 @@ aurumai-mockup/
 ## Entidades del Dominio
 
 ### Tenant
+
 - Representa un cliente/organización
 - Configuración multi-región y multi-normativa
 - Aislamiento de datos
 
 ### Site
+
 - Ubicación física (mina, planta, facility)
 - Pertenece a un Tenant
 - Contiene múltiples Machines
 
 ### Machine
+
 - Activo industrial (truck, mill, boiler, turbine, etc.)
 - Tiene Sensors asociados
 - Centro de mantenimiento predictivo y métricas ESG
 
 ### Sensor
+
 - Punto de medición (vibration, temp, pressure, flow, CO₂, etc.)
 - Protocolo (Modbus, OPC-UA, MQTT, LoRa)
 - Pertenece a una Machine
 
 ### Alert
+
 - Alerta generada por el sistema
 - Niveles: Info, Warning, Critical, Emergency
 - Categorías: Predictive, ESG, Energy, Water, Operational, Safety
 
 ### Event
+
 - Eventos operacionales y de mantenimiento
 - Tipos: Maintenance, Failure, Repair, Calibration, etc.
 - Trazabilidad y auditoría
 
 ### EmissionSource
+
 - Fuente de emisiones GHG
 - Tipos: Mobile Combustion, Stationary Combustion, Electricity, Process
 - Scopes: 1, 2, 3 (GHG Protocol)
 
 ### EmissionFactor
+
 - Factores de conversión a CO₂eq
 - Fuentes: IPCC, EPA, DEFRA, country-specific
 - Versionado y validez temporal
 
 ### EmissionRecord
+
 - Registro calculado de emisiones
 - Vincula activity data con emission factors
 - Base para reporting ESG
@@ -194,16 +203,19 @@ aurumai-mockup/
 ## Value Objects
 
 ### Measurement
+
 - Punto de dato de sensor individual
 - Inmutable
 - Incluye timestamp, valor, unidad, calidad
 
 ### FeatureVector
+
 - Features ingenierizadas para ML
 - Agregaciones, derivadas, estadísticas
 - Listo para inferencia
 
 ### Prediction
+
 - Salida de modelo ML
 - Risk score, confidence, time-to-event
 - Tipos: failure, anomaly, emissions, energy
@@ -253,18 +265,21 @@ Raw Measurements → Feature Engineering → ML Prediction
 ## Escalabilidad
 
 ### Fase 1: 100 máquinas
+
 - Backend monolito (FastAPI)
 - PostgreSQL + TimescaleDB
 - Docker Compose
 - Edge nodes simples
 
 ### Fase 2: 1,000 máquinas
+
 - API replicada (3-5 instancias)
 - TSDB con particiones
 - Kafka para ingesta de alta tasa
 - Edge con compresión
 
 ### Fase 3: 10,000 máquinas
+
 - Microservicios separados
 - TSDB distribuido (ClickHouse cluster)
 - Back-pressure y QoS por tenant
@@ -273,6 +288,7 @@ Raw Measurements → Feature Engineering → ML Prediction
 ## Tecnologías
 
 ### Backend
+
 - **FastAPI**: API REST moderna y rápida
 - **Python 3.11+**: Lenguaje principal
 - **Pydantic**: Validación y serialización
@@ -281,28 +297,33 @@ Raw Measurements → Feature Engineering → ML Prediction
 - **PostgreSQL**: Metadata y entidades
 
 ### Edge
+
 - **Python**: Lógica de edge
 - **SQLite**: Buffer local
 - **MQTT**: Comunicación con backend
 - **ONNX Runtime**: Inferencia local de modelos
 
 ### IoT
+
 - **MQTT**: Protocolo principal
 - **OPC-UA**: Integración SCADA
 - **Modbus**: Sensores industriales
 - **LoRaWAN**: Sensores remotos
 
 ### ML
+
 - **scikit-learn**: Modelos básicos
 - **XGBoost**: Gradient boosting
 - **ONNX**: Formato de modelos portable
 
 ### Frontend
+
 - **Next.js**: React framework
 - **TailwindCSS**: Styling
 - **Recharts/D3**: Visualizaciones
 
 ### Infraestructura
+
 - **Docker**: Contenedorización
 - **Docker Compose**: Orquestación local
 - **Kubernetes**: Orquestación producción (futuro)
@@ -310,25 +331,30 @@ Raw Measurements → Feature Engineering → ML Prediction
 ## Principios de Diseño
 
 ### 1. El dominio NO conoce la infraestructura
+
 - Las entidades no saben nada de FastAPI, PostgreSQL o MQTT
 - Dependency Inversion: el dominio define interfaces, la infraestructura las implementa
 
 ### 2. Adaptadores reemplazables
+
 - Cambias TSDB → el dominio ni se entera
 - Cambias protocolo IoT → solo cambias adaptador
 - Cambias modelo ML → solo cambias ML Engine adapter
 
 ### 3. Multi-vertical desde el día 1
+
 - Dominio común: Tenant, Site, Machine, Sensor
 - Verticales = configuración + modelos específicos + vistas
 - NO forks de código
 
 ### 4. ESG como first-class citizen
+
 - No es un "add-on"
 - Misma telemetría sirve para predictivo y ESG
 - EmissionSource, EmissionFactor, EmissionRecord en el dominio core
 
 ### 5. Edge-first
+
 - Operación offline por diseño
 - Store & forward
 - Inferencia local cuando sea posible
@@ -336,16 +362,19 @@ Raw Measurements → Feature Engineering → ML Prediction
 ## Compliance & Seguridad
 
 ### Multi-región
+
 - Cluster EU para tenants EU
 - Cluster LATAM para tenants LATAM
 - Nunca mezclar datos sensibles entre regiones
 
 ### GDPR
+
 - Datos técnicos, no personales
 - Minimización de datos
 - Derecho al olvido implementable
 
 ### Seguridad
+
 - TLS 1.2+ obligatorio
 - JWT con scopes
 - RBAC: admin, operator, viewer, esg_analyst
@@ -354,6 +383,7 @@ Raw Measurements → Feature Engineering → ML Prediction
 ## Próximos Pasos (Implementación)
 
 ### Inmediato
+
 1. ✅ Estructura de dominio completa
 2. ✅ Entidades y Value Objects
 3. ✅ Interfaces de repositorios
@@ -364,18 +394,21 @@ Raw Measurements → Feature Engineering → ML Prediction
 8. ⏳ Docker Compose completo
 
 ### Corto plazo (1-2 semanas)
+
 - ML engine básico (modelos fake → real)
 - ESG calculator con factores IPCC
 - Dashboard Next.js funcional
 - Demo end-to-end
 
 ### Medio plazo (1-2 meses)
+
 - Integración MQTT real
 - Edge node en hardware real
 - Modelos ML entrenados con datos reales
 - Multi-tenant operativo
 
 ### Largo plazo (3-6 meses)
+
 - Kubernetes deployment
 - Multi-región activa
 - Catálogo de modelos ML

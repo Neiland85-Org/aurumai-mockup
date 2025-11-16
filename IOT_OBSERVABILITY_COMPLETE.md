@@ -3,6 +3,7 @@
 ## 📊 Executive Summary
 
 Successfully refactored **iot-sim** with enterprise-grade observability infrastructure, including:
+
 - ✅ JSON structured logging with contextual fields
 - ✅ Retry policies with exponential backoff
 - ✅ Circuit breaker for backend connection resilience
@@ -20,18 +21,21 @@ Successfully refactored **iot-sim** with enterprise-grade observability infrastr
 Centralized observability infrastructure for IoT simulator:
 
 **Logging:**
+
 - `IoTJSONFormatter` - Custom JSON formatter with IoT-specific fields
 - `setup_logging()` - Configure structured logging
 - `set_sample_context()` / `clear_sample_context()` - Thread-safe context tracking
 - Context fields: `machine_id`, `sample_number`, `timestamp`, `environment`
 
 **Retry Policies:**
+
 - `create_retry_decorator()` - Exponential backoff with tenacity
 - Configurable: `max_attempts`, `base_delay`, `max_delay`, `multiplier`
 - Automatic retry on `httpx.HTTPError` and `httpx.TimeoutException`
 - Logs retry attempts at WARNING level
 
 **Circuit Breakers:**
+
 - `IoTCircuitBreaker` - Extended PyBreaker with logging
 - `create_circuit_breaker()` - Factory function
 - States: CLOSED → OPEN → HALF_OPEN
@@ -39,12 +43,14 @@ Centralized observability infrastructure for IoT simulator:
 - Protects backend from cascading failures
 
 **Timeouts:**
+
 - `create_timeout_config()` - httpx.Timeout factory
 - Separate timeouts: connect=5s, read=30s, write=30s, pool=5s
 
 #### 2. **iot-sim/generator_simplified.py** (Refactored)
 
 **Changes:**
+
 - Imports observability infrastructure
 - `HTTPPublisher` class refactored:
   - Structured logging with logger instance
@@ -55,6 +61,7 @@ Centralized observability infrastructure for IoT simulator:
   - Graceful handling of `CircuitBreakerError`
 
 **New Features:**
+
 ```python
 HTTPPublisher(
     backend_url="http://localhost:8000",
@@ -65,6 +72,7 @@ HTTPPublisher(
 ```
 
 **Logging Examples:**
+
 ```json
 {
   "timestamp": "2025-11-15T16:35:12.fZ",
@@ -79,6 +87,7 @@ HTTPPublisher(
 ```
 
 **Error Handling:**
+
 - Circuit breaker open → Warning log + return False
 - HTTP errors → Error log with exception details
 - Unexpected errors → Error log with full traceback
@@ -86,12 +95,14 @@ HTTPPublisher(
 #### 3. **iot-sim/run_demo.py** (Refactored)
 
 **Changes:**
+
 - Structured logging setup at demo level
 - Context tracking in IoT thread
 - Logging in both threads (IoT + Edge)
 - Environment variables support
 
 **New Configuration:**
+
 ```bash
 BACKEND_URL=http://localhost:8000
 SAMPLES=1000
@@ -101,6 +112,7 @@ ENVIRONMENT=development
 ```
 
 **Logging in Threads:**
+
 - IoT thread: Logs sample generation, queue status
 - Edge thread: Logs processing, syncing
 - Final summary: Structured log + console output
@@ -108,6 +120,7 @@ ENVIRONMENT=development
 #### 4. **iot-sim/requirements.txt** (Updated)
 
 **New Dependencies:**
+
 ```txt
 # Observability - Logging
 python-json-logger>=2.0.7
@@ -142,6 +155,7 @@ python generator_simplified.py
 ```
 
 **Console Output:**
+
 ```
 🚛 TRUCK-21 IoT Simulator - With Observability
 ==============================================================
@@ -157,6 +171,7 @@ python generator_simplified.py
 ```
 
 **JSON Logs:**
+
 ```json
 {"timestamp": "2025-11-15T16:35:00.fZ", "severity": "INFO", "logger": "iot-simulator", "message": "Logging initialized", "component": "iot-simulator", "environment": "development", "log_level": "INFO"}
 {"timestamp": "2025-11-15T16:35:00.fZ", "severity": "INFO", "logger": "iot-simulator", "message": "HTTP Publisher initialized", "backend_url": "http://localhost:8000", "max_retries": 3, "circuit_breaker_enabled": true}
@@ -177,6 +192,7 @@ LOG_LEVEL=DEBUG ENVIRONMENT=production python run_demo.py http://backend:8000 50
 ```
 
 **Console Output:**
+
 ```
 ======================================================================
 🏭 AurumAI Mockup - IoT + Edge Integrated Simulator
@@ -212,6 +228,7 @@ Press Ctrl+C to stop
 **Format:** One JSON object per line (ready for ELK/Loki/CloudWatch)
 
 **Standard Fields:**
+
 - `timestamp` - ISO 8601 UTC timestamp
 - `severity` - Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
 - `logger` - Logger name
@@ -221,12 +238,14 @@ Press Ctrl+C to stop
 - `function` - Function name
 
 **Contextual Fields (when available):**
+
 - `machine_id` - Machine identifier (e.g., "TRUCK-21")
 - `sample_number` - Sample sequence number
 - `status` - Sample status (normal, degrading, critical)
 - Custom fields via `extra={...}`
 
 **Example Log Entry:**
+
 ```json
 {
   "timestamp": "2025-11-15T16:35:45.fZ",
@@ -246,6 +265,7 @@ Press Ctrl+C to stop
 ### 2. Retry Policies
 
 **Configuration:**
+
 ```python
 retry_decorator = create_retry_decorator(
     max_attempts=3,      # 3 total attempts (1 original + 2 retries)
@@ -256,12 +276,14 @@ retry_decorator = create_retry_decorator(
 ```
 
 **Backoff Sequence:**
+
 - Attempt 1: Immediate
 - Attempt 2: Wait 1s (base_delay * 2^0)
 - Attempt 3: Wait 2s (base_delay * 2^1)
 - Further attempts: 4s, 8s, 16s, ... up to max_delay
 
 **Logged Events:**
+
 ```json
 {"severity": "WARNING", "message": "Retrying in 1.0 seconds...", "attempt": 1, "error": "Connection timeout"}
 {"severity": "WARNING", "message": "Retrying in 2.0 seconds...", "attempt": 2, "error": "Connection timeout"}
@@ -279,6 +301,7 @@ retry_decorator = create_retry_decorator(
 | **HALF_OPEN** | Testing recovery, limited requests allowed | First success → CLOSED<br>Any failure → OPEN |
 
 **Configuration:**
+
 ```python
 circuit_breaker = create_circuit_breaker(
     name="iot-backend-connection",
@@ -288,6 +311,7 @@ circuit_breaker = create_circuit_breaker(
 ```
 
 **State Change Logging:**
+
 ```json
 {
   "severity": "WARNING",
@@ -300,6 +324,7 @@ circuit_breaker = create_circuit_breaker(
 ```
 
 **Benefits:**
+
 - Prevents cascading failures
 - Protects backend from overload
 - Automatic recovery testing
@@ -308,6 +333,7 @@ circuit_breaker = create_circuit_breaker(
 ### 4. Timeout Configuration
 
 **httpx.Timeout Components:**
+
 ```python
 timeout = create_timeout_config(
     connect=5.0,   # Time to establish connection
@@ -318,6 +344,7 @@ timeout = create_timeout_config(
 ```
 
 **Benefits:**
+
 - Prevents hanging connections
 - Predictable failure modes
 - Different timeouts for different phases
@@ -336,6 +363,7 @@ python -c "from observability import setup_logging, create_circuit_breaker, crea
 ```
 
 **Expected Output:**
+
 ```
 ✅ IoT Simulator imports OK
 ✅ Observability infrastructure loaded
@@ -344,6 +372,7 @@ python -c "from observability import setup_logging, create_circuit_breaker, crea
 ### 2. Functional Testing
 
 **Test 1: Normal Operation**
+
 ```bash
 # Terminal 1: Backend running
 cd backend
@@ -356,12 +385,14 @@ SAMPLES=100 INTERVAL_SECONDS=0.5 LOG_LEVEL=INFO python generator_simplified.py
 ```
 
 **Expected:**
+
 - All samples published successfully (100% success rate)
 - Circuit breaker remains CLOSED
 - No retry attempts
 - JSON logs with machine_id, sample_number
 
 **Test 2: Backend Failure (Circuit Breaker)**
+
 ```bash
 # Terminal 1: Stop backend (Ctrl+C)
 
@@ -370,6 +401,7 @@ SAMPLES=100 INTERVAL_SECONDS=0.5 python generator_simplified.py
 ```
 
 **Expected:**
+
 - First 5 samples: Retry attempts (3 each)
 - After 5 failures: Circuit breaker OPEN
 - Remaining samples: Immediate failure (no retries)
@@ -377,6 +409,7 @@ SAMPLES=100 INTERVAL_SECONDS=0.5 python generator_simplified.py
 - Final stats: Circuit Breaker Blocks > 0
 
 **Test 3: Backend Recovery**
+
 ```bash
 # Terminal 1: Restart backend after 30s
 
@@ -384,6 +417,7 @@ SAMPLES=100 INTERVAL_SECONDS=0.5 python generator_simplified.py
 ```
 
 **Expected:**
+
 - Circuit breaker transitions: OPEN → HALF_OPEN → CLOSED
 - Successful publishes resume
 - Logs show recovery
@@ -396,6 +430,7 @@ SAMPLES=1000 INTERVAL_SECONDS=0.1 LOG_LEVEL=WARNING python generator_simplified.
 ```
 
 **Monitor:**
+
 - Memory usage (should be stable)
 - CPU usage
 - Backend response times
@@ -459,6 +494,7 @@ count(log_messages{message="Circuit breaker state changed", new_state="open"})
 ### Observability Settings (in code)
 
 **Logging:**
+
 ```python
 logger = setup_logging(
     level="INFO",              # DEBUG for verbose, ERROR for minimal
@@ -468,6 +504,7 @@ logger = setup_logging(
 ```
 
 **Retry:**
+
 ```python
 retry_decorator = create_retry_decorator(
     max_attempts=3,    # Total attempts
@@ -478,6 +515,7 @@ retry_decorator = create_retry_decorator(
 ```
 
 **Circuit Breaker:**
+
 ```python
 circuit_breaker = create_circuit_breaker(
     name="iot-backend-connection",
@@ -487,6 +525,7 @@ circuit_breaker = create_circuit_breaker(
 ```
 
 **Timeouts:**
+
 ```python
 timeout = create_timeout_config(
     connect=5.0,   # Connection timeout
@@ -575,6 +614,7 @@ timeout = create_timeout_config(
 ### 1. Apply to Edge Simulator (edge-sim)
 
 Refactor `edge-sim/sync.py` and `edge-sim/main_simplified.py` with same infrastructure:
+
 - Copy `observability.py` to `edge-sim/`
 - Update `requirements.txt`
 - Refactor HTTP client with circuit breaker + retry
@@ -583,6 +623,7 @@ Refactor `edge-sim/sync.py` and `edge-sim/main_simplified.py` with same infrastr
 ### 2. End-to-End Testing
 
 Test resilience with backend failures:
+
 ```bash
 # Scenario: Backend goes down during simulation
 # Expected: Circuit breaker opens, samples buffered/dropped gracefully
@@ -592,6 +633,7 @@ Test resilience with backend failures:
 ### 3. Log Aggregation
 
 Configure log shipping to centralized system:
+
 - **Option A:** ELK Stack (Elasticsearch + Logstash + Kibana)
 - **Option B:** Grafana Loki + Promtail
 - **Option C:** CloudWatch Logs (if on AWS)
@@ -601,6 +643,7 @@ Ship JSON logs from stdout to aggregator.
 ### 4. Monitoring Dashboards
 
 Create dashboards to visualize:
+
 - Sample generation rate
 - Publish success rate
 - Circuit breaker state timeline
@@ -612,15 +655,18 @@ Create dashboards to visualize:
 ## 📚 References
 
 **Backend Observability Documentation:**
+
 - [OBSERVABILITY_IMPLEMENTATION.md](../OBSERVABILITY_IMPLEMENTATION.md)
 - [OBSERVABILITY_COMPLETE.md](../OBSERVABILITY_COMPLETE.md)
 
 **Dependencies:**
+
 - [tenacity](https://github.com/jd/tenacity) - Retry library
 - [pybreaker](https://github.com/danielfm/pybreaker) - Circuit breaker
 - [python-json-logger](https://github.com/madzak/python-json-logger) - JSON logging
 
 **Patterns:**
+
 - [Circuit Breaker Pattern](https://martinfowler.com/bliki/CircuitBreaker.html)
 - [Exponential Backoff](https://en.wikipedia.org/wiki/Exponential_backoff)
 - [Structured Logging](https://www.structlog.org/en/stable/)

@@ -3,6 +3,7 @@
 ## 🚀 Start Commands
 
 ### Backend
+
 ```bash
 cd backend
 source .venv/bin/activate
@@ -10,10 +11,12 @@ python -m uvicorn app:app --reload
 ```
 
 **Endpoints:**
+
 - http://localhost:8000/metrics (Prometheus format)
 - http://localhost:8000/health (JSON status)
 
 ### IoT Simulator
+
 ```bash
 cd iot-sim
 source ../backend/.venv/bin/activate
@@ -21,6 +24,7 @@ python generator_simplified.py
 ```
 
 **Environment Variables:**
+
 ```bash
 BACKEND_URL=http://localhost:8000
 SAMPLES=1000
@@ -30,6 +34,7 @@ ENVIRONMENT=development
 ```
 
 ### Integrated Demo (IoT + Edge)
+
 ```bash
 cd iot-sim
 source ../backend/.venv/bin/activate
@@ -41,6 +46,7 @@ python run_demo.py
 ## 📝 Log Examples
 
 ### Backend Log (JSON)
+
 ```json
 {
   "timestamp": "2025-11-15T16:28:12.fZ",
@@ -54,6 +60,7 @@ python run_demo.py
 ```
 
 ### IoT Simulator Log (JSON)
+
 ```json
 {
   "timestamp": "2025-11-15T16:35:12.fZ",
@@ -76,38 +83,46 @@ python run_demo.py
 ### Backend (settings.py)
 
 **Logging:**
+
 - `log_level` = "INFO"
 - `log_format` = "json"
 
 **Retry:**
+
 - `retry_max_attempts` = 3
 - `retry_base_delay` = 1.0
 - `retry_max_delay` = 30.0
 
 **Circuit Breaker:**
+
 - `circuit_breaker_fail_max` = 5
 - `circuit_breaker_timeout` = 60.0
 
 **Timeouts:**
+
 - `timeout_connect` = 5.0
 - `timeout_read` = 30.0
 
 **Tracing:**
+
 - `tracing_enabled` = False
 - `tracing_otlp_endpoint` = ""
 
 ### IoT Simulator (observability.py)
 
 **Retry:**
+
 - max_attempts = 3
 - base_delay = 1.0
 - max_delay = 30.0
 
 **Circuit Breaker:**
+
 - fail_max = 5
 - timeout_duration = 60.0
 
 **Timeout:**
+
 - connect = 5.0
 - read = 30.0
 
@@ -116,6 +131,7 @@ python run_demo.py
 ## 🧪 Testing Scenarios
 
 ### Test 1: Normal Operation
+
 ```bash
 # Terminal 1: Backend
 cd backend && python -m uvicorn app:app --reload
@@ -123,28 +139,35 @@ cd backend && python -m uvicorn app:app --reload
 # Terminal 2: Simulator
 cd iot-sim && SAMPLES=100 INTERVAL_SECONDS=0.5 python generator_simplified.py
 ```
+
 **Expected:** 100% success rate
 
 ### Test 2: Backend Failure (Circuit Breaker)
+
 ```bash
 # Terminal 1: Stop backend (Ctrl+C)
 
 # Terminal 2: Run simulator
 cd iot-sim && SAMPLES=100 INTERVAL_SECONDS=0.5 python generator_simplified.py
 ```
+
 **Expected:**
+
 - First 5 samples: 3 retry attempts each
 - Circuit breaker opens after 5 failures
 - Remaining samples: Immediate failure (no retries)
 
 ### Test 3: Backend Recovery
+
 ```bash
 # Terminal 1: Restart backend after 30s
 cd backend && python -m uvicorn app:app --reload
 
 # Terminal 2: Keep simulator running
 ```
+
 **Expected:**
+
 - Circuit breaker: OPEN → HALF_OPEN (after 60s)
 - Circuit breaker: HALF_OPEN → CLOSED (after success)
 

@@ -6,14 +6,14 @@ Centralized logging configuration with contextual fields
 import logging
 import sys
 from contextvars import ContextVar
-from typing import Any, Dict, MutableMapping, Optional
+from typing import Any, MutableMapping
 
 from pythonjsonlogger import jsonlogger
 
 # Context variables for request-scoped logging
-request_id_ctx: ContextVar[Optional[str]] = ContextVar("request_id", default=None)
-machine_id_ctx: ContextVar[Optional[str]] = ContextVar("machine_id", default=None)
-user_id_ctx: ContextVar[Optional[str]] = ContextVar("user_id", default=None)
+request_id_ctx: ContextVar[str | None] = ContextVar("request_id", default=None)
+machine_id_ctx: ContextVar[str | None] = ContextVar("machine_id", default=None)
+user_id_ctx: ContextVar[str | None] = ContextVar("user_id", default=None)
 
 
 class ContextualJSONFormatter(jsonlogger.JsonFormatter):
@@ -72,7 +72,7 @@ class ContextualJSONFormatter(jsonlogger.JsonFormatter):
 def setup_logging(
     level: str = "INFO",
     environment: str = "development",
-    logger_name: Optional[str] = None,
+    logger_name: str | None = None,
 ) -> logging.Logger:
     """
     Configure structured JSON logging for the application.
@@ -133,9 +133,9 @@ def get_logger(name: str, level: str = "INFO", environment: str = "development")
 
 
 def set_request_context(
-    request_id: Optional[str] = None,
-    machine_id: Optional[str] = None,
-    user_id: Optional[str] = None,
+    request_id: str | None = None,
+    machine_id: str | None = None,
+    user_id: str | None = None,
 ) -> None:
     """
     Set contextual fields for the current request.
@@ -179,7 +179,9 @@ class LoggerAdapter(logging.LoggerAdapter):  # type: ignore[type-arg]
         >>> logger.info("Prediction completed")  # Will include service=ml_engine
     """
 
-    def process(self, msg: str, kwargs: MutableMapping[str, Any]) -> tuple[str, MutableMapping[str, Any]]:
+    def process(
+        self, msg: str, kwargs: MutableMapping[str, Any]
+    ) -> tuple[str, MutableMapping[str, Any]]:
         """Add extra fields to kwargs"""
         extra = kwargs.get("extra", {})
         extra.update(self.extra)

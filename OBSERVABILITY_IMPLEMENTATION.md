@@ -83,6 +83,7 @@ logger.info("Processing machine", extra={"operation": "prediction"})
 ```
 
 **Características:**
+
 - ✅ ContextVars para campos request-scoped (thread-safe)
 - ✅ Formato JSON listo para ELK/Grafana Loki
 - ✅ Campos automáticos: timestamp, environment, request_id, machine_id, user_id
@@ -119,6 +120,7 @@ async def fetch_machine_data(machine_id: str) -> dict:
 ```
 
 **Backoff exponencial:**
+
 - Intento 1: 0s delay
 - Intento 2: 1s delay (base_delay * 2^0)
 - Intento 3: 2s delay (base_delay * 2^1)
@@ -146,6 +148,7 @@ except CircuitBreakerError:
 ```
 
 **Estados del circuit breaker:**
+
 - **CLOSED**: Normal, todos los requests pasan
 - **OPEN**: Fallando, rechaza requests inmediatamente (fast-fail)
 - **HALF_OPEN**: Probando recuperación, permite 1 request de prueba
@@ -530,6 +533,7 @@ async def send_measurement(data: dict):
 ### **4. Documentación completa** ⏳
 
 Crear `OBSERVABILITY_GUIDE.md` con:
+
 - Arquitectura de observabilidad
 - Configuración de stack (Prometheus/Grafana/Jaeger)
 - Dashboards de ejemplo
@@ -584,6 +588,7 @@ Crear `OBSERVABILITY_GUIDE.md` con:
 ## 🎯 Resultados Esperados
 
 ### **Antes (sin infraestructura):**
+
 - ❌ Errores silenciosos (no logs)
 - ❌ Fallos en cascada (sin circuit breaker)
 - ❌ Sin visibilidad de rendimiento
@@ -591,6 +596,7 @@ Crear `OBSERVABILITY_GUIDE.md` con:
 - ❌ Sin trazabilidad entre servicios
 
 ### **Después (con infraestructura):**
+
 - ✅ Logs estructurados JSON con contexto completo
 - ✅ Métricas en tiempo real (Prometheus)
 - ✅ Trazas distribuidas (end-to-end visibility)

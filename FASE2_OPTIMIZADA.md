@@ -9,9 +9,11 @@ Más texto
 
 ```text
 ```
+
 ```text
 ```text
 ```
+
 ```text
 # Fase 2 Optimizada - IoT & Edge Simulators Simplificados
 
@@ -42,24 +44,35 @@ Más texto
 ### IoT Simulator
 
 ```
+
 #### Objetivos IoT
+
 ```
 ```
+
 #### Implementación IoT
+
 ```
 ```
+
 #### Testing IoT
+
 ```
 
 ### Edge Simulator
 
 ```
+
 ```
 ```
+
 #### Objetivos Edge
+
 ```
 ```
+
 #### Implementación Edge
+
 ```
 ```
 
@@ -305,9 +318,12 @@ python run_demo.py
 
 ```
 ```
+
 #### Testing Edge
+
 ```
 ```
+
 ```
 ```
 
@@ -315,9 +331,12 @@ python run_demo.py
 
 ```
 ```
+
 #### Implementación Integración
+
 ```
 ```
+
 ```
 ```
 
@@ -334,11 +353,14 @@ Si en el futuro se necesita la versión completa con MQTT, buffer, etc:
 
 ```python
 ```
+
 ```bash
 ```
+
 ```bash
 ```bash
 ```
+
 ```
 
 ### Paso 2: Agregar Buffer SQLite (0.5 días)
@@ -347,12 +369,15 @@ Si en el futuro se necesita la versión completa con MQTT, buffer, etc:
 ```bash
 ```text
 ```
+
 ```text
 ```python
 ```
+
 ```python
 ```python
 ```
+
 ```
 
 ### Paso 3: Agregar Inferencia ONNX (1 día)
@@ -361,9 +386,11 @@ Si en el futuro se necesita la versión completa con MQTT, buffer, etc:
 ```python
 ```python
 ```
+
 ```python
 ```python
 ```
+
 ```
 
 ### Paso 4: Agregar Máquinas (0.5 días)
@@ -430,34 +457,44 @@ Si en el futuro se necesita la versión completa con MQTT, buffer, etc:
 **Complejidad**: Reducida significativamente
 
 ¡Manos a la obra! 🚀
+
 ```
 ```python
 ```python
 ```
+
 ```python
 ```python
 ```
+
 ```python
 ```python
 ```
+
 ```python
 ```python
 ```
+
 ```python
 ```python
 ```
+
 ```python
 ```python
 ```
+
 ```python
 ```python
 ```
+
 ```python
 ```python
 ```
+
 ```python
 ```python
 ```
+
 ```python
 # Fase 2 Optimizada - Simuladores IoT & Edge
 
@@ -494,6 +531,7 @@ iot-sim/
 ├── config.py                   # ✅ ORIGINAL - Actualizar para versión simple
 └── requirements.txt            # ✅ Actualizar (eliminar paho-mqtt)
 ```
+
 ```text
 iot-sim/
 ├── generator_simplified.py    # ✅ NUEVO - Generador simple TRUCK-21
@@ -513,6 +551,7 @@ edge-sim/
 ├── features.py                 # ✅ ORIGINAL - Reutilizar lógica básica
 ├── sync.py                     # ✅ ORIGINAL - Reutilizar HTTP client
 └── requirements.txt            # ✅ Actualizar
+
 ```
 ```text
 edge-sim/
@@ -769,6 +808,7 @@ Fase 2: IoT/Edge Sims       → 1 semana (4-6 días)
 Fase 3: Frontend            → 1-2 semanas
 Fase 4: Docker              → 2-3 días
 TOTAL PARA DEMO:            3-5 semanas
+
 ```
 ```text
 Fase 1: Backend MVP         → 1-2 semanas
@@ -786,6 +826,7 @@ Fase 2: IoT/Edge Sims       → 2-3 días ✂️ (50% reducción)
 Fase 3: Frontend            → 1-2 semanas
 Fase 4: Docker              → 2-3 días
 TOTAL PARA DEMO:            2.5-4.5 semanas ⚡
+
 ```
 ```text
 Fase 1: Backend MVP         → 1-2 semanas

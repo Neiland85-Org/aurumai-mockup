@@ -89,11 +89,13 @@ Se ha implementado **infraestructura enterprise-grade de observabilidad y resili
 ## 🚀 Nuevos Endpoints
 
 ### **`GET /metrics`**
+
 ```bash
 curl http://localhost:8000/metrics
 ```
 
 **Respuesta:** Métricas en formato Prometheus
+
 ```
 # HELP http_requests_total Total HTTP requests
 # TYPE http_requests_total counter
@@ -107,11 +109,13 @@ http_request_duration_seconds_bucket{method="GET",endpoint="/api/machines",le="0
 ```
 
 ### **`GET /health`**
+
 ```bash
 curl http://localhost:8000/health
 ```
 
 **Respuesta:**
+
 ```json
 {
   "status": "healthy",
@@ -211,26 +215,31 @@ open http://localhost:9090
 ## 📊 Métricas Disponibles
 
 ### **HTTP Requests**
+
 - `http_requests_total` - Total de requests por método/endpoint/status
 - `http_request_duration_seconds` - Latencia de requests (histograma)
 - `http_requests_in_progress` - Requests concurrentes actuales
 
 ### **Database**
+
 - `db_queries_total` - Total de queries SQL
 - `db_query_duration_seconds` - Latencia de queries
 - `db_connections_active` - Conexiones activas
 
 ### **ML Predictions**
+
 - `ml_predictions_total` - Total de predicciones
 - `ml_prediction_duration_seconds` - Latencia de predicción
 - `ml_prediction_risk_score` - Distribución de scores
 
 ### **Data Ingestion**
+
 - `data_ingestion_total` - Eventos de ingesta
 - `data_ingestion_errors_total` - Errores de ingesta
 - `data_ingestion_duration_seconds` - Latencia de ingesta
 
 ### **Resilience**
+
 - `circuit_breaker_state` - Estado de circuit breakers (0=closed, 1=open, 2=half_open)
 - `circuit_breaker_failures_total` - Fallos totales por breaker
 - `retry_attempts_total` - Intentos de retry por función
@@ -249,6 +258,7 @@ python -m uvicorn app:app --reload
 ```
 
 **Output esperado (JSON):**
+
 ```json
 {"timestamp":"2025-11-15T10:30:00.123Z","severity":"INFO","logger":"aurumai","message":"Initializing AurumAI Backend","environment":"development","app_name":"AurumAI Platform"}
 ```
@@ -260,6 +270,7 @@ curl http://localhost:8000/metrics | grep http_requests_total
 ```
 
 **Output esperado:**
+
 ```
 # HELP http_requests_total Total HTTP requests
 # TYPE http_requests_total counter
@@ -272,6 +283,7 @@ curl http://localhost:8000/health | jq
 ```
 
 **Output esperado:**
+
 ```json
 {
   "status": "healthy",
@@ -288,22 +300,26 @@ curl http://localhost:8000/health | jq
 ## 📈 Queries Prometheus de Ejemplo
 
 ### **Tasa de Requests por Segundo**
+
 ```promql
 rate(http_requests_total[5m])
 ```
 
 ### **Latencia P95**
+
 ```promql
 histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
 ```
 
 ### **Tasa de Error (5xx)**
+
 ```promql
 sum(rate(http_requests_total{status_code=~"5.."}[5m])) 
   / sum(rate(http_requests_total[5m]))
 ```
 
 ### **Circuit Breakers Abiertos**
+
 ```promql
 circuit_breaker_state{state="open"} > 0
 ```
@@ -439,6 +455,7 @@ async def get_features(machine_id: str):
 ### **1. Aplicar a Simuladores (Pendiente)**
 
 Refactorizar `iot-sim` y `edge-sim` con:
+
 - Logging estructurado
 - Reintentos con backoff
 - Circuit breaker para backend
@@ -448,6 +465,7 @@ Refactorizar `iot-sim` y `edge-sim` con:
 ### **2. Dashboards de Grafana**
 
 Crear 4 dashboards:
+
 1. Overview (requests/s, latencia, errores)
 2. ML Predictions (predicciones/s, risk score distribution)
 3. Data Ingestion (ingestion rate, errores)
@@ -456,6 +474,7 @@ Crear 4 dashboards:
 ### **3. Alertas de Prometheus**
 
 Configurar alertas para:
+
 - Latencia P95 > 1s
 - Tasa de error > 1%
 - Circuit breaker abierto > 60s
@@ -466,6 +485,7 @@ Configurar alertas para:
 ## 🏆 Beneficios Logrados
 
 ### **Antes**
+
 - ❌ Logs sin estructura (print statements)
 - ❌ Sin métricas de rendimiento
 - ❌ Sin trazas distribuidas
@@ -473,6 +493,7 @@ Configurar alertas para:
 - ❌ Sin visibilidad de requests end-to-end
 
 ### **Después**
+
 - ✅ Logs JSON estructurados con contexto completo
 - ✅ 18+ métricas Prometheus en tiempo real
 - ✅ Trazas distribuidas OpenTelemetry
@@ -491,6 +512,7 @@ Configurar alertas para:
 - **Backend /health**: http://localhost:8000/health
 
 **Documentación:**
+
 - [OBSERVABILITY_IMPLEMENTATION.md](./OBSERVABILITY_IMPLEMENTATION.md) - Guía completa
 - [OpenTelemetry Python Docs](https://opentelemetry.io/docs/instrumentation/python/)
 - [Prometheus Best Practices](https://prometheus.io/docs/practices/)

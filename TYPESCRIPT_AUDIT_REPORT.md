@@ -82,6 +82,7 @@ export interface APIResponse<T> {
 ```
 
 **Ventajas:**
+
 - ✅ Single source of truth para tipos de dominio
 - ✅ Reutilizable en toda la aplicación
 - ✅ Bien documentado
@@ -94,6 +95,7 @@ export interface APIResponse<T> {
 ### 📝 `/frontend/src/lib/api.ts` (CRÍTICO)
 
 **Antes:**
+
 ```typescript
 export async function fetchJSON(path: string) {
   const res = await fetch(`${API_BASE}${path}`);
@@ -107,6 +109,7 @@ export async function getMachines() {
 ```
 
 **Después:**
+
 ```typescript
 import type { Machine, Prediction, ESGData, MachineMetrics } from '@/types';
 
@@ -136,6 +139,7 @@ export async function getESGSummary(): Promise<ESGData[]> {
 ```
 
 **Cambios clave:**
+
 - ✅ Función genérica `fetchJSON<T>(path: string): Promise<T>`
 - ✅ Todos los endpoints con tipos explícitos de retorno
 - ✅ Mejor manejo de errores con mensaje descriptivo
@@ -145,6 +149,7 @@ export async function getESGSummary(): Promise<ESGData[]> {
 ### 📝 `/frontend/src/pages/index.tsx` (CRÍTICO)
 
 **Antes:**
+
 ```typescript
 export default function HomePage() {
   const [machines, setMachines] = useState([]);  // ❌ unknown[]
@@ -157,6 +162,7 @@ export default function HomePage() {
 ```
 
 **Después:**
+
 ```typescript
 import { ReactElement } from 'react';
 import type { Machine } from '@/types';
@@ -179,6 +185,7 @@ export default function HomePage(): ReactElement {
 ```
 
 **Cambios clave:**
+
 - ✅ `useState<Machine[]>([])` - estado tipado explícitamente
 - ✅ `ReactElement` return type
 - ✅ Eliminado cast `any` en map
@@ -189,6 +196,7 @@ export default function HomePage(): ReactElement {
 ### 📝 `/frontend/src/pages/predictive.tsx` (CRÍTICO)
 
 **Antes:**
+
 ```typescript
 export default function PredictivePage() {
   const [machines, setMachines] = useState([]);  // ❌ unknown[]
@@ -201,6 +209,7 @@ export default function PredictivePage() {
 ```
 
 **Después:**
+
 ```typescript
 import { ReactElement } from 'react';
 import type { Machine, Prediction } from '@/types';
@@ -223,6 +232,7 @@ export default function PredictivePage(): ReactElement {
 ```
 
 **Cambios clave:**
+
 - ✅ `useState<Prediction | null>(null)` - unión tipada
 - ✅ `riskColor: string` - variable tipada explícitamente
 - ✅ Predicción de tipos mejorada en condicionales
@@ -232,6 +242,7 @@ export default function PredictivePage(): ReactElement {
 ### 📝 `/frontend/src/pages/esg.tsx` (CRÍTICO)
 
 **Antes:**
+
 ```typescript
 export default function ESGPage() {
   const [machines, setMachines] = useState([]);  // ❌ unknown[]
@@ -242,6 +253,7 @@ export default function ESGPage() {
 ```
 
 **Después:**
+
 ```typescript
 import { ReactElement } from 'react';
 import type { Machine, ESGData } from '@/types';
@@ -256,6 +268,7 @@ export default function ESGPage(): ReactElement {
 ```
 
 **Cambios clave:**
+
 - ✅ `useState<ESGData | null>(null)`
 - ✅ Acceso seguro a propiedades (e.g., `esgData?.instant_co2eq_kg`)
 
@@ -264,6 +277,7 @@ export default function ESGPage(): ReactElement {
 ### 📝 `/frontend/src/components/MetricCard.tsx`
 
 **Antes:**
+
 ```typescript
 import React from "react";
 
@@ -280,6 +294,7 @@ const MetricCard: React.FC<Props> = ({ label, value, color, unit }) => {
 ```
 
 **Después:**
+
 ```typescript
 import type { ReactElement } from 'react';
 
@@ -301,6 +316,7 @@ export default function MetricCard({
 ```
 
 **Cambios clave:**
+
 - ✅ Eliminado `React` import (Next.js 17.x+ no lo requiere)
 - ✅ Cambio de `React.FC` a función exportada con `ReactElement` return type
 - ✅ Interfaz renombrada a `MetricCardProps` (convención clara)
@@ -310,6 +326,7 @@ export default function MetricCard({
 ### 📝 `/frontend/src/components/MachineCard.tsx`
 
 **Antes:**
+
 ```typescript
 interface Props {
   machineId: string;
@@ -321,6 +338,7 @@ interface Props {
 ```
 
 **Después:**
+
 ```typescript
 import type { Machine } from '@/types';
 
@@ -334,6 +352,7 @@ interface MachineCardProps {
 ```
 
 **Cambios clave:**
+
 - ✅ Props reutililizan tipos del dominio (`Machine`)
 - ✅ `statusColor: string` variable tipada explícitamente
 - ✅ Mejor validación via `Machine['status']` (literal type union)
@@ -343,6 +362,7 @@ interface MachineCardProps {
 ### 📝 `/frontend/src/components/LineChart.tsx`
 
 **Antes:**
+
 ```typescript
 const LineChart: React.FC<Props> = ({ data, color = "#cc7f32", height = 100 }) => {
   const points = data.map((v, i) => ({  // ❌ points no tipado
@@ -355,6 +375,7 @@ const LineChart: React.FC<Props> = ({ data, color = "#cc7f32", height = 100 }) =
 ```
 
 **Después:**
+
 ```typescript
 import type { ReactElement } from 'react';
 
@@ -388,6 +409,7 @@ export default function LineChart({
 ```
 
 **Cambios clave:**
+
 - ✅ Interfaz `Point` para array de puntos SVG
 - ✅ Todas las variables locales tipadas explícitamente
 - ✅ Return type `ReactElement`
@@ -413,6 +435,7 @@ export default function App({ Component, pageProps }: AppProps) {
 ### Estilo de Código
 
 ✅ **Prettier formateo**
+
 - 5 archivos formateados automáticamente
 - Indentación: 2 espacios
 - Ancho de línea: 100 caracteres
@@ -420,11 +443,13 @@ export default function App({ Component, pageProps }: AppProps) {
 - TrailingComma: es5
 
 ✅ **Directivas de importación**
+
 - Cambio de `import React from 'react'` a `import type { ReactElement } from 'react'`
 - Uso de `@/types` (path alias) para importar tipos centralizados
 - Path alias `@/` apunta a `src/`
 
 ✅ **Convenciones de naming**
+
 - Props interfaces: `XxxProps` (en lugar de `Props`)
 - Exports: `export default function Xxx()` (en lugar de `const Xxx: React.FC<Props>`)
 
@@ -434,12 +459,14 @@ export default function App({ Component, pageProps }: AppProps) {
 
 ### ✅ Regla 1: Prohibido `any` (100% eliminado)
 
-**Antes:** 
+**Antes:**
+
 - `const [machines, setMachines] = useState([])` → inferido como `unknown[]`
 - `.map((m: any) => ...)` → cast explícito a `any`
 - `setPrediction<any>(null)` → cualquier tipo aceptado
 
 **Después:**
+
 - `useState<Machine[]>([])` → tipado explícitamente
 - `.map((m) => ...)` → inference automático de tipo
 - `useState<Prediction | null>(null)` → unión tipada precisa
@@ -449,6 +476,7 @@ export default function App({ Component, pageProps }: AppProps) {
 ### ✅ Regla 2: Props de React SIEMPRE tipadas
 
 **Implementación:**
+
 ```typescript
 interface MetricCardProps {
   label: string;
@@ -472,6 +500,7 @@ export default function MetricCard({
 ### ✅ Regla 3: Hooks SIEMPRE tipados
 
 **Implementación:**
+
 ```typescript
 // useState con tipo explícito
 const [machines, setMachines] = useState<Machine[]>([]);
@@ -493,6 +522,7 @@ useEffect(() => {
 ### ✅ Regla 4: Estados complejos con interfaces/types
 
 **Implementación:**
+
 ```typescript
 // Uso de interfaces del dominio
 import type { Machine, Prediction, ESGData } from '@/types';
@@ -508,6 +538,7 @@ const [esgData, setEsgData] = useState<ESGData | null>(null);
 ### ✅ Regla 5: Todas las Promesas con tipo de retorno
 
 **Implementación:**
+
 ```typescript
 // Funciones de API
 export async function getMachines(): Promise<Machine[]> {
@@ -530,10 +561,12 @@ async function fetchData(): Promise<void> {
 ## 6. Validaciones Realizadas
 
 ### ✅ TypeScript Compiler (`tsc --noEmit`)
+
 - Resultado: **0 errores, 0 warnings**
 - Modo estricto: habilitado en `tsconfig.json`
 
 ### ✅ Prettier Formatting
+
 - **5 archivos formateados:**
   - `src/lib/api.ts`
   - `src/pages/index.tsx`
@@ -544,6 +577,7 @@ async function fetchData(): Promise<void> {
   - `src/components/LineChart.tsx`
 
 ### ✅ Análisis Manual
+
 - ✓ Cero instancias de `any` en código nuevo
 - ✓ Todas las props interfaces documentadas
 - ✓ Todos los hooks tienen tipos explícitos
@@ -555,16 +589,19 @@ async function fetchData(): Promise<void> {
 ## 7. Beneficios Logrados
 
 ### 🎯 Seguridad de Tipos
+
 - **IDE Intellisense mejorado:** Autocompletado 100% preciso
 - **Detección de errores en compilación:** Errores capturados antes de runtime
 - **Refactorización segura:** Cambios en tipos se propagan automáticamente
 
 ### 🎯 Mantenibilidad
+
 - **Documentación automática:** Los tipos sirven como especificación
 - **Menos bugs sutiles:** Errores de tipo evitados en tiempo de compilación
 - **Legibilidad mejorada:** Código autodocumentado con tipos
 
 ### 🎯 Rendimiento del Desarrollador
+
 - **Desarrollo más rápido:** Menos debugging requerido
 - **Confianza en cambios:** Refactorización asegurada por tipos
 - **Menos PR reviews:** Tipos evitan cambios incorrectos

@@ -6,7 +6,8 @@
 
 - ✅ **Arquitectura Hexagonal**: Estructura completa implementada
 - ✅ **Domain Layer**:
-  - 9 entidades completas (Tenant, Site, Machine, Sensor, Alert, Event, EmissionSource, EmissionFactor, EmissionRecord)
+  - 9 entidades completas (Tenant, Site, Machine, Sensor, Alert, Event,
+    EmissionSource, EmissionFactor, EmissionRecord)
   - 3 value objects (Measurement, FeatureVector, Prediction)
   - 6 interfaces de repositorios
 - ✅ **Configuración**: Settings con Pydantic, .env.example
@@ -485,4 +486,5 @@ scripts/
 
 ---
 
-**Nota**: Este roadmap es adaptable. Las prioridades pueden cambiar según feedback de stakeholders y necesidades del negocio.
+**Nota**: Este roadmap es adaptable. Las prioridades pueden cambiar
+según feedback de stakeholders y necesidades del negocio.
