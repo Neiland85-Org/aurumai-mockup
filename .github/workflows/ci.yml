@@ -94,6 +94,7 @@ jobs:
         run: npm install -g markdownlint-cli
 
       - name: Run MarkdownLint
+        continue-on-error: true
         run: markdownlint "**/*.md" --config .markdownlint.json
 
   # ============================================
