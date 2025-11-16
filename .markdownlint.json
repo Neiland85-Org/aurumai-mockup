@@ -1,5 +1,6 @@
 {
   "default": true,
+  "MD001": false,
   "MD003": {
     "style": "consistent"
   },
@@ -13,19 +14,12 @@
     "br_spaces": 2,
     "list_item_empty_lines": false
   },
-  "MD013": {
-    "line_length": 100,
-    "heading_line_length": 100,
-    "code_block_line_length": 100,
-    "code_blocks": false,
-    "tables": false
-  },
+  "MD013": false,
+  "MD024": false,
   "MD026": {
     "punctuation": ".,;:!?。"
   },
-  "MD029": {
-    "style": "one_or_ordered"
-  },
+  "MD029": false,
   "MD030": {
     "ul_single": 1,
     "ol_single": 1,
@@ -33,7 +27,7 @@
     "ol_multi": 1
   },
   "MD033": {
-    "allowed_elements": ["br", "kbd", "details", "summary"]
+    "allowed_elements": ["br", "kbd", "details", "summary", "T"]
   },
   "MD034": false,
   "MD036": false,
