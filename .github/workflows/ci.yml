@@ -91,7 +91,7 @@ jobs:
         run: npm install -g markdownlint-cli
 
       - name: Run MarkdownLint
-        run: markdownlint "**/*.md" --config .markdownlint.json
+        run: markdownlint "**/*.md" --config .markdownlint.json --ignore-path .markdownlintignore
 
   # ============================================
   # SECURITY SCANNING
