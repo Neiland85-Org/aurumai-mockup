@@ -1,6 +1,6 @@
 # 🚀 Instrucciones para Test de Endpoints
 
-## Paso 1: Levantar Backend
+## Paso 1 Levantar Backend
 
 Abre una **nueva terminal** y ejecuta:
 
@@ -19,7 +19,7 @@ INFO:     Application startup complete.
 
 ---
 
-## Paso 2: Verificar que el Backend está Activo
+## Paso 2 Verificar que el Backend está Activo
 
 En **otra terminal**, ejecuta:
 
@@ -31,16 +31,16 @@ Deberías recibir una respuesta JSON del backend.
 
 ---
 
-## Paso 3: Test de Endpoints
+## Paso 3 Test de Endpoints
 
-### Opción A: Usando el script Python
+### Opción A Usando el script Python
 
 ```bash
 cd /Users/estudio/Projects/GitHub/MOCKUPs/aurumai-mockup
 python3 test_endpoints.py
 ```
 
-### Opción B: Usando curl manualmente
+### Opción B Usando curl manualmente
 
 **Test /ingest/raw**:
 
@@ -132,12 +132,14 @@ sqlite3 backend/aurumai.db "SELECT * FROM measurements ORDER BY timestamp DESC L
 
 ## Troubleshooting
 
-### Si el backend no arranca:
+### Si el backend no arranca
 
 1. **Verificar puerto no está en uso**:
+
    ```bash
    lsof -i :8000
    ```
+
 2. **Matar proceso si existe**:
 
    ```bash
@@ -145,12 +147,13 @@ sqlite3 backend/aurumai.db "SELECT * FROM measurements ORDER BY timestamp DESC L
    ```
 
 3. **Verificar dependencias instaladas**:
+
    ```bash
    cd backend
    pip3 list | grep -i "fastapi\|uvicorn\|sqlalchemy"
    ```
 
-### Si hay errores de import:
+### Si hay errores de import
 
 ```bash
 cd /Users/estudio/Projects/GitHub/MOCKUPs/aurumai-mockup/backend
@@ -160,7 +163,7 @@ python3 -m uvicorn app:app --reload
 
 ---
 
-## Siguiente Paso: Demo Completo
+## Siguiente Paso Demo Completo
 
 Una vez que los endpoints funcionen, ejecutar el demo integrado:
 
@@ -174,4 +177,5 @@ python3 run_demo.py
 
 ---
 
-**Nota**: Como no puedo mantener terminales en background de forma confiable, estos pasos deben ejecutarse manualmente en tu terminal.
+**Nota**: Como no puedo mantener terminales en background de forma confiable,
+estos pasos deben ejecutarse manualmente en tu terminal.

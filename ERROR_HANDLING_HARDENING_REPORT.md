@@ -8,7 +8,8 @@
 
 ## 📋 Resumen Ejecutivo
 
-Se realizó un **hardening exhaustivo del manejo de errores** en todo el repositorio AurumAI. El objetivo es garantizar:
+Se realizó un **hardening exhaustivo del manejo de errores** en todo el repositorio AurumAI.
+El objetivo es garantizar:
 
 - ✅ Frontend sin pantallas en blanco
 - ✅ Backend sin errores silenciosos
@@ -45,6 +46,7 @@ export class AbortError extends Error { ... }       // Request abortado
 ```
 
 **Beneficios:**
+
 - ✅ No hay `any` en error handling
 - ✅ Type-safe error propagation
 - ✅ Pattern matching para errores
@@ -120,6 +122,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 ```
 
 **Funcionalidad:**
+
 - ✅ Captura errores de React no manejados
 - ✅ Fallback UI amigable
 - ✅ Botones para retry y home
@@ -145,6 +148,7 @@ export function useToast() {
 ```
 
 **Tipos de notificaciones:**
+
 - ✅ Success (verde)
 - ✅ Error (rojo)
 - ✅ Warning (amarillo)
@@ -158,6 +162,7 @@ export function useToast() {
 #### `pages/index.tsx` (HomePage)
 
 **Antes:**
+
 ```typescript
 // Sin error handling, pantalla blanca si falla
 const [machines, setMachines] = useState([]);
@@ -168,6 +173,7 @@ useEffect(() => {
 ```
 
 **Después:**
+
 ```typescript
 // Con error handling completo
 const [machines, setMachines] = useState<Machine[]>([]);
@@ -195,6 +201,7 @@ if (machines.length === 0) {
 ```
 
 **Mejoras:**
+
 - ✅ Estados de carga, error, success
 - ✅ UI fallback para cada estado
 - ✅ Mensajes de error amigables
@@ -205,6 +212,7 @@ if (machines.length === 0) {
 #### `pages/predictive.tsx` (Predictive Maintenance)
 
 **Cambios:**
+
 - ✅ Error handling para carga inicial de máquinas
 - ✅ Error handling para polling de predicciones
 - ✅ `isMounted` flag para evitar state leaks
@@ -215,6 +223,7 @@ if (machines.length === 0) {
 #### `pages/esg.tsx` (ESG Monitoring)
 
 **Cambios:**
+
 - ✅ Error handling para carga inicial
 - ✅ Error handling para polling de ESG
 - ✅ Estados de carga/error/success
@@ -256,6 +265,7 @@ function AppContent({ Component, pageProps }: AppProps): ReactElement {
 ```
 
 **Funcionalidad global:**
+
 - ✅ ErrorBoundary envuelve toda la app
 - ✅ ToastContainer visible globalmente
 - ✅ Manejo de unhandled promise rejections
@@ -340,18 +350,21 @@ function AppContent({ Component, pageProps }: AppProps): ReactElement {
 ## ⚠️ Validaciones Realizadas
 
 ### TypeScript Compiler
+
 ```bash
 $ npx tsc --noEmit
 # Result: ✅ 0 errors
 ```
 
 ### Prettier Formatting
+
 ```bash
 $ npx prettier --write src
 # Result: ✅ 5 files formatted
 ```
 
 ### Code Quality
+
 - ✅ No `any` en error handling
 - ✅ Todos los types explícitos
 - ✅ Return types en todos los async
@@ -393,6 +406,7 @@ $ npx prettier --write src
 ## 📝 Próximas Fases
 
 ### BACKEND - Próximo
+
 - [ ] Crear `backend/models/error.py` con ErrorResponse model
 - [ ] Agregar HTTPException handlers
 - [ ] Middleware global de captura de errores
@@ -402,6 +416,7 @@ $ npx prettier --write src
 - [ ] Mapeos dominio → HTTP
 
 ### SIMULADORES - Después
+
 - [ ] Try/catch en enviadores (iot-sim, edge-sim)
 - [ ] Reconexión automática MQTT/WS
 - [ ] Validación de datos

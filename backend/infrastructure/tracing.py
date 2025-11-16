@@ -10,6 +10,7 @@ from typing import Any, AsyncGenerator
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.propagate import extract, inject
 from opentelemetry.sdk.resources import (
     DEPLOYMENT_ENVIRONMENT,
     SERVICE_NAME,
@@ -203,7 +204,7 @@ def set_span_status(success: bool, description: str | None = None) -> None:
         span.set_status(Status(StatusCode.ERROR, description))
 
 
-def record_exception(exception: Exception, attributes: dict[str, Any | None] = None) -> None:
+def record_exception(exception: Exception, attributes: dict[str, Any] | None = None) -> None:
     """
     Record an exception in the current span.
 
@@ -239,8 +240,6 @@ def get_trace_context_headers() -> dict[str, str]:
         >>> async with httpx.AsyncClient() as client:
         ...     response = await client.get("http://api.example.com", headers=headers)
     """
-    from opentelemetry.propagate import inject
-
     headers: dict[str, str] = {}
     inject(headers)
     return headers
@@ -260,8 +259,6 @@ def extract_trace_context(headers: dict[str, str]) -> None:
         ...     extract_trace_context(dict(request.headers))
         ...     # Processing continues with trace context
     """
-    from opentelemetry.propagate import extract
-
     extract(headers)
 
 
@@ -282,7 +279,7 @@ class TracedOperation:
     def __init__(
         self,
         operation_name: str,
-        attributes: dict[str, Any | None] = None,
+        attributes: dict[str, Any] | None = None,
         tracer_name: str | None = None,
     ) -> None:
         """
@@ -324,7 +321,7 @@ class TracedOperation:
 
 async def traced_async_operation(
     operation_name: str,
-    attributes: dict[str, Any | None] = None,
+    attributes: dict[str, Any] | None = None,
 ) -> AsyncGenerator[Span, None]:
     """
     Async context manager for creating custom spans.

@@ -5,9 +5,9 @@ Represents significant events in the system (maintenance, failures, operations).
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from uuid import UUID, uuid4
 
 
@@ -48,7 +48,7 @@ class Event:
     cost: float | None = None
     related_alert_id: UUID | None = None
     metadata: Dict[str, Any] = field(default_factory=dict)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
     @staticmethod
     def create(
@@ -63,7 +63,7 @@ class Event:
         performed_by: str | None = None,
         cost: float | None = None,
         related_alert_id: UUID | None = None,
-        metadata: Dict[str, Any | None] = None,
+        metadata: dict[str, Any] | None = None,
     ) -> "Event":
         """Factory method to create a new event"""
         return Event(
@@ -74,11 +74,11 @@ class Event:
             event_type=event_type,
             title=title,
             description=description,
-            occurred_at=occurred_at or datetime.utcnow(),
+            occurred_at=occurred_at or datetime.now(timezone.utc),
             duration_minutes=duration_minutes,
             performed_by=performed_by,
             cost=cost,
             related_alert_id=related_alert_id,
             metadata=metadata or {},
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
         )

@@ -5,8 +5,8 @@ Represents physical or virtual sensors attached to machines.
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Any, Dict
+from datetime import datetime, timezone
+from typing import Any, Dict, Optional
 from uuid import UUID, uuid4
 
 
@@ -40,8 +40,8 @@ class Sensor:
     protocol: str  # modbus, opcua, mqtt, lora, canbus, analog
     address: str | None = None  # Protocol-specific address/tag
     spec: SensorSpec = field(default_factory=SensorSpec)
-    created_at: datetime = field(default_factory=datetime.utcnow)
-    updated_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     is_active: bool = True
     metadata: Dict[str, Any] = field(default_factory=dict)
 
@@ -56,7 +56,7 @@ class Sensor:
         spec: SensorSpec | None = None,
     ) -> "Sensor":
         """Factory method to create a new sensor"""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         return Sensor(
             id=uuid4(),
             machine_id=machine_id,
@@ -75,9 +75,9 @@ class Sensor:
     def calibrate(self, spec: SensorSpec) -> None:
         """Update sensor calibration"""
         self.spec = spec
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
 
     def deactivate(self) -> None:
         """Deactivate sensor"""
         self.is_active = False
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)

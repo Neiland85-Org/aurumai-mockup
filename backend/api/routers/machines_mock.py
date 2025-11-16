@@ -5,7 +5,7 @@ This file provides sample data for development without requiring PostgreSQL.
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import Any
 
 from fastapi import APIRouter, Request
@@ -28,35 +28,35 @@ MOCK_MACHINES = [
         "machine_type": "CNC_MILL",
         "site": "Factory-A",
         "status": "operational",
-        "commissioned_date": datetime(2022, 1, 15),
+        "commissioned_date": datetime(2022, 1, 15, tzinfo=timezone.utc),
     },
     {
         "machine_id": "CNC-002",
         "machine_type": "CNC_LATHE",
         "site": "Factory-A",
         "status": "operational",
-        "commissioned_date": datetime(2022, 3, 20),
+        "commissioned_date": datetime(2022, 3, 20, tzinfo=timezone.utc),
     },
     {
         "machine_id": "PRESS-001",
         "machine_type": "HYDRAULIC_PRESS",
         "site": "Factory-B",
         "status": "operational",
-        "commissioned_date": datetime(2021, 11, 10),
+        "commissioned_date": datetime(2021, 11, 10, tzinfo=timezone.utc),
     },
     {
         "machine_id": "WELD-001",
         "machine_type": "WELDING_ROBOT",
         "site": "Factory-A",
         "status": "offline",
-        "commissioned_date": datetime(2023, 2, 5),
+        "commissioned_date": datetime(2023, 2, 5, tzinfo=timezone.utc),
     },
     {
         "machine_id": "PACK-001",
         "machine_type": "PACKAGING_LINE",
         "site": "Factory-C",
         "status": "operational",
-        "commissioned_date": datetime(2022, 8, 12),
+        "commissioned_date": datetime(2022, 8, 12, tzinfo=timezone.utc),
     },
 ]
 

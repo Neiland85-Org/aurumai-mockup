@@ -3,10 +3,11 @@ Error models and response schemas for AurumAI Backend.
 Provides typed, consistent error responses across all endpoints.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Optional
 
+import json
 from pydantic import BaseModel, Field
 
 
@@ -111,7 +112,7 @@ class ErrorDetails(BaseModel):
 
     field: str | None = Field(default=None, description="Field that caused the error")
     constraint: str | None = Field(default=None, description="Constraint that was violated")
-    provided_value: Any | None = Field(default=None, description="Value that was provided")
+    provided_value: Any = Field(default=None, description="Value that was provided")
     expected_format: str | None = Field(default=None, description="Expected format for the field")
 
 
@@ -126,7 +127,7 @@ class ErrorResponse(BaseModel):
     message: str = Field(..., description="Human-readable error message")
     details: ErrorDetails | None = Field(None, description="Optional detailed error information")
     timestamp: datetime = Field(
-        default_factory=datetime.utcnow, description="Error occurrence timestamp"
+        default_factory=lambda: datetime.now(timezone.utc), description="Error occurrence timestamp"
     )
     request_id: str | None = Field(None, description="Request ID for tracing")
 
@@ -154,8 +155,6 @@ class ErrorResponse(BaseModel):
     def json(self, **kwargs: Any) -> str:  # type: ignore
         """Override json to ensure timestamp is ISO format."""
         data = self.dict()
-        import json
-
         return json.dumps(data, default=str, **kwargs)
 
 
@@ -168,7 +167,7 @@ class ValidationError(BaseModel):
     errors: list[ErrorDetails] = Field(
         default_factory=list, description="List of validation errors"
     )
-    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Error timestamp")
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="Error timestamp")
 
     class Config:
         json_schema_extra: ClassVar[dict[str, Any]] = {
@@ -229,7 +228,7 @@ class ValidationException(ApplicationError):
         message: str,
         field: str | None = None,
         constraint: str | None = None,
-        provided_value: Any | None = None,
+        provided_value: Any = None,
         expected_format: str | None = None,
     ) -> None:
         details = ErrorDetails(

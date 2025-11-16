@@ -26,6 +26,7 @@ from api.routers import esg_mock, ingest, machines_mock, predict_mock
 from infrastructure.config.settings import settings
 from infrastructure.logging import setup_logging
 from infrastructure.metrics import get_metrics, system_info
+from infrastructure.rate_limiting import limiter
 from infrastructure.tracing import instrument_fastapi, setup_tracing
 from models_errors import ApplicationError
 
@@ -67,8 +68,6 @@ app = FastAPI(
     version=settings.app_version,
     description="Backend for AurumAI using Hexagonal Architecture with full observability.",
 )
-
-from infrastructure.rate_limiting import limiter
 
 # Configure rate limiting
 app.state.limiter = limiter

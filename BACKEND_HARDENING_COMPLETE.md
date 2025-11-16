@@ -66,6 +66,7 @@ useEffect(() => {
 ```
 
 **Validaciones TypeScript:**
+
 ```bash
 $ npx tsc --noEmit
 ✅ 0 errors, 0 warnings
@@ -235,11 +236,13 @@ logger.error(json.dumps({
 ### Frontend (8 archivos)
 
 ✅ **Creados:**
+
 - `src/types/errors.ts` - Utilidades de error
 - `src/components/ErrorBoundary.tsx` - Global error boundary
 - `src/components/Toast.tsx` - Notificaciones
 
 ✅ **Refactorizados:**
+
 - `src/lib/api.ts` - API con Result<T,E>
 - `src/pages/_app.tsx` - Error wrappers
 - `src/pages/index.tsx` - Error states + fallback
@@ -249,10 +252,12 @@ logger.error(json.dumps({
 ### Backend (6 archivos)
 
 ✅ **Creados:**
+
 - `backend/models_errors.py` - Error models
 - `backend/api/exception_handlers.py` - Middleware
 
 ✅ **Refactorizados:**
+
 - `backend/app.py` - Middleware setup
 - `backend/api/routers/machines.py` - Validación + errors
 - `backend/api/routers/predict.py` - Validación + errors
@@ -262,13 +267,14 @@ logger.error(json.dumps({
 ### Herramientas
 
 ✅ **Creados:**
+
 - `validate_backend.py` - Script de validación Python
 
 ---
 
 ## ✨ CARACTERÍSTICAS IMPLEMENTADAS
 
-### Frontend
+### Frontend (Características)
 
 - ✅ **Result<T, E> Pattern** - Type-safe error handling
 - ✅ **ErrorBoundary** - Captura React errors
@@ -282,7 +288,7 @@ logger.error(json.dumps({
 - ✅ **Input Validation** - Pydantic en models
 - ✅ **No `any` Types** - Tipado completo
 
-### Backend
+### Backend (Características)
 
 - ✅ **ErrorResponse Model** - Respuesta uniforme
 - ✅ **ErrorCode Enum** - 15+ error types
@@ -301,6 +307,7 @@ logger.error(json.dumps({
 ## 🧪 VALIDACIONES
 
 ### Frontend
+
 ```bash
 ✅ npx tsc --noEmit
    0 errors, 0 warnings
@@ -311,6 +318,7 @@ logger.error(json.dumps({
 ```
 
 ### Backend
+
 ```bash
 ✅ Script: validate_backend.py
    - No bare except clauses
@@ -323,7 +331,8 @@ logger.error(json.dumps({
 
 ## 📋 CHECKLIST FINAL
 
-### Frontend ✅ COMPLETO
+### Frontend (Checklist Final)
+
 - ✅ Result<T, E> pattern
 - ✅ 4 error types (API, Network, Timeout, Abort)
 - ✅ ErrorBoundary component
@@ -337,7 +346,8 @@ logger.error(json.dumps({
 - ✅ No `any` types
 - ✅ TypeScript validation: 0 errors
 
-### Backend ✅ COMPLETO
+### Backend (Checklist Final)
+
 - ✅ ErrorResponse model
 - ✅ 15+ ErrorCode enums
 - ✅ Global RequestID middleware
@@ -351,7 +361,8 @@ logger.error(json.dumps({
 - ✅ Documentación de endpoints
 - ✅ HTTP status code mapping
 
-### Validación ✅ COMPLETO
+### Validación (Checklist Final)
+
 - ✅ TypeScript compiler pass
 - ✅ Prettier formatting
 - ✅ No bare exceptions
@@ -363,13 +374,15 @@ logger.error(json.dumps({
 ## 🚀 BENEFICIOS OBTENIDOS
 
 ### Para Usuarios
+
 - 🎯 Sin pantallas blancas
 - 🎯 Mensajes de error claros
 - 🎯 Recuperación automática con retry
 - 🎯 Feedback visual (toasts)
 - 🎯 Estados de carga claros
 
-### Para Developers
+### Para Developers (Beneficios)
+
 - 🎯 Código más predecible
 - 🎯 Debugging más fácil
 - 🎯 Error handling uniforme
@@ -377,6 +390,7 @@ logger.error(json.dumps({
 - 🎯 Patrón consistente
 
 ### Para Ops/Monitoring
+
 - 🎯 Request tracing (IDs)
 - 🎯 Logs estructurados (JSON)
 - 🎯 Error codes estandarizados
@@ -415,6 +429,7 @@ logger.error(json.dumps({
 ### Para Developers
 
 **Usando Result Pattern en Frontend:**
+
 ```typescript
 const result = await getAPI(args);
 if (result.ok) {
@@ -426,6 +441,7 @@ if (result.ok) {
 ```
 
 **Usando ApplicationError en Backend:**
+
 ```python
 raise ValidationException(
     message="User input invalid",
@@ -438,6 +454,7 @@ raise ValidationException(
 ### Para Ops
 
 **Parsear logs estructurados:**
+
 ```bash
 # Todos los logs son JSON
 cat logs.txt | jq '.[] | select(.error_code)'
@@ -451,6 +468,7 @@ cat logs.txt | jq ".[] | select(.request_id == \"abc-123\")"
 ## ✅ RESUMEN EJECUTIVO
 
 ### Estado Actual
+
 - **Frontend:** ✅ HARDENED (250+ líneas de error handling)
 - **Backend:** ✅ HARDENED (350+ líneas de error models)
 - **Simuladores:** ⏳ Pendiente (próxima fase)
@@ -459,31 +477,37 @@ cat logs.txt | jq ".[] | select(.request_id == \"abc-123\")"
 ### Garantías Cumplidas
 
 ✅ **Frontend sin pantallas en blanco**
+
 - ErrorBoundary captura ALL React errors
 - UI fallback en cada página
 - Loading states visibles
 
 ✅ **Backend sin errores silenciosos**
+
 - Global exception handler (catch-all)
 - Errores tipados y específicos
 - JSON logging de TODOS los errors
 
 ✅ **Simuladores tolerantes a fallos** (próxima fase)
+
 - Try/catch en eventos
 - Auto-reconnect
 - Validación de datos
 
 ✅ **Respuestas de error uniformes**
+
 - ErrorResponse model
 - HTTP status code mapping
 - Request ID tracing
 
 ✅ **Código más escalable y robusto**
+
 - Result<T, E> pattern
 - Retry logic con backoff
 - Middleware reutilizable
 
 ✅ **Ningún warning de TypeScript/Python**
+
 - tsc: 0 errors
 - No bare exceptions
 - All typed
@@ -499,6 +523,7 @@ El hardening de manejo de errores en AurumAI está **95% completo**:
 - ⏳ **Simuladores:** Listos para hardening (próxima fase)
 
 La aplicación es ahora **production-ready** en términos de error handling:
+
 - Sin pantallas blancas
 - Sin errores silenciosos
 - Con trazabilidad completa

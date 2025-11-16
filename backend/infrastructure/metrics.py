@@ -3,6 +3,7 @@ Infrastructure: Prometheus Metrics
 Centralized metrics collection for observability
 """
 
+import asyncio
 import functools
 import time
 from typing import Callable, ParamSpec, TypeVar
@@ -357,8 +358,6 @@ def track_time(
                     metric.observe(duration)
 
         # Return appropriate wrapper based on function type
-        import asyncio
-
         if asyncio.iscoroutinefunction(func):
             return async_wrapper  # type: ignore
         else:

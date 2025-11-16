@@ -4,19 +4,22 @@
 
 **3 Archivos Nuevos + 5 Refactorizados**
 
-#### Errores Capturados:
+#### Errores Capturados
+
 - Network timeouts (AbortController + 30s timeout)
 - API failures (Result<T, E> pattern)
 - Component crashes (ErrorBoundary)
 - Unhandled rejections (Global listener)
 
-#### UI Fallbacks:
+#### UI Fallbacks
+
 - Loading spinner
 - Error message + retry button
 - Empty state message
 - Yellow warning banner
 
-#### Code Example:
+#### Code Example
+
 ```typescript
 // Result pattern - type-safe
 const result = await getMachines({ signal: controller.signal });
@@ -33,14 +36,16 @@ if (result.ok) {
 
 **2 Archivos Nuevos + 5 Refactorizados**
 
-#### Errores Capturados:
+#### Errores Capturados (Backend)
+
 - Invalid input (ValidationException)
 - Machine not found (ResourceNotFoundException)
 - Computation failures (ComputationException)
 - External service down (ExternalServiceException)
 - Bare exceptions (Global handler)
 
-#### Error Response Example:
+#### Error Response Example
+
 ```json
 {
   "status_code": 400,
@@ -56,7 +61,8 @@ if (result.ok) {
 }
 ```
 
-#### Middleware Stack:
+#### Middleware Stack
+
 ```
 Client → RequestIDMiddleware
       → ErrorLoggingMiddleware
@@ -68,7 +74,8 @@ Client → RequestIDMiddleware
         ErrorResponse JSON
 ```
 
-#### Input Validation Example:
+#### Input Validation Example
+
 ```python
 def _validate_machine_id(machine_id: str) -> None:
     if not machine_id:
@@ -110,12 +117,14 @@ def _validate_machine_id(machine_id: str) -> None:
 ### 📈 MÉTRICAS
 
 **Frontend:**
+
 - 250+ líneas de error handling code
 - 4 tipos específicos de errores
 - 3 componentes de error handling
 - 8 archivos refactorizados
 
 **Backend:**
+
 - 350+ líneas de error models
 - 15+ error codes definidos
 - 3 exception handlers

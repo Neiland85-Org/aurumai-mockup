@@ -6,7 +6,7 @@ Supports versioning and multiple methodologies (IPCC, country-specific, custom).
 """
 
 from dataclasses import dataclass, field
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from enum import Enum
 from typing import Any, Dict
 from uuid import UUID, uuid4
@@ -49,8 +49,8 @@ class EmissionFactor:
     valid_from: date = field(default_factory=lambda: date(2024, 1, 1))
     valid_to: date | None = None
     version: str = "1.0"
-    created_at: datetime = field(default_factory=datetime.utcnow)
-    updated_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     is_active: bool = True
     metadata: Dict[str, Any] = field(default_factory=dict)
 
@@ -77,10 +77,10 @@ class EmissionFactor:
         valid_from: date | None = None,
         valid_to: date | None = None,
         version: str = "1.0",
-        metadata: Dict[str, Any | None] = None,
+        metadata: dict[str, Any] | None = None,
     ) -> "EmissionFactor":
         """Factory method to create a new emission factor"""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         factor = EmissionFactor(
             id=uuid4(),
             name=name,

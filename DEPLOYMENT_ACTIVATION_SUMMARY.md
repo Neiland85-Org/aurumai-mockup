@@ -8,7 +8,7 @@
 
 ## ✅ Cambios Aplicados
 
-### **1. Workflow CI/CD Actualizado**
+### 1. Workflow CI/CD Actualizado
 
 **Archivo:** `.github/workflows/ci.yml`
 
@@ -51,7 +51,7 @@
 
 ## 🚀 Flujo de Deploy Activado
 
-### **Trigger Automático:**
+### Trigger Automático
 
 ```yaml
 if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -63,7 +63,7 @@ if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 - ❌ Pull requests (solo linting/testing)
 - ❌ Push a otras branches
 
-### **Dependencias:**
+### Dependencias
 
 ```yaml
 needs: [build-backend, build-frontend]
@@ -81,7 +81,7 @@ needs: [build-backend, build-frontend]
 4. Smoke Tests
 ```
 
-### **Configuración de Deploy:**
+### Configuración de Deploy
 
 **Environment:**
 
@@ -110,9 +110,9 @@ LOG_LEVEL=INFO
 
 El workflow ahora **requiere** que exista el environment 'staging' en GitHub Settings.
 
-### **Cómo Crearlo (2 minutos):**
+### Cómo Crearlo (2 minutos)
 
-#### **Paso 1: Ir a Settings**
+#### Paso 1: Ir a Settings
 
 ```
 https://github.com/Neiland85-Org/aurumai-mockup/settings/environments
@@ -124,13 +124,13 @@ O manualmente:
 2. Clic en **Settings** (tab superior derecha)
 3. En menú lateral → **Environments**
 
-#### **Paso 2: Crear Environment**
+#### Paso 2: Crear Environment
 
 1. Clic en **"New environment"**
 2. Name: `staging` (exactamente, minúsculas)
 3. Clic en **"Configure environment"**
 
-#### **Paso 3: Configurar (Opcional)**
+#### Paso 3: Configurar (Opcional)
 
 **Configuración Recomendada para Staging:**
 
@@ -147,7 +147,7 @@ Protection Rules:
 Environment secrets: (agregar cuando configures GCP/Railway)
 ```
 
-#### **Paso 4: Guardar**
+#### Paso 4: Guardar
 
 - Si agregaste rules: Clic en **"Save protection rules"**
 - Si no: Ya está listo
@@ -156,7 +156,7 @@ Environment secrets: (agregar cuando configures GCP/Railway)
 
 ## 🔐 Secrets Necesarios (Siguiente Paso)
 
-### **Para Google Cloud Run:**
+### Para Google Cloud Run
 
 Agregar en: `Settings → Secrets and variables → Actions → New repository secret`
 
@@ -191,7 +191,7 @@ Agregar en: `Settings → Secrets and variables → Actions → New repository s
 credentials: ${{ secrets.GCP_SA_KEY }}
 ```
 
-### **Alternativa: Railway**
+### Alternativa: Railway
 
 **Secret name:** `RAILWAY_TOKEN`
 
@@ -218,7 +218,7 @@ credentials: ${{ secrets.GCP_SA_KEY }}
 
 ## 📊 Qué Pasa al Hacer Push a Main
 
-### **Escenario 1: Environment NO Creado (Estado Actual)**
+### Escenario 1: Environment NO Creado (Estado Actual)
 
 ```
 1. git push origin main
@@ -237,7 +237,7 @@ credentials: ${{ secrets.GCP_SA_KEY }}
 
 **Solución:** Crear environment (2 min)
 
-### **Escenario 2: Environment Creado, Sin Secrets**
+### Escenario 2: Environment Creado, Sin Secrets
 
 ```
 1. git push origin main
@@ -258,7 +258,7 @@ credentials: ${{ secrets.GCP_SA_KEY }}
 
 **Solución:** Agregar secret `GCP_SA_KEY`
 
-### **Escenario 3: Environment + Secrets Configurados**
+### Escenario 3: Environment + Secrets Configurados
 
 ```
 1. git push origin main
@@ -288,14 +288,14 @@ credentials: ${{ secrets.GCP_SA_KEY }}
 
 ## ✅ Checklist de Activación Completa
 
-### **Paso 1: GitHub Environment** ⏳
+### Paso 1: GitHub Environment ⏳
 
 - [ ] Ir a Settings → Environments
 - [ ] Crear environment 'staging'
 - [ ] (Opcional) Configurar protection rules
 - [ ] Guardar
 
-### **Paso 2: Elegir Plataforma de Deploy** ⏳
+### Paso 2: Elegir Plataforma de Deploy ⏳
 
 - [ ] **Opción A: Google Cloud Run**
 
@@ -320,7 +320,7 @@ credentials: ${{ secrets.GCP_SA_KEY }}
   - [ ] Configurar service
   - [ ] Modificar workflow para Render
 
-### **Paso 3: Configurar Infrastructure** ⏳
+### Paso 3: Configurar Infrastructure ⏳
 
 - [ ] Base de datos PostgreSQL (staging)
 - [ ] TimescaleDB (staging)
@@ -328,7 +328,7 @@ credentials: ${{ secrets.GCP_SA_KEY }}
 - [ ] Variables de entorno
 - [ ] Secrets de aplicación
 
-### **Paso 4: Primer Deploy** ⏳
+### Paso 4: Primer Deploy ⏳
 
 - [ ] Commit cualquier cambio
 - [ ] `git push origin main`
@@ -337,7 +337,7 @@ credentials: ${{ secrets.GCP_SA_KEY }}
 - [ ] Verificar deploy exitoso
 - [ ] Verificar smoke tests
 
-### **Paso 5: Validación** ⏳
+### Paso 5: Validación ⏳
 
 - [ ] Acceder a staging URL
 - [ ] Verificar backend health: `/health`
@@ -349,7 +349,7 @@ credentials: ${{ secrets.GCP_SA_KEY }}
 
 ## 🛠️ Troubleshooting
 
-### **Error: "Environment 'staging' not found"**
+### Error: "Environment 'staging' not found"
 
 **Solución:**
 
@@ -357,7 +357,7 @@ credentials: ${{ secrets.GCP_SA_KEY }}
 Settings → Environments → New environment → "staging"
 ```
 
-### **Error: "Resource not accessible by integration"**
+### Error: "Resource not accessible by integration"
 
 **Causa:** Permisos insuficientes de GITHUB_TOKEN
 
@@ -371,7 +371,7 @@ permissions:
   deployments: write
 ```
 
-### **Error: "Invalid credentials"**
+### Error: "Invalid credentials"
 
 **Para GCP:**
 
@@ -382,7 +382,7 @@ permissions:
 4. Re-run workflow
 ```
 
-### **Error: "Service not found" (Cloud Run)**
+### Error: "Service not found" (Cloud Run)
 
 **Causa:** Servicios no existen en GCP
 
@@ -403,7 +403,7 @@ gcloud run deploy aurumai-frontend-staging \
 # Luego GitHub Actions actualizará con tus images
 ```
 
-### **Smoke Tests Fallan**
+### Smoke Tests Fallan
 
 **Causa:** URLs no existen o servicios no responden
 
@@ -421,25 +421,25 @@ gcloud run deploy aurumai-frontend-staging \
 
 ## 📈 Próximos Pasos
 
-### **Inmediato (Hoy):**
+### Inmediato (Hoy)
 
 1. ✅ **Crear environment 'staging'** en GitHub (2 min)
 2. ⏳ Decidir plataforma: GCP, Railway, o Render
 3. ⏳ Configurar secrets necesarios
 
-### **Corto Plazo (Esta Semana):**
+### Corto Plazo (Esta Semana)
 
-4. ⏳ Configurar infrastructure (DB, MQTT, etc.)
-5. ⏳ Primer deploy a staging
-6. ⏳ Validar aplicación completa
-7. ⏳ Configurar monitoreo (Grafana)
+1. ⏳ Configurar infrastructure (DB, MQTT, etc.)
+2. ⏳ Primer deploy a staging
+3. ⏳ Validar aplicación completa
+4. ⏳ Configurar monitoreo (Grafana)
 
-### **Medio Plazo (Próximas 2 Semanas):**
+### Medio Plazo (Próximas 2 Semanas)
 
-8. ⏳ Environment 'production'
-9. ⏳ Protection rules estrictas
-10. ⏳ Deploy a producción
-11. ⏳ Alerting + On-call
+1. ⏳ Environment 'production'
+2. ⏳ Protection rules estrictas
+3. ⏳ Deploy a producción
+4. ⏳ Alerting + On-call
 
 ---
 

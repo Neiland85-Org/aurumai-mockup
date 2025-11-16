@@ -10,10 +10,12 @@ SECURITY NOTICE:
 - Development defaults only for non-sensitive settings
 """
 
+import json
 import os
+import sys
 from typing import Any, List
 
-from pydantic import Field, ValidationInfo, field_validator
+from pydantic import Field, ValidationError, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _env_file = os.environ.get("ENV_FILE", ".env")
@@ -150,8 +152,6 @@ class Settings(BaseSettings):
                 return [origin.strip() for origin in v.split(",")]
             # If it's a JSON array string, parse it
             elif v.startswith("["):
-                import json
-
                 return json.loads(v)
             # Single origin
             return [v]
@@ -209,10 +209,6 @@ try:
     # type: ignore[call-arg] - BaseSettings loads from environment, not constructor args
     settings = Settings()  # type: ignore[call-arg]
 except Exception as e:  # pragma: no cover - configuration errors must surface early
-    import sys
-
-    from pydantic import ValidationError
-
     print(f"Error cargando configuración: {e}", file=sys.stderr)
     if isinstance(e, ValidationError):
         print("Variables faltantes o inválidas:", file=sys.stderr)

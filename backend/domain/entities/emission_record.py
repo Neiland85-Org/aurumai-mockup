@@ -5,7 +5,7 @@ Represents calculated emissions for a given activity and time period.
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict
 from uuid import UUID, uuid4
 
@@ -36,7 +36,7 @@ class EmissionRecord:
     co2eq_kg: float  # Total CO2 equivalent
     calculation_method: str = "direct"  # direct, estimated, modeled
     confidence_level: float = 1.0  # 0.0 to 1.0
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     @staticmethod
@@ -57,7 +57,7 @@ class EmissionRecord:
         machine_id: UUID | None = None,
         calculation_method: str = "direct",
         confidence_level: float = 1.0,
-        metadata: Dict[str, Any | None] = None,
+        metadata: dict[str, Any] | None = None,
     ) -> "EmissionRecord":
         """Factory method to create a new emission record"""
         return EmissionRecord(
@@ -78,7 +78,7 @@ class EmissionRecord:
             co2eq_kg=co2eq_kg,
             calculation_method=calculation_method,
             confidence_level=confidence_level,
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
             metadata=metadata or {},
         )
 
