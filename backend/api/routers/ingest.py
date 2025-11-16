@@ -105,6 +105,7 @@ def _validate_feature_vector(vec: FeatureVector) -> None:
 
 
 @router.post("/raw")
+@limiter.limit("100/minute")
 async def ingest_raw(
     request: Request,
     meas: RawMeasurement,
@@ -125,9 +126,6 @@ async def ingest_raw(
         ResourceNotFoundException: If machine not found.
         ComputationException: If ingestion fails.
     """
-    # Rate limiting: 100 requests per minute for raw telemetry
-    limiter.limit("100/minute")(request)
-
     # Validate input
     _validate_raw_measurement(meas)
 
@@ -165,6 +163,7 @@ async def ingest_raw(
 
 
 @router.post("/features")
+@limiter.limit("50/minute")
 async def ingest_features(
     request: Request,
     vec: FeatureVector,
@@ -185,9 +184,6 @@ async def ingest_features(
         ResourceNotFoundException: If machine not found.
         ComputationException: If ingestion fails.
     """
-    # Rate limiting: 50 requests per minute for feature vectors
-    limiter.limit("50/minute")(request)
-
     # Validate input
     _validate_feature_vector(vec)
 
