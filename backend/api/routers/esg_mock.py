@@ -8,13 +8,20 @@ import random
 from datetime import datetime, timezone
 from typing import Any
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from models import ESGResponse
+
+# Get the global limiter from the infrastructure module
+from infrastructure.rate_limiting import limiter
 
 logger = logging.getLogger("aurumai")
 
 router = APIRouter()
+
+# Rate limiter for ESG endpoints
 
 # Mock machine IDs (should match machines_mock.py)
 VALID_MACHINE_IDS = {"CNC-001", "CNC-002", "PRESS-001", "WELD-001", "PACK-001"}
@@ -58,19 +65,12 @@ def _generate_mock_esg(machine_id: str) -> dict[str, Any]:
 
 
 @router.get("/current", response_model=ESGResponse)
+@limiter.limit("50/minute")
 async def get_current_esg_mock(
+    request: Request,
     machine_id: str = Query(..., description="Machine ID", min_length=1),
 ) -> ESGResponse:
-    """
-    Get current mock ESG/Carbon metrics for a machine.
-    Returns simulated data - no database required.
 
-    Args:
-        machine_id: The machine to get ESG data for.
-
-    Returns:
-        Mock ESG metrics including CO2 emissions and fuel consumption.
-    """
     logger.info(
         f"🔧 Using MOCK ESG endpoint for '{machine_id}' (database not available)"
     )
@@ -100,14 +100,9 @@ async def get_current_esg_mock(
 
 
 @router.get("/summary")
-async def get_esg_summary_mock() -> dict[str, Any]:
-    """
-    Get aggregated mock ESG summary across all machines.
-    Returns simulated data - no database required.
+@limiter.limit("20/minute")
+async def get_esg_summary_mock(request: Request) -> dict[str, Any]:
 
-    Returns:
-        Dictionary with total emissions and per-machine breakdown.
-    """
     logger.info("🔧 Using MOCK ESG summary endpoint (database not available)")
 
     machines_data = []

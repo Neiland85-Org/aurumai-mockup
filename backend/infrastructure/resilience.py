@@ -324,7 +324,6 @@ class ResilientCircuitBreaker(CircuitBreaker):
                 f"Circuit breaker '{self.name}' call succeeded",
                 extra={"circuit_breaker": self.name, "state": self.current_state},
             )
-            return result
         except CircuitBreakerError:
             logger.error(
                 f"Circuit breaker '{self.name}' is OPEN, rejecting call",
@@ -335,6 +334,8 @@ class ResilientCircuitBreaker(CircuitBreaker):
                 },
             )
             raise
+        else:
+            return result
 
     async def call_async(
         self, func: Callable[P, T], *args: P.args, **kwargs: P.kwargs
@@ -359,7 +360,6 @@ class ResilientCircuitBreaker(CircuitBreaker):
                 f"Circuit breaker '{self.name}' async call succeeded",
                 extra={"circuit_breaker": self.name, "state": self.current_state},
             )
-            return result
         except CircuitBreakerError:
             logger.error(
                 f"Circuit breaker '{self.name}' is OPEN, rejecting async call",
@@ -370,6 +370,8 @@ class ResilientCircuitBreaker(CircuitBreaker):
                 },
             )
             raise
+        else:
+            return result
 
 
 # ============================================================================

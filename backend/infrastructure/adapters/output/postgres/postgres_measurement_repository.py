@@ -2,7 +2,7 @@
 Concrete PostgreSQL implementation of IMeasurementRepository
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Mapping, Optional, Sequence
 from uuid import UUID
 
@@ -131,9 +131,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         if ts is not None and hasattr(ts, "value"):
             ts = ts.value
         if ts is None:
-            from datetime import datetime
-
-            ts = datetime.now()
+            ts = datetime.now(timezone.utc)
         metrics = getattr(model, "metrics", {})
         metrics_dict: Dict[str, float] = {}
         if isinstance(metrics, dict):
@@ -159,9 +157,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         if ts is not None and hasattr(ts, "value"):
             ts = ts.value
         if ts is None:
-            from datetime import datetime
-
-            ts = datetime.now()
+            ts = datetime.now(timezone.utc)
         features = getattr(model, "features", {})
         features_dict: Dict[str, float] = {}
         if isinstance(features, dict):

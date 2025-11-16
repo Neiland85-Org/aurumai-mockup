@@ -87,7 +87,8 @@ class IngestTelemetryUseCase:
         # Validate machine exists
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         # Create and save measurement
         measurement = RawMeasurement(
@@ -128,7 +129,8 @@ class IngestTelemetryUseCase:
         # Validate machine exists
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         # Create and save feature vector
         feature_vector = FeatureVector(

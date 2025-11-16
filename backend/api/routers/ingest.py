@@ -6,9 +6,14 @@ Handles ingestion of raw telemetry and feature vectors with comprehensive error 
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from api.dependencies import get_ingest_telemetry_use_case
+
+# Get the global limiter from the infrastructure module
+from infrastructure.rate_limiting import limiter
 from application.use_cases import IngestTelemetryUseCase
 from application.use_cases.ingest.ingest_telemetry_use_case import (
     FeatureIngestResult,
@@ -25,6 +30,8 @@ from models_errors import (
 logger = logging.getLogger("aurumai")
 
 router = APIRouter()
+
+# Rate limiter for ingest endpoints
 
 
 def _validate_raw_measurement(meas: RawMeasurement) -> None:
@@ -99,6 +106,7 @@ def _validate_feature_vector(vec: FeatureVector) -> None:
 
 @router.post("/raw")
 async def ingest_raw(
+    request: Request,
     meas: RawMeasurement,
     use_case: Annotated[IngestTelemetryUseCase, Depends(get_ingest_telemetry_use_case)],
 ) -> RawIngestResult:
@@ -117,6 +125,9 @@ async def ingest_raw(
         ResourceNotFoundException: If machine not found.
         ComputationException: If ingestion fails.
     """
+    # Rate limiting: 100 requests per minute for raw telemetry
+    limiter.limit("100/minute")(request)
+
     # Validate input
     _validate_raw_measurement(meas)
 
@@ -129,8 +140,6 @@ async def ingest_raw(
         logger.info(
             f"Raw telemetry ingested for machine {meas.machine_id}: {result['message']}"
         )
-        return result
-
     except (ResourceNotFoundException, ValidationException):
         raise
     except ValueError as exc:
@@ -151,10 +160,13 @@ async def ingest_raw(
             message=f"Failed to ingest telemetry for machine '{meas.machine_id}'",
             error_code=ErrorCode.INGEST_ERROR,
         ) from exc
+    else:
+        return result
 
 
 @router.post("/features")
 async def ingest_features(
+    request: Request,
     vec: FeatureVector,
     use_case: Annotated[IngestTelemetryUseCase, Depends(get_ingest_telemetry_use_case)],
 ) -> FeatureIngestResult:
@@ -173,6 +185,9 @@ async def ingest_features(
         ResourceNotFoundException: If machine not found.
         ComputationException: If ingestion fails.
     """
+    # Rate limiting: 50 requests per minute for feature vectors
+    limiter.limit("50/minute")(request)
+
     # Validate input
     _validate_feature_vector(vec)
 
@@ -185,8 +200,6 @@ async def ingest_features(
         logger.info(
             f"Feature vector ingested for machine {vec.machine_id}: {result['message']}"
         )
-        return result
-
     except (ResourceNotFoundException, ValidationException):
         raise
     except ValueError as exc:
@@ -206,3 +219,5 @@ async def ingest_features(
             message=f"Failed to ingest features for machine '{vec.machine_id}'",
             error_code=ErrorCode.INVALID_FEATURES,
         ) from exc
+    else:
+        return result

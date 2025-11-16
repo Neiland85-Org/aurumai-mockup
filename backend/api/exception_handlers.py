@@ -68,7 +68,6 @@ class ErrorLoggingMiddleware(BaseHTTPMiddleware):
                         }
                     )
                 )
-            return response
         except Exception as exc:
             # Log unhandled exceptions
             logger.error(
@@ -86,6 +85,8 @@ class ErrorLoggingMiddleware(BaseHTTPMiddleware):
                 )
             )
             raise
+        else:
+            return response
 
 
 async def application_error_handler(request: Request, exc: Any) -> JSONResponse:

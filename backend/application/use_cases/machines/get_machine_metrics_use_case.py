@@ -51,7 +51,8 @@ class GetMachineMetricsUseCase:
         # Get machine
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         # Get latest measurements
         raw_measurement = await self.measurement_repo.get_latest_raw_measurement(
@@ -198,7 +199,8 @@ class GetMachineMetricsUseCase:
         # Check if machine already exists
         existing = await self.machine_repo.get_by_id(machine_id)
         if existing:
-            raise ValueError(f"Machine {machine_id} already exists")
+            message = f"Machine {machine_id} already exists"
+            raise ValueError(message)
 
         # Create machine entity
         machine = Machine(
@@ -236,7 +238,8 @@ class GetMachineMetricsUseCase:
         # Get existing machine
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         # Update fields if provided
         if machine_type is not None:

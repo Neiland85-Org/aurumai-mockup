@@ -4,7 +4,7 @@ Concrete PostgreSQL implementation of IESGRepository
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List
 
 from sqlalchemy import desc, func, select
@@ -162,9 +162,7 @@ class PostgresESGRepository(IESGRepository):
         machine_id = str(get_value("machine_id"))
         timestamp = get_value("timestamp")
         if timestamp is None:
-            from datetime import datetime
-
-            timestamp = datetime.now()
+            timestamp = datetime.now(timezone.utc)
         instant_co2eq_kg = safe_float(get_value("instant_co2eq_kg"))
         cumulative_co2eq_kg = safe_float(get_value("cumulative_co2eq_kg"))
         fuel_rate_lh = safe_float(get_value("fuel_rate_lh"))

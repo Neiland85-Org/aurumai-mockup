@@ -9,6 +9,10 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi.util import get_remote_address
 
 from api.exception_handlers import (
     ErrorLoggingMiddleware,
@@ -64,6 +68,15 @@ app = FastAPI(
     version=settings.app_version,
     description="Backend for AurumAI using Hexagonal Architecture with full observability.",
 )
+
+from infrastructure.rate_limiting import limiter
+
+# Configure rate limiting
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Add rate limiting middleware
+app.add_middleware(SlowAPIMiddleware)
 
 # Instrument FastAPI with OpenTelemetry (if enabled)
 if settings.tracing_enabled:

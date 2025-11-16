@@ -8,13 +8,20 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from models import MachineInfo, MachineMetrics, PredictionResponse
+
+# Get the global limiter from the infrastructure module
+from infrastructure.rate_limiting import limiter
 
 logger = logging.getLogger("aurumai")
 
 router = APIRouter()
+
+# Rate limiter for machines endpoints
 
 
 # Mock data
@@ -24,41 +31,42 @@ MOCK_MACHINES = [
         "machine_type": "CNC_MILL",
         "site": "Factory-A",
         "status": "operational",
-        "commissioned_date": "2022-01-15",
+        "commissioned_date": datetime(2022, 1, 15),
     },
     {
         "machine_id": "CNC-002",
         "machine_type": "CNC_LATHE",
         "site": "Factory-A",
         "status": "operational",
-        "commissioned_date": "2022-03-20",
+        "commissioned_date": datetime(2022, 3, 20),
     },
     {
         "machine_id": "PRESS-001",
         "machine_type": "HYDRAULIC_PRESS",
         "site": "Factory-B",
         "status": "operational",
-        "commissioned_date": "2021-11-10",
+        "commissioned_date": datetime(2021, 11, 10),
     },
     {
         "machine_id": "WELD-001",
         "machine_type": "WELDING_ROBOT",
         "site": "Factory-A",
         "status": "offline",
-        "commissioned_date": "2023-02-05",
+        "commissioned_date": datetime(2023, 2, 5),
     },
     {
         "machine_id": "PACK-001",
         "machine_type": "PACKAGING_LINE",
         "site": "Factory-C",
         "status": "operational",
-        "commissioned_date": "2022-08-12",
+        "commissioned_date": datetime(2022, 8, 12),
     },
 ]
 
 
 @router.get("/", response_model=list[MachineInfo])
-async def list_machines() -> list[MachineInfo]:
+@limiter.limit("200/minute")
+async def list_machines(request: Request) -> list[MachineInfo]:
     """
     List all available machines (MOCK VERSION).
     Returns sample data without database connection.
@@ -81,7 +89,8 @@ async def list_machines() -> list[MachineInfo]:
 
 
 @router.get("/{machine_id}/metrics", response_model=MachineMetrics)
-async def get_machine_metrics(machine_id: str) -> MachineMetrics:
+@limiter.limit("100/minute")
+async def get_machine_metrics(request: Request, machine_id: str) -> MachineMetrics:
     """
     Get current metrics and status for a specific machine (MOCK VERSION).
     Returns sample metrics without database connection.

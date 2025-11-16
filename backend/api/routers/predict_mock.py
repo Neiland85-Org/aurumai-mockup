@@ -7,11 +7,18 @@ import logging
 import random
 from typing import Any
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
+# Get the global limiter from the infrastructure module
+from infrastructure.rate_limiting import limiter
 
 logger = logging.getLogger("aurumai")
 
 router = APIRouter()
+
+# Rate limiter for prediction endpoints (lower limit due to computational cost)
 
 # Mock machine IDs (should match machines_mock.py)
 VALID_MACHINE_IDS = {"CNC-001", "CNC-002", "PRESS-001", "WELD-001", "PACK-001"}
@@ -52,19 +59,12 @@ def _generate_mock_prediction(machine_id: str) -> dict[str, Any]:
 
 
 @router.get("")
+@limiter.limit("30/minute")
 async def predict_mock(
+    request: Request,
     machine_id: str = Query(..., description="Machine ID"),
 ) -> dict[str, Any]:
-    """
-    Get mock predictive maintenance analysis for a machine.
-    Returns simulated data - no database required.
 
-    Args:
-        machine_id: The machine to get predictions for.
-
-    Returns:
-        Mock prediction with risk score, failure probability, and maintenance schedule.
-    """
     logger.info(
         f"🔧 Using MOCK predict endpoint for '{machine_id}' (database not available)"
     )
