@@ -10,10 +10,10 @@
 
 | Archivo | Cambios Aplicados |
 |---------|-------------------|
-| `lib/api.ts` | `fetchJSON<T>()` genérica, Promise<T> en todos los endpoints |
-| `pages/index.tsx` | `useState<Machine[]>()`, removed `any` casts, `ReactElement` return |
-| `pages/predictive.tsx` | `useState<Prediction \| null>()`, tipado completo |
-| `pages/esg.tsx` | `useState<ESGData \| null>()`, tipado completo |
+| `lib/api.ts` | `fetchJSON` genérica, `Promise` con tipos en todos los endpoints |
+| `pages/index.tsx` | `useState` con `Machine[]`, removed `any` casts, `ReactElement` return |
+| `pages/predictive.tsx` | `useState` con `Prediction` o `null`, tipado completo |
+| `pages/esg.tsx` | `useState` con `ESGData` o `null`, tipado completo |
 | `components/MetricCard.tsx` | Props interface, ReactElement return, sin React.FC |
 | `components/MachineCard.tsx` | Props reutiliza tipos de Machine, tipado completo |
 | `components/LineChart.tsx` | Point interface, todas variables tipadas |
