@@ -203,7 +203,7 @@ jobs:
           pytest tests/test_smoke.py -v --cov=. --cov-report=xml || echo "⚠️ Tests skipped - using mock endpoints"
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         if: success()
         with:
           file: ./backend/coverage.xml
