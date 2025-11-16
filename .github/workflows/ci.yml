@@ -162,6 +162,8 @@ jobs:
   test-backend:
     name: �� Test Backend
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     # Temporarily disabled PostgreSQL service for mock-only testing
     # services:
     #   postgres:
