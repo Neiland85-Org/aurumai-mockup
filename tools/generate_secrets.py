@@ -17,6 +17,8 @@ import secrets
 import string
 from pathlib import Path
 from typing import Optional
+from cryptography.fernet import Fernet
+import base64
 
 
 def generate_secret_key(length: int = 32) -> str:
@@ -47,7 +49,7 @@ def generate_password(length: int = 16) -> str:
     return password
 
 
-def create_env_template(env_type: str = "development", use_placeholders: bool = False) -> str:
+def create_env_template(env_type: str = "development", use_placeholders: bool = False):
     """
     Create .env template with generated secrets or placeholders.
 
@@ -56,16 +58,24 @@ def create_env_template(env_type: str = "development", use_placeholders: bool = 
         use_placeholders: If True, use <CHANGE_ME> placeholders instead of real secrets
 
     Returns:
-        .env file content as string
+        Tuple: (.env file content as string, encryption key as string or None)
     """
     if use_placeholders:
         secret_key = "<CHANGE_ME_SECRET_KEY>"
         db_password = "<CHANGE_ME_DB_PASSWORD>"
         mqtt_password = "<CHANGE_ME_MQTT_PASSWORD>"
+        encryption_key = None
     else:
-        secret_key = generate_secret_key(32)
-        db_password = generate_password(20)
-        mqtt_password = generate_password(16)
+        # Generate encryption key
+        encryption_key = Fernet.generate_key()
+        f = Fernet(encryption_key)
+        # Encrypt sensitive secrets
+        secret_key_plain = generate_secret_key(32)
+        db_password_plain = generate_password(20)
+        mqtt_password_plain = generate_password(16)
+        secret_key = f.encrypt(secret_key_plain.encode()).decode()
+        db_password = f.encrypt(db_password_plain.encode()).decode()
+        mqtt_password = f.encrypt(mqtt_password_plain.encode()).decode()
 
     template = f"""# AurumAI Platform - {env_type.upper()} Environment
 # Generated on: {Path(__file__).stat().st_mtime}
@@ -274,7 +284,7 @@ def main():
         print()
 
     # Generate full .env template
-    env_content = create_env_template(args.env, use_placeholders=args.placeholders)
+    env_content, encryption_key = create_env_template(args.env, use_placeholders=args.placeholders)
 
     if args.save:
         env_file = Path(f".env.{args.env}")
@@ -282,6 +292,11 @@ def main():
         if env_file.exists():
             response = input(f"⚠️  {env_file} already exists. Overwrite? (y/N): ")
             if response.lower() != 'y':
+        if not args.placeholders and encryption_key is not None:
+            print(f"   2. Your encryption key for decrypting the secrets is:\n       {encryption_key.decode()}")
+            print(f"      You must keep this key secure! Without it, the secrets in the .env file cannot be used.")
+            print(f"      DO NOT store this key in source control. Prefer a secrets manager.")
+            print(f"      To decrypt, use the Fernet recipe from cryptography.fernet.")
                 print("❌ Cancelled. File not modified.")
                 return 0
 
@@ -289,9 +304,9 @@ def main():
         print("💡 Next steps:")
         print(f"   1. Review {env_file} and customize values")
         if not args.placeholders:
-            print(f"   2. Copy to backend/.env for local development:")
+            print(f"   3. Copy to backend/.env for local development:")
             print(f"      cp {env_file} backend/.env")
-        print(f"   3. NEVER commit .env files to git!")
+        print(f"   4. NEVER commit .env files to git!")
         print()
     else:
         print("📄 Full .env template:")
