@@ -7,11 +7,18 @@ import logging
 import random
 from typing import Any
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
+# Get the global limiter from the infrastructure module
+from infrastructure.rate_limiting import limiter
 
 logger = logging.getLogger("aurumai")
 
 router = APIRouter()
+
+# Rate limiter for prediction endpoints (lower limit due to computational cost)
 
 # Mock machine IDs (should match machines_mock.py)
 VALID_MACHINE_IDS = {"CNC-001", "CNC-002", "PRESS-001", "WELD-001", "PACK-001"}
@@ -31,10 +38,10 @@ def _generate_mock_prediction(machine_id: str) -> dict[str, Any]:
 
     # Add variation
     risk_score = max(0.0, min(1.0, base_risk + random.uniform(-0.1, 0.1)))
-    
+
     # Failure probability is usually lower than risk score
     failure_prob = risk_score * random.uniform(0.6, 0.9)
-    
+
     # Maintenance hours based on risk
     if risk_score > 0.6:
         maintenance_hours = random.randint(24, 72)  # Soon
@@ -52,24 +59,18 @@ def _generate_mock_prediction(machine_id: str) -> dict[str, Any]:
 
 
 @router.get("")
+@limiter.limit("30/minute")
 async def predict_mock(
+    request: Request,
     machine_id: str = Query(..., description="Machine ID"),
 ) -> dict[str, Any]:
-    """
-    Get mock predictive maintenance analysis for a machine.
-    Returns simulated data - no database required.
-    
-    Args:
-        machine_id: The machine to get predictions for.
-        
-    Returns:
-        Mock prediction with risk score, failure probability, and maintenance schedule.
-    """
+
     logger.info(f"🔧 Using MOCK predict endpoint for '{machine_id}' (database not available)")
 
     # Validate machine exists
     if machine_id not in VALID_MACHINE_IDS:
         from models_errors import ResourceNotFoundException
+
         raise ResourceNotFoundException(
             message=f"Machine '{machine_id}' not found in mock data",
             resource_type="machine",
@@ -86,7 +87,15 @@ async def predict_mock(
         "maintenance_hours": prediction["maintenance_hours"],
         "confidence": prediction["confidence"],
         "recommendations": [
-            f"Monitor {machine_id} for unusual vibrations" if prediction["risk_score"] > 0.5 else f"{machine_id} operating normally",
-            "Schedule maintenance" if prediction["maintenance_hours"] < 100 else "Continue regular monitoring",
+            (
+                f"Monitor {machine_id} for unusual vibrations"
+                if prediction["risk_score"] > 0.5
+                else f"{machine_id} operating normally"
+            ),
+            (
+                "Schedule maintenance"
+                if prediction["maintenance_hours"] < 100
+                else "Continue regular monitoring"
+            ),
         ],
     }

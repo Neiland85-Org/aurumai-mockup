@@ -5,19 +5,22 @@ Enables end-to-end request tracing across services
 
 from __future__ import annotations
 
-import logging
-from typing import Any, Optional
+from typing import Any, AsyncGenerator
 
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.sdk.resources import Resource, SERVICE_NAME, SERVICE_VERSION, DEPLOYMENT_ENVIRONMENT
+from opentelemetry.sdk.resources import (
+    DEPLOYMENT_ENVIRONMENT,
+    SERVICE_NAME,
+    SERVICE_VERSION,
+    Resource,
+)
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 from opentelemetry.trace import Span, Status, StatusCode
 
 from infrastructure.logging import get_logger
-
 
 logger = get_logger(__name__)
 
@@ -31,7 +34,7 @@ def setup_tracing(
     service_name: str = "aurumai-backend",
     service_version: str = "1.0.0",
     environment: str = "development",
-    otlp_endpoint: Optional[str] = None,
+    otlp_endpoint: str | None = None,
     console_export: bool = False,
 ) -> TracerProvider:
     """
@@ -72,7 +75,7 @@ def setup_tracing(
             otlp_exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
             provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
             logger.info(
-                f"OpenTelemetry OTLP exporter configured",
+                "OpenTelemetry OTLP exporter configured",
                 extra={"endpoint": otlp_endpoint},
             )
         except Exception as e:
@@ -91,7 +94,7 @@ def setup_tracing(
     trace.set_tracer_provider(provider)
 
     logger.info(
-        f"OpenTelemetry tracing configured",
+        "OpenTelemetry tracing configured",
         extra={
             "service_name": service_name,
             "service_version": service_version,
@@ -178,7 +181,7 @@ def set_span_attributes(attributes: dict[str, Any]) -> None:
         span.set_attribute(key, value)
 
 
-def set_span_status(success: bool, description: Optional[str] = None) -> None:
+def set_span_status(success: bool, description: str | None = None) -> None:
     """
     Set the status of the current span.
 
@@ -200,7 +203,7 @@ def set_span_status(success: bool, description: Optional[str] = None) -> None:
         span.set_status(Status(StatusCode.ERROR, description))
 
 
-def record_exception(exception: Exception, attributes: Optional[dict[str, Any]] = None) -> None:
+def record_exception(exception: Exception, attributes: dict[str, Any | None] = None) -> None:
     """
     Record an exception in the current span.
 
@@ -267,7 +270,7 @@ def extract_trace_context(headers: dict[str, str]) -> None:
 # ============================================================================
 
 
-class traced_operation:
+class TracedOperation:
     """
     Context manager for creating custom spans.
 
@@ -279,8 +282,8 @@ class traced_operation:
     def __init__(
         self,
         operation_name: str,
-        attributes: Optional[dict[str, Any]] = None,
-        tracer_name: Optional[str] = None,
+        attributes: dict[str, Any | None] = None,
+        tracer_name: str | None = None,
     ) -> None:
         """
         Initialize traced operation.
@@ -293,7 +296,7 @@ class traced_operation:
         self.operation_name = operation_name
         self.attributes = attributes or {}
         self.tracer = get_tracer(tracer_name or __name__)
-        self.span: Optional[Span] = None
+        self.span: Span | None = None
 
     def __enter__(self) -> Span:
         """Start the span"""
@@ -321,8 +324,8 @@ class traced_operation:
 
 async def traced_async_operation(
     operation_name: str,
-    attributes: Optional[dict[str, Any]] = None,
-):
+    attributes: dict[str, Any | None] = None,
+) -> AsyncGenerator[Span, None]:
     """
     Async context manager for creating custom spans.
 
@@ -354,7 +357,7 @@ async def traced_async_operation(
 # ============================================================================
 
 
-def get_trace_id() -> Optional[str]:
+def get_trace_id() -> str | None:
     """
     Get the current trace ID as a hex string.
 
@@ -371,7 +374,7 @@ def get_trace_id() -> Optional[str]:
     return None
 
 
-def get_span_id() -> Optional[str]:
+def get_span_id() -> str | None:
     """
     Get the current span ID as a hex string.
 

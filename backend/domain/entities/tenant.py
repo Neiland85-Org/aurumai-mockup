@@ -7,7 +7,7 @@ Tenants are isolated from each other and have their own configuration.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 from uuid import UUID, uuid4
 
 
@@ -48,7 +48,7 @@ class Tenant:
         code: str,
         industry: str,
         region: str,
-        config: Optional[TenantConfig] = None,
+        config: TenantConfig | None = None,
     ) -> "Tenant":
         """Factory method to create a new tenant"""
         now = datetime.utcnow()

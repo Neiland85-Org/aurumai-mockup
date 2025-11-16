@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 from typing import Literal, Mapping
+
 from typing_extensions import TypedDict
 
 
@@ -36,6 +37,7 @@ class ForecastResult(TypedDict):
     forecast_total_kg: float
     forecast_total_tons: float
     hourly: list[ForecastHourlyEntry]
+
 
 # Emission factors (simplified for demo)
 # In production, these would come from EmissionFactor entities with versioning
@@ -148,9 +150,7 @@ def calculate_carbon_intensity(
     return round(total_co2eq_kg / production_units, 3)
 
 
-def forecast_emissions(
-    current_rate_kg_per_hour: float, forecast_hours: int
-) -> ForecastResult:
+def forecast_emissions(current_rate_kg_per_hour: float, forecast_hours: int) -> ForecastResult:
     """
     Simple linear forecast of future emissions.
     In production, this would use time series forecasting models.

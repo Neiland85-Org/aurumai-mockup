@@ -2,8 +2,8 @@
 Concrete PostgreSQL implementation of IMeasurementRepository
 """
 
-from datetime import datetime
-from typing import Dict, List, Mapping, Optional, Sequence
+from datetime import datetime, timezone
+from typing import Dict, List, Mapping, Sequence
 from uuid import UUID
 
 from sqlalchemy import desc, select
@@ -45,7 +45,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
 
         return self._feature_model_to_entity(model)
 
-    async def get_latest_raw_measurement(self, machine_id: str) -> Optional[RawMeasurement]:
+    async def get_latest_raw_measurement(self, machine_id: str) -> RawMeasurement | None:
         """Get latest raw measurement for machine"""
         stmt = (
             select(RawMeasurementModel)
@@ -60,7 +60,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
             return self._raw_model_to_entity(model)
         return None
 
-    async def get_latest_features(self, machine_id: str) -> Optional[FeatureVector]:
+    async def get_latest_features(self, machine_id: str) -> FeatureVector | None:
         """Get latest feature vector for machine"""
         stmt = (
             select(FeatureModel)
@@ -129,9 +129,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         if ts is not None and hasattr(ts, "value"):
             ts = ts.value
         if ts is None:
-            from datetime import datetime
-
-            ts = datetime.now()
+            ts = datetime.now(timezone.utc)
         metrics = getattr(model, "metrics", {})
         metrics_dict: Dict[str, float] = {}
         if isinstance(metrics, dict):
@@ -157,9 +155,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         if ts is not None and hasattr(ts, "value"):
             ts = ts.value
         if ts is None:
-            from datetime import datetime
-
-            ts = datetime.now()
+            ts = datetime.now(timezone.utc)
         features = getattr(model, "features", {})
         features_dict: Dict[str, float] = {}
         if isinstance(features, dict):

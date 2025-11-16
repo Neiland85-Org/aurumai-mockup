@@ -3,7 +3,7 @@ Tenant Repository Interface
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 
 from domain.entities import Tenant
@@ -18,12 +18,12 @@ class ITenantRepository(ABC):
         pass
 
     @abstractmethod
-    async def find_by_id(self, tenant_id: UUID) -> Optional[Tenant]:
+    async def find_by_id(self, tenant_id: UUID) -> Tenant | None:
         """Find tenant by ID"""
         pass
 
     @abstractmethod
-    async def find_by_code(self, code: str) -> Optional[Tenant]:
+    async def find_by_code(self, code: str) -> Tenant | None:
         """Find tenant by code"""
         pass
 

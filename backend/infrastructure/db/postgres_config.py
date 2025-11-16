@@ -52,24 +52,24 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 async def init_database() -> None:
     """
     Initialize database - verify TimescaleDB extension.
-    
+
     IMPORTANT: This function NO LONGER creates tables automatically.
     Use Alembic migrations instead:
-    
+
     1. Create migration: alembic revision --autogenerate -m "description"
     2. Apply migration: alembic upgrade head
     3. Rollback: alembic downgrade -1
-    
+
     This function only ensures TimescaleDB extension is available.
     Table creation and hypertable conversion are handled by migrations.
     """
     async with engine.begin() as conn:
         # Only enable TimescaleDB extension (idempotent operation)
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"))
-        
+
         # NOTE: Table creation removed - use Alembic migrations
         # Tables and hypertables are created via:
         #   alembic upgrade head
-        # 
+        #
         # This prevents accidental data loss from recreating tables.
         # See: backend/alembic/versions/ for migration files

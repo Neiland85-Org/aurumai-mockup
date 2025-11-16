@@ -1,4 +1,5 @@
 import { useEffect, useState, ReactElement, useCallback } from 'react';
+import Link from 'next/link';
 import { getPrediction, getMachines } from '../lib/api';
 import MetricCard from '../components/MetricCard';
 import LineChart from '../components/LineChart';
@@ -111,9 +112,9 @@ export default function PredictivePage(): ReactElement {
   return (
     <div className="min-h-screen p-8">
       <div className="mb-6">
-        <a href="/" className="text-yellow-600 hover:underline">
+        <Link href="/" className="text-yellow-600 hover:underline">
           ← Back to Overview
-        </a>
+        </Link>
       </div>
 
       <h1 className="text-3xl font-bold text-yellow-600 mb-6">Predictive Maintenance</h1>

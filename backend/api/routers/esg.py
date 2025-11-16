@@ -78,13 +78,13 @@ async def get_current_esg(
     """
     Calculate current ESG/Carbon metrics for a machine.
     Uses hexagonal architecture with dependency injection.
-    
+
     Args:
         machine_id: The machine to calculate ESG for.
-        
+
     Returns:
         Current ESG metrics including CO2 emissions and fuel consumption.
-        
+
     Raises:
         ValidationException: If machine_id is invalid.
         ResourceNotFoundException: If machine or ESG data not found.
@@ -136,14 +136,14 @@ async def get_esg_history(
     """
     Get ESG history for a machine.
     Uses hexagonal architecture with dependency injection.
-    
+
     Args:
         machine_id: The machine to get ESG history for.
         limit: Maximum number of records (1-500, default 100).
-        
+
     Returns:
         Dictionary with machine_id and list of historical ESG records.
-        
+
     Raises:
         ValidationException: If parameters are invalid.
         ResourceNotFoundException: If machine or history not found.
@@ -199,10 +199,10 @@ async def get_esg_summary(
     """
     Get aggregated ESG summary across all machines.
     Uses hexagonal architecture with dependency injection.
-    
+
     Returns:
         Dictionary with total emissions and per-machine breakdown.
-        
+
     Raises:
         ComputationException: If summary calculation fails.
     """
@@ -220,9 +220,7 @@ async def get_esg_summary(
     except ComputationException:
         raise
     except Exception as exc:
-        logger.error(
-            f"Unexpected error calculating ESG summary: {type(exc).__name__}: {exc}"
-        )
+        logger.error(f"Unexpected error calculating ESG summary: {type(exc).__name__}: {exc}")
         raise ComputationException(
             message="Failed to calculate ESG summary",
             error_code=ErrorCode.ESG_CALCULATION_ERROR,

@@ -78,13 +78,13 @@ async def predict(
     """
     Run predictive maintenance model for a specific machine.
     Uses hexagonal architecture with dependency injection.
-    
+
     Args:
         machine_id: The ID of the machine to predict.
-        
+
     Returns:
         Prediction result with risk score and maintenance recommendations.
-        
+
     Raises:
         ValidationException: If machine_id is invalid.
         ResourceNotFoundException: If machine or prediction data not found.
@@ -101,7 +101,7 @@ async def predict(
             timestamp=prediction.timestamp,
             risk_score=prediction.risk_score,
             failure_probability=prediction.failure_probability,
-            confidence=prediction.confidence if prediction.confidence is not None else 0.85,
+            confidence=(prediction.confidence if prediction.confidence is not None else 0.85),
             next_maintenance_hours=prediction.maintenance_hours,
         )
 
@@ -117,9 +117,7 @@ async def predict(
     except ComputationException:
         raise
     except Exception as exc:
-        logger.error(
-            f"Unexpected error predicting {machine_id}: {type(exc).__name__}: {exc}"
-        )
+        logger.error(f"Unexpected error predicting {machine_id}: {type(exc).__name__}: {exc}")
         raise ComputationException(
             message=f"Failed to generate prediction for machine '{machine_id}'",
             error_code=ErrorCode.PREDICTION_FAILED,
@@ -135,14 +133,14 @@ async def get_prediction_history(
     """
     Get prediction history for a machine.
     Uses hexagonal architecture with dependency injection.
-    
+
     Args:
         machine_id: The machine to get history for.
         limit: Maximum number of records (1-200, default 50).
-        
+
     Returns:
         Dictionary with machine_id and list of historical predictions.
-        
+
     Raises:
         ValidationException: If parameters are invalid.
         ResourceNotFoundException: If machine or history not found.

@@ -5,7 +5,7 @@ Represents ESG/Carbon emissions data
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 
 @dataclass
@@ -19,9 +19,9 @@ class ESGRecord:
     timestamp: datetime
     instant_co2eq_kg: float
     cumulative_co2eq_kg: float
-    fuel_rate_lh: Optional[float] = None
-    power_consumption_kw: Optional[float] = None
-    efficiency_score: Optional[float] = None
+    fuel_rate_lh: float | None = None
+    power_consumption_kw: float | None = None
+    efficiency_score: float | None = None
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:

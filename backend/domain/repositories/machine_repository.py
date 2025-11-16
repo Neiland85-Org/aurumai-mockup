@@ -30,7 +30,9 @@ class IMachineRepository(ABC):
         pass
 
     @abstractmethod
-    async def find_by_site(self, site_id: UUID, skip: int = 0, limit: int = 100) -> Sequence[Machine]:
+    async def find_by_site(
+        self, site_id: UUID, skip: int = 0, limit: int = 100
+    ) -> Sequence[Machine]:
         """Find machines by site"""
         pass
 

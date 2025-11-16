@@ -8,13 +8,20 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from models import MachineInfo, MachineMetrics, PredictionResponse
+
+# Get the global limiter from the infrastructure module
+from infrastructure.rate_limiting import limiter
 
 logger = logging.getLogger("aurumai")
 
 router = APIRouter()
+
+# Rate limiter for machines endpoints
 
 
 # Mock data
@@ -24,50 +31,51 @@ MOCK_MACHINES = [
         "machine_type": "CNC_MILL",
         "site": "Factory-A",
         "status": "operational",
-        "commissioned_date": "2022-01-15",
+        "commissioned_date": datetime(2022, 1, 15),
     },
     {
         "machine_id": "CNC-002",
         "machine_type": "CNC_LATHE",
         "site": "Factory-A",
         "status": "operational",
-        "commissioned_date": "2022-03-20",
+        "commissioned_date": datetime(2022, 3, 20),
     },
     {
         "machine_id": "PRESS-001",
         "machine_type": "HYDRAULIC_PRESS",
         "site": "Factory-B",
         "status": "operational",
-        "commissioned_date": "2021-11-10",
+        "commissioned_date": datetime(2021, 11, 10),
     },
     {
         "machine_id": "WELD-001",
         "machine_type": "WELDING_ROBOT",
         "site": "Factory-A",
         "status": "offline",
-        "commissioned_date": "2023-02-05",
+        "commissioned_date": datetime(2023, 2, 5),
     },
     {
         "machine_id": "PACK-001",
         "machine_type": "PACKAGING_LINE",
         "site": "Factory-C",
         "status": "operational",
-        "commissioned_date": "2022-08-12",
+        "commissioned_date": datetime(2022, 8, 12),
     },
 ]
 
 
 @router.get("/", response_model=list[MachineInfo])
-async def list_machines() -> list[MachineInfo]:
+@limiter.limit("200/minute")
+async def list_machines(request: Request) -> list[MachineInfo]:
     """
     List all available machines (MOCK VERSION).
     Returns sample data without database connection.
-    
+
     Returns:
         List of mock machines with basic info.
     """
     logger.info("🔧 Using MOCK machines endpoint (database not available)")
-    
+
     return [
         MachineInfo(
             machine_id=m["machine_id"],
@@ -81,30 +89,31 @@ async def list_machines() -> list[MachineInfo]:
 
 
 @router.get("/{machine_id}/metrics", response_model=MachineMetrics)
-async def get_machine_metrics(machine_id: str) -> MachineMetrics:
+@limiter.limit("100/minute")
+async def get_machine_metrics(request: Request, machine_id: str) -> MachineMetrics:
     """
     Get current metrics and status for a specific machine (MOCK VERSION).
     Returns sample metrics without database connection.
-    
+
     Args:
         machine_id: The ID of the machine to retrieve metrics for.
-        
+
     Returns:
         Mock machine metrics including status, measurements, and predictions.
     """
     logger.info(f"🔧 Using MOCK metrics endpoint for machine: {machine_id}")
-    
+
     # Find machine in mock data
     machine = next((m for m in MOCK_MACHINES if m["machine_id"] == machine_id), None)
-    
+
     if not machine:
         # Return default mock machine if not found
         machine = MOCK_MACHINES[0]
         machine_id = machine["machine_id"]
-    
+
     # Generate mock metrics based on machine ID
     now = datetime.utcnow()
-    
+
     # Mock metrics vary by machine type
     mock_metrics: dict[str, Any] = {
         "temperature": 45.2 + hash(machine_id) % 20,
@@ -113,7 +122,7 @@ async def get_machine_metrics(machine_id: str) -> MachineMetrics:
         "rpm": 1500 + hash(machine_id) % 500,
         "pressure": 80 + hash(machine_id) % 40,
     }
-    
+
     # Mock prediction
     risk_score = 0.2 + (hash(machine_id) % 30) / 100
     prediction = PredictionResponse(
@@ -124,10 +133,10 @@ async def get_machine_metrics(machine_id: str) -> MachineMetrics:
         confidence=0.85 + (hash(machine_id) % 10) / 100,
         maintenance_hours=240 - int(risk_score * 100),
     )
-    
+
     # Alerts based on risk
     alerts_count = 1 if risk_score > 0.4 else 0
-    
+
     return MachineMetrics(
         machine_id=machine_id,
         current_status=machine["status"],

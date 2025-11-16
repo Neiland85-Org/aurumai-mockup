@@ -6,6 +6,7 @@ Calculates carbon emissions and ESG metrics for machines
 from __future__ import annotations
 
 from datetime import datetime
+
 from typing_extensions import TypedDict
 
 from domain.entities.esg import ESGRecord
@@ -68,12 +69,14 @@ class CalculateESGUseCase:
         # Validate machine exists
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         # Get latest raw measurement
         measurement = await self.measurement_repo.get_latest_raw_measurement(machine_id)
         if not measurement:
-            raise ValueError(f"No measurements available for machine {machine_id}")
+            message = f"No measurements available for machine {machine_id}"
+            raise ValueError(message)
 
         # Get previous ESG record for cumulative calculation
         previous_esg = await self.esg_repo.get_latest(machine_id)
@@ -117,7 +120,8 @@ class CalculateESGUseCase:
         # Validate machine exists
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         return await self.esg_repo.get_latest(machine_id)
 
@@ -139,7 +143,8 @@ class CalculateESGUseCase:
         # Validate machine exists
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         history = await self.esg_repo.get_history(machine_id, limit)
         return list(history)
@@ -203,6 +208,7 @@ class CalculateESGUseCase:
             # Validate machine exists
             machine = await self.machine_repo.get_by_id(machine_id)
             if not machine:
-                raise ValueError(f"Machine {machine_id} not found")
+                message = f"Machine {machine_id} not found"
+                raise ValueError(message)
 
         return await self.esg_repo.get_total_emissions(machine_id)

@@ -3,7 +3,7 @@ Use Case: Get Machine Metrics
 Retrieves comprehensive metrics and status for machines
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from domain.entities.machine import Machine
 from domain.repositories.esg_repository import IESGRepository
@@ -51,7 +51,8 @@ class GetMachineMetricsUseCase:
         # Get machine
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         # Get latest measurements
         raw_measurement = await self.measurement_repo.get_latest_raw_measurement(machine_id)
@@ -188,7 +189,8 @@ class GetMachineMetricsUseCase:
         # Check if machine already exists
         existing = await self.machine_repo.get_by_id(machine_id)
         if existing:
-            raise ValueError(f"Machine {machine_id} already exists")
+            message = f"Machine {machine_id} already exists"
+            raise ValueError(message)
 
         # Create machine entity
         machine = Machine(
@@ -204,9 +206,9 @@ class GetMachineMetricsUseCase:
     async def update_machine(
         self,
         machine_id: str,
-        machine_type: Optional[str] = None,
-        location: Optional[str] = None,
-        operational: Optional[bool] = None,
+        machine_type: str | None = None,
+        location: str | None = None,
+        operational: bool | None = None,
     ) -> Machine:
         """
         Update machine information.
@@ -226,7 +228,8 @@ class GetMachineMetricsUseCase:
         # Get existing machine
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         # Update fields if provided
         if machine_type is not None:

@@ -4,7 +4,6 @@ Executes ML prediction for a machine and stores the result
 """
 
 from datetime import datetime
-from typing import Optional
 
 from domain.entities.prediction import Prediction
 from domain.repositories.machine_repository import IMachineRepository
@@ -47,12 +46,14 @@ class RunPredictionUseCase:
         # Validate machine exists
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         # Get latest features
         features = await self.measurement_repo.get_latest_features(machine_id)
         if not features:
-            raise ValueError(f"No features available for machine {machine_id}")
+            message = f"No features available for machine {machine_id}"
+            raise ValueError(message)
 
         # Run ML prediction
         prediction_result = await self.ml_service.predict(
@@ -97,12 +98,13 @@ class RunPredictionUseCase:
         # Validate machine exists
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         history = await self.prediction_repo.get_history(machine_id, limit)
         return list(history)
 
-    async def get_latest(self, machine_id: str) -> Optional[Prediction]:
+    async def get_latest(self, machine_id: str) -> Prediction | None:
         """
         Get latest prediction for a machine.
 
@@ -115,7 +117,8 @@ class RunPredictionUseCase:
         # Validate machine exists
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         return await self.prediction_repo.get_latest(machine_id)
 

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from typing import Literal, Mapping, Sequence
+
 from typing_extensions import TypedDict
 
 from domain.entities.measurement import FeatureVector, RawMeasurement
@@ -86,7 +87,8 @@ class IngestTelemetryUseCase:
         # Validate machine exists
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         # Create and save measurement
         measurement = RawMeasurement(
@@ -127,7 +129,8 @@ class IngestTelemetryUseCase:
         # Validate machine exists
         machine = await self.machine_repo.get_by_id(machine_id)
         if not machine:
-            raise ValueError(f"Machine {machine_id} not found")
+            message = f"Machine {machine_id} not found"
+            raise ValueError(message)
 
         # Create and save feature vector
         feature_vector = FeatureVector(
@@ -147,7 +150,7 @@ class IngestTelemetryUseCase:
 
     async def execute_batch_raw(
         self,
-    measurements: Sequence[RawMeasurementInput],
+        measurements: Sequence[RawMeasurementInput],
     ) -> BatchIngestResult:
         """
         Ingest batch of raw measurements.

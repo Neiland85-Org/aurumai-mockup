@@ -5,19 +5,18 @@ Centralized metrics collection for observability
 
 import functools
 import time
-from typing import Any, Callable, TypeVar, ParamSpec
+from typing import Callable, ParamSpec, TypeVar
 
 from prometheus_client import (
+    REGISTRY,
+    CollectorRegistry,
     Counter,
     Gauge,
     Histogram,
     generate_latest,
-    REGISTRY,
-    CollectorRegistry,
 )
 
 from infrastructure.logging import get_logger
-
 
 logger = get_logger(__name__)
 
@@ -212,7 +211,9 @@ def track_db_query(operation: str, table: str, duration: float) -> None:
     db_query_duration_seconds.labels(operation=operation, table=table).observe(duration)
 
 
-def track_prediction(machine_type: str, model_version: str, duration: float, risk_score: float) -> None:
+def track_prediction(
+    machine_type: str, model_version: str, duration: float, risk_score: float
+) -> None:
     """
     Track ML prediction metrics.
 
@@ -227,7 +228,13 @@ def track_prediction(machine_type: str, model_version: str, duration: float, ris
     ml_prediction_risk_score.labels(machine_type=machine_type).observe(risk_score)
 
 
-def track_ingestion(machine_id: str, data_type: str, duration: float, success: bool = True, error_type: str | None = None) -> None:
+def track_ingestion(
+    machine_id: str,
+    data_type: str,
+    duration: float,
+    success: bool = True,
+    error_type: str | None = None,
+) -> None:
     """
     Track data ingestion metrics.
 
@@ -305,7 +312,9 @@ def track_validation_error(field: str, constraint: str) -> None:
 # ============================================================================
 
 
-def track_time(metric: Histogram, labels: dict[str, str] | None = None) -> Callable[[Callable[P, T]], Callable[P, T]]:
+def track_time(
+    metric: Histogram, labels: dict[str, str] | None = None
+) -> Callable[[Callable[P, T]], Callable[P, T]]:
     """
     Decorator to track function execution time.
 
@@ -314,7 +323,8 @@ def track_time(metric: Histogram, labels: dict[str, str] | None = None) -> Calla
         labels: Optional labels for the metric
 
     Example:
-        >>> @track_time(http_request_duration_seconds, {"method": "GET", "endpoint": "/api/machines"})
+        >>> @track_time(http_request_duration_seconds,
+        ...     {"method": "GET", "endpoint": "/api/machines"})
         ... def get_machines():
         ...     return {"machines": [...]}
     """
@@ -348,6 +358,7 @@ def track_time(metric: Histogram, labels: dict[str, str] | None = None) -> Calla
 
         # Return appropriate wrapper based on function type
         import asyncio
+
         if asyncio.iscoroutinefunction(func):
             return async_wrapper  # type: ignore
         else:

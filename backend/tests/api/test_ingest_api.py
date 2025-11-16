@@ -5,9 +5,10 @@ API Tests for the Ingest Endpoints
 from unittest.mock import AsyncMock
 
 import pytest
+from fastapi.testclient import TestClient
+
 from api.dependencies import get_ingest_telemetry_use_case
 from app import app
-from fastapi.testclient import TestClient
 
 # Create a test client
 client = TestClient(app)
@@ -36,6 +37,9 @@ def test_ingest_raw_success() -> None:
     mock_ingest_use_case.execute_raw.return_value = {
         "status": "success",
         "machine_id": "test-machine",
+        "message": "Raw measurement ingested successfully",
+        "timestamp": "2025-11-15T10:00:00Z",
+        "metrics_count": 2,
     }
     payload = {
         "machine_id": "test-machine",
@@ -70,7 +74,7 @@ def test_ingest_raw_machine_not_found() -> None:
 
     # Assert
     assert response.status_code == 404
-    assert "Machine test-machine not found" in response.json()["detail"]
+    assert "Machine 'test-machine' not found or invalid" in response.json()["message"]
     mock_ingest_use_case.execute_raw.assert_called_once()
 
 
@@ -82,6 +86,9 @@ def test_ingest_features_success() -> None:
     mock_ingest_use_case.execute_features.return_value = {
         "status": "success",
         "machine_id": "test-machine",
+        "message": "Feature vector ingested successfully",
+        "timestamp": "2025-11-15T10:00:00Z",
+        "features_count": 2,
     }
     payload = {
         "machine_id": "test-machine",

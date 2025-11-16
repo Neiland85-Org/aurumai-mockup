@@ -9,17 +9,15 @@ import uuid
 from datetime import datetime
 from typing import Any, Callable
 
-from fastapi import Request, Response, status
+from fastapi import Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.types import ASGIApp
 
 from models_errors import (
     ApplicationError,
     ErrorCode,
     ErrorResponse,
-    ERROR_CODE_TO_STATUS,
 )
 
 # Configure JSON logger
@@ -58,37 +56,40 @@ class ErrorLoggingMiddleware(BaseHTTPMiddleware):
             # Log responses with error status codes
             if response.status_code >= 400:
                 logger.warning(
-                    json.dumps({
-                        "timestamp": datetime.utcnow().isoformat() + "Z",
-                        "level": "WARNING",
-                        "request_id": request_id,
-                        "method": request.method,
-                        "path": request.url.path,
-                        "status_code": response.status_code,
-                        "message": f"HTTP {response.status_code}",
-                    })
+                    json.dumps(
+                        {
+                            "timestamp": datetime.utcnow().isoformat() + "Z",
+                            "level": "WARNING",
+                            "request_id": request_id,
+                            "method": request.method,
+                            "path": request.url.path,
+                            "status_code": response.status_code,
+                            "message": f"HTTP {response.status_code}",
+                        }
+                    )
                 )
-            return response
         except Exception as exc:
             # Log unhandled exceptions
             logger.error(
-                json.dumps({
-                    "timestamp": datetime.utcnow().isoformat() + "Z",
-                    "level": "ERROR",
-                    "request_id": request_id,
-                    "method": request.method,
-                    "path": request.url.path,
-                    "error_type": type(exc).__name__,
-                    "error_message": str(exc),
-                    "message": "Unhandled exception in request",
-                })
+                json.dumps(
+                    {
+                        "timestamp": datetime.utcnow().isoformat() + "Z",
+                        "level": "ERROR",
+                        "request_id": request_id,
+                        "method": request.method,
+                        "path": request.url.path,
+                        "error_type": type(exc).__name__,
+                        "error_message": str(exc),
+                        "message": "Unhandled exception in request",
+                    }
+                )
             )
             raise
+        else:
+            return response
 
 
-async def application_error_handler(
-    request: Request, exc: Any
-) -> JSONResponse:
+async def application_error_handler(request: Request, exc: Any) -> JSONResponse:
     """
     Handle ApplicationError exceptions.
     Converts ApplicationError to ErrorResponse with proper HTTP status.
@@ -98,14 +99,16 @@ async def application_error_handler(
     error_response = app_error.to_error_response(request_id)
 
     logger.warning(
-        json.dumps({
-            "timestamp": datetime.utcnow().isoformat() + "Z",
-            "level": "WARNING",
-            "request_id": request_id,
-            "error_code": error_response.error_code,
-            "status_code": error_response.status_code,
-            "message": error_response.message,
-        })
+        json.dumps(
+            {
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "level": "WARNING",
+                "request_id": request_id,
+                "error_code": error_response.error_code,
+                "status_code": error_response.status_code,
+                "message": error_response.message,
+            }
+        )
     )
 
     return JSONResponse(
@@ -114,9 +117,7 @@ async def application_error_handler(
     )
 
 
-async def validation_error_handler(
-    request: Request, exc: Any
-) -> JSONResponse:
+async def validation_error_handler(request: Request, exc: Any) -> JSONResponse:
     """
     Handle Pydantic validation errors.
     Converts validation errors to ErrorResponse.
@@ -126,13 +127,15 @@ async def validation_error_handler(
 
     error_details = []
     for error in validation_error.errors():
-        loc = ".".join(str(l) for l in error["loc"][1:])
-        error_details.append({
-            "field": loc,
-            "constraint": error["type"],
-            "provided_value": error.get("input", ""),
-            "expected_format": error.get("msg", "Invalid value"),
-        })
+        loc = ".".join(str(location_part) for location_part in error["loc"][1:])
+        error_details.append(
+            {
+                "field": loc,
+                "constraint": error["type"],
+                "provided_value": error.get("input", ""),
+                "expected_format": error.get("msg", "Invalid value"),
+            }
+        )
 
     error_response = ErrorResponse(
         status_code=400,
@@ -143,15 +146,17 @@ async def validation_error_handler(
     )
 
     logger.warning(
-        json.dumps({
-            "timestamp": datetime.utcnow().isoformat() + "Z",
-            "level": "WARNING",
-            "request_id": request_id,
-            "error_code": ErrorCode.VALIDATION_ERROR,
-            "status_code": 400,
-            "message": "Validation failed",
-            "errors": error_details,
-        })
+        json.dumps(
+            {
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "level": "WARNING",
+                "request_id": request_id,
+                "error_code": ErrorCode.VALIDATION_ERROR,
+                "status_code": 400,
+                "message": "Validation failed",
+                "errors": error_details,
+            }
+        )
     )
 
     return JSONResponse(
@@ -160,9 +165,7 @@ async def validation_error_handler(
     )
 
 
-async def general_exception_handler(
-    request: Request, exc: Any
-) -> JSONResponse:
+async def general_exception_handler(request: Request, exc: Any) -> JSONResponse:
     """
     Handle all other exceptions.
     Converts any unhandled exception to ErrorResponse with 500 status.
@@ -179,16 +182,18 @@ async def general_exception_handler(
     )
 
     logger.error(
-        json.dumps({
-            "timestamp": datetime.utcnow().isoformat() + "Z",
-            "level": "ERROR",
-            "request_id": request_id,
-            "error_type": type(exc).__name__,
-            "error_message": str(exc),
-            "error_code": ErrorCode.INTERNAL_ERROR,
-            "status_code": 500,
-            "message": "Unhandled exception",
-        })
+        json.dumps(
+            {
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "level": "ERROR",
+                "request_id": request_id,
+                "error_type": type(exc).__name__,
+                "error_message": str(exc),
+                "error_code": ErrorCode.INTERNAL_ERROR,
+                "status_code": 500,
+                "message": "Unhandled exception",
+            }
+        )
     )
 
     return JSONResponse(

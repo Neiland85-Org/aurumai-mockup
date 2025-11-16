@@ -11,9 +11,9 @@ SECURITY NOTICE:
 """
 
 import os
-from typing import List
+from typing import Any, List
 
-from pydantic import Field, field_validator
+from pydantic import Field, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _env_file = os.environ.get("ENV_FILE", ".env")
@@ -21,7 +21,7 @@ _env_file = os.environ.get("ENV_FILE", ".env")
 
 class Settings(BaseSettings):
     """Main application settings
-    
+
     Critical variables (SECRET_KEY, DB_PASSWORD) have NO defaults
     and will raise ValidationError if not provided in environment.
     """
@@ -73,9 +73,9 @@ class Settings(BaseSettings):
     # Security
     # CRITICAL: SECRET_KEY is REQUIRED (no default)
     secret_key: str = Field(
-        ..., 
+        ...,
         min_length=32,
-        description="Secret key for JWT/sessions (REQUIRED, min 32 chars)"
+        description="Secret key for JWT/sessions (REQUIRED, min 32 chars)",
     )
     access_token_expire_minutes: int = 30
     algorithm: str = "HS256"
@@ -121,15 +121,15 @@ class Settings(BaseSettings):
 
     # Resilience - Timeouts
     timeout_connect: float = 5.0  # Connection timeout in seconds
-    timeout_read: float = 30.0    # Read timeout in seconds
-    timeout_write: float = 30.0   # Write timeout in seconds
-    timeout_pool: float = 5.0     # Pool timeout in seconds
-    timeout_db: float = 30.0      # Database timeout in seconds
+    timeout_read: float = 30.0  # Read timeout in seconds
+    timeout_write: float = 30.0  # Write timeout in seconds
+    timeout_pool: float = 5.0  # Pool timeout in seconds
+    timeout_db: float = 30.0  # Database timeout in seconds
 
     # CORS
     cors_origins: List[str] = Field(
         default=["http://localhost:3000", "http://localhost:8000"],
-        description="Comma-separated list of allowed CORS origins"
+        description="Comma-separated list of allowed CORS origins",
     )
     cors_allow_credentials: bool = True
 
@@ -142,7 +142,7 @@ class Settings(BaseSettings):
 
     @field_validator("cors_origins", mode="before")
     @classmethod
-    def parse_cors_origins(cls, v):
+    def parse_cors_origins(cls, v: Any) -> list[str]:
         """Parse CORS origins from comma-separated string or JSON array"""
         if isinstance(v, str):
             # If it's a comma-separated string, split it
@@ -151,6 +151,7 @@ class Settings(BaseSettings):
             # If it's a JSON array string, parse it
             elif v.startswith("["):
                 import json
+
                 return json.loads(v)
             # Single origin
             return [v]
@@ -158,7 +159,7 @@ class Settings(BaseSettings):
 
     @field_validator("secret_key")
     @classmethod
-    def validate_secret_key(cls, v: str, info) -> str:
+    def validate_secret_key(cls, v: str, info: ValidationInfo) -> str:
         """Validate SECRET_KEY is strong enough for production"""
         if info.data.get("environment", "").lower() == "production":
             if len(v) < 64:
@@ -172,7 +173,7 @@ class Settings(BaseSettings):
 
     @field_validator("debug")
     @classmethod
-    def validate_debug_in_production(cls, v: bool, info) -> bool:
+    def validate_debug_in_production(cls, v: bool, info: ValidationInfo) -> bool:
         """Ensure DEBUG is False in production"""
         if info.data.get("environment", "").lower() == "production" and v:
             raise ValueError("DEBUG must be False in production environment")
@@ -219,5 +220,8 @@ except Exception as e:  # pragma: no cover - configuration errors must surface e
             loc = ".".join(str(x) for x in err["loc"])
             msg = err["msg"]
             print(f"- {loc}: {msg}", file=sys.stderr)
-    print("\n💡 Asegúrate de que el archivo .env existe y contiene todas las variables requeridas", file=sys.stderr)
+    print(
+        "\n💡 Asegúrate de que el archivo .env existe y contiene todas las variables requeridas",
+        file=sys.stderr,
+    )
     sys.exit(1)

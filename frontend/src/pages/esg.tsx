@@ -1,4 +1,5 @@
 import { useState, useEffect, ReactElement } from 'react';
+import Link from 'next/link';
 import { getESG, getMachines } from '../lib/api';
 import MetricCard from '../components/MetricCard';
 import { useToast } from '@/components/Toast';
@@ -101,9 +102,9 @@ export default function ESGPage(): ReactElement {
   return (
     <div className="min-h-screen p-8">
       <div className="mb-6">
-        <a href="/" className="text-green-600 hover:underline">
+        <Link href="/" className="text-green-600 hover:underline">
           ← Back to Overview
-        </a>
+        </Link>
       </div>
 
       <h1 className="text-3xl font-bold text-green-600 mb-6">ESG / Carbon Monitoring</h1>

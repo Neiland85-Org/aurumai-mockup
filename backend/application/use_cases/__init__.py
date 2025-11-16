@@ -1,12 +1,12 @@
 """Aggregate re-exports for application use cases.
 
 Allows importing use cases via:
-	from application.use_cases import (
-		IngestTelemetryUseCase,
-		RunPredictionUseCase,
-		CalculateESGUseCase,
-		GetMachineMetricsUseCase,
-	)
+        from application.use_cases import (
+                IngestTelemetryUseCase,
+                RunPredictionUseCase,
+                CalculateESGUseCase,
+                GetMachineMetricsUseCase,
+        )
 """
 
 from .esg import CalculateESGUseCase

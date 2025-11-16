@@ -9,6 +9,10 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi.util import get_remote_address
 
 from api.exception_handlers import (
     ErrorLoggingMiddleware,
@@ -17,13 +21,13 @@ from api.exception_handlers import (
     general_exception_handler,
     validation_error_handler,
 )
-from api.routers import esg, ingest, machines, predict
+
 # TEMPORARY: Use mock routers for development without database
-from api.routers import machines_mock, esg_mock, predict_mock
+from api.routers import esg_mock, ingest, machines_mock, predict_mock
 from infrastructure.config.settings import settings
-from infrastructure.logging import setup_logging, get_logger
+from infrastructure.logging import setup_logging
 from infrastructure.metrics import get_metrics, system_info
-from infrastructure.tracing import setup_tracing, instrument_fastapi
+from infrastructure.tracing import instrument_fastapi, setup_tracing
 from models_errors import ApplicationError
 
 # from api.routers import ingest_simple, machines_simple, predict_simple, esg_simple
@@ -64,6 +68,15 @@ app = FastAPI(
     version=settings.app_version,
     description="Backend for AurumAI using Hexagonal Architecture with full observability.",
 )
+
+from infrastructure.rate_limiting import limiter
+
+# Configure rate limiting
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Add rate limiting middleware
+app.add_middleware(SlowAPIMiddleware)
 
 # Instrument FastAPI with OpenTelemetry (if enabled)
 if settings.tracing_enabled:
@@ -108,16 +121,16 @@ async def startup_event() -> None:
     Initializes the database connection and tables.
     """
     logger.info("Starting AurumAI Backend...")
-    
+
     # Set system info metrics
     system_info.labels(
         version=settings.app_version,
         environment=settings.environment,
     ).set(1)
-    
+
     # TODO: Initialize database when ready
     # await init_database()
-    
+
     logger.info(
         "AurumAI Backend started successfully",
         extra={
@@ -146,11 +159,11 @@ def read_root() -> dict[str, str]:
 async def metrics() -> PlainTextResponse:
     """
     Prometheus metrics endpoint.
-    
+
     Exposes application metrics in Prometheus text format for scraping.
     Includes HTTP request metrics, database metrics, ML prediction metrics,
     circuit breaker states, retry attempts, and error rates.
-    
+
     Returns:
         PlainTextResponse: Metrics in Prometheus text format
     """
@@ -162,7 +175,7 @@ async def metrics() -> PlainTextResponse:
 def health_check() -> dict[str, Any]:
     """
     Detailed health check endpoint.
-    
+
     Returns application health status and configuration.
     """
     return {

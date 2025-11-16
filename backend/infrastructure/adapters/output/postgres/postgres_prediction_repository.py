@@ -3,7 +3,7 @@ Concrete PostgreSQL implementation of IPredictionRepository
 """
 
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -37,7 +37,7 @@ class PostgresPredictionRepository(IPredictionRepository):
 
         return self._model_to_entity(model)
 
-    async def get_latest(self, machine_id: str) -> Optional[Prediction]:
+    async def get_latest(self, machine_id: str) -> Prediction | None:
         """Get latest prediction for machine"""
         stmt = (
             select(PredictionModel)
@@ -125,9 +125,11 @@ class PostgresPredictionRepository(IPredictionRepository):
             failure_probability=float(getattr(model, "failure_probability", 0.0)),
             maintenance_hours=int(getattr(model, "maintenance_hours", 0)),
             failure_type=getattr(model, "failure_type", None),
-            confidence=float(getattr(model, "confidence", 0.0))
-            if getattr(model, "confidence", None) is not None
-            else None,
+            confidence=(
+                float(getattr(model, "confidence", 0.0))
+                if getattr(model, "confidence", None) is not None
+                else None
+            ),
             model_version=str(getattr(model, "model_version", "")),
             features_used=features_used,
         )

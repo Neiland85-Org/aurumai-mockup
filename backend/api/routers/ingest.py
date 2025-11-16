@@ -6,9 +6,14 @@ Handles ingestion of raw telemetry and feature vectors with comprehensive error 
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from api.dependencies import get_ingest_telemetry_use_case
+
+# Get the global limiter from the infrastructure module
+from infrastructure.rate_limiting import limiter
 from application.use_cases import IngestTelemetryUseCase
 from application.use_cases.ingest.ingest_telemetry_use_case import (
     FeatureIngestResult,
@@ -25,6 +30,8 @@ from models_errors import (
 logger = logging.getLogger("aurumai")
 
 router = APIRouter()
+
+# Rate limiter for ingest endpoints
 
 
 def _validate_raw_measurement(meas: RawMeasurement) -> None:
@@ -52,14 +59,14 @@ def _validate_raw_measurement(meas: RawMeasurement) -> None:
     for key, value in meas.metrics.items():
         try:
             float(value)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as exc:
             raise ValidationException(
                 message=f"Metric '{key}' value must be numeric",
                 field=f"metrics.{key}",
                 constraint="type",
                 provided_value=str(value),
                 expected_format="Numeric value",
-            )
+            ) from exc
 
 
 def _validate_feature_vector(vec: FeatureVector) -> None:
@@ -87,31 +94,33 @@ def _validate_feature_vector(vec: FeatureVector) -> None:
     for key, value in vec.features.items():
         try:
             float(value)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as exc:
             raise ValidationException(
                 message=f"Feature '{key}' value must be numeric",
                 field=f"features.{key}",
                 constraint="type",
                 provided_value=str(value),
                 expected_format="Numeric value",
-            )
+            ) from exc
 
 
 @router.post("/raw")
+@limiter.limit("100/minute")
 async def ingest_raw(
+    request: Request,
     meas: RawMeasurement,
     use_case: Annotated[IngestTelemetryUseCase, Depends(get_ingest_telemetry_use_case)],
 ) -> RawIngestResult:
     """
     Ingest raw telemetry data from IoT devices/Edge nodes.
     Uses hexagonal architecture with dependency injection.
-    
+
     Args:
         meas: Raw measurement with machine_id, timestamp, and metrics dict.
-        
+
     Returns:
         Result of ingestion including status and any warnings.
-        
+
     Raises:
         ValidationException: If measurement data is invalid.
         ResourceNotFoundException: If machine not found.
@@ -126,11 +135,7 @@ async def ingest_raw(
             timestamp=meas.timestamp,
             metrics=meas.metrics,
         )
-        logger.info(
-            f"Raw telemetry ingested for machine {meas.machine_id}: {result['message']}"
-        )
-        return result
-
+        logger.info(f"Raw telemetry ingested for machine {meas.machine_id}: {result['message']}")
     except (ResourceNotFoundException, ValidationException):
         raise
     except ValueError as exc:
@@ -144,29 +149,34 @@ async def ingest_raw(
         raise
     except Exception as exc:
         logger.error(
-            f"Unexpected error ingesting raw telemetry for {meas.machine_id}: {type(exc).__name__}: {exc}"
+            f"Unexpected error ingesting raw telemetry for {meas.machine_id}: "
+            f"{type(exc).__name__}: {exc}"
         )
         raise ComputationException(
             message=f"Failed to ingest telemetry for machine '{meas.machine_id}'",
             error_code=ErrorCode.INGEST_ERROR,
         ) from exc
+    else:
+        return result
 
 
 @router.post("/features")
+@limiter.limit("50/minute")
 async def ingest_features(
+    request: Request,
     vec: FeatureVector,
     use_case: Annotated[IngestTelemetryUseCase, Depends(get_ingest_telemetry_use_case)],
 ) -> FeatureIngestResult:
     """
     Ingest feature-engineered data from Edge nodes.
     Uses hexagonal architecture with dependency injection.
-    
+
     Args:
         vec: Feature vector with machine_id, timestamp, and features dict.
-        
+
     Returns:
         Result of ingestion including status and any warnings.
-        
+
     Raises:
         ValidationException: If feature data is invalid.
         ResourceNotFoundException: If machine not found.
@@ -181,11 +191,7 @@ async def ingest_features(
             timestamp=vec.timestamp,
             features=vec.features,
         )
-        logger.info(
-            f"Feature vector ingested for machine {vec.machine_id}: {result['message']}"
-        )
-        return result
-
+        logger.info(f"Feature vector ingested for machine {vec.machine_id}: {result['message']}")
     except (ResourceNotFoundException, ValidationException):
         raise
     except ValueError as exc:
@@ -205,3 +211,5 @@ async def ingest_features(
             message=f"Failed to ingest features for machine '{vec.machine_id}'",
             error_code=ErrorCode.INVALID_FEATURES,
         ) from exc
+    else:
+        return result

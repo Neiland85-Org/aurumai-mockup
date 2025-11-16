@@ -24,7 +24,7 @@ class RawMeasurement:
         if not self.machine_id or not self.machine_id.strip():
             raise ValueError("machine_id cannot be empty")
         if not isinstance(self.metrics, dict):
-            raise ValueError("metrics must be a dictionary")
+            raise TypeError("metrics must be a dictionary")
         if not self.metrics:
             raise ValueError("metrics cannot be empty")
 
@@ -45,6 +45,6 @@ class FeatureVector:
         if not self.machine_id or not self.machine_id.strip():
             raise ValueError("machine_id cannot be empty")
         if not isinstance(self.features, dict):
-            raise ValueError("features must be a dictionary")
+            raise TypeError("features must be a dictionary")
         if not self.features:
             raise ValueError("features cannot be empty")
