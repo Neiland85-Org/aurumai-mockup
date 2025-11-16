@@ -40,12 +40,8 @@ class MLServiceImpl(IMLService):
         }.get(machine_type, random.uniform(0.05, 0.20))
 
         # Extract key features if available
-        vibration = float(
-            features.get("vibration") or features.get("raw_vibration") or 3.0
-        )
-        temperature = float(
-            features.get("temperature") or features.get("raw_temperature") or 85.0
-        )
+        vibration = float(features.get("vibration") or features.get("raw_vibration") or 3.0)
+        temperature = float(features.get("temperature") or features.get("raw_temperature") or 85.0)
         rpm = float(features.get("rpm") or features.get("raw_rpm") or 1600.0)
 
         # Risk modifiers based on features
@@ -76,9 +72,7 @@ class MLServiceImpl(IMLService):
                 risk_adjustment += 0.05
 
         # Calculate final risk score (0-1)
-        risk_score = min(
-            base_risk + risk_adjustment + random.uniform(-0.05, 0.05), 0.95
-        )
+        risk_score = min(base_risk + risk_adjustment + random.uniform(-0.05, 0.05), 0.95)
         failure_probability = min(risk_score * 1.2, 0.99)
 
         # Estimate hours until maintenance needed
@@ -104,9 +98,7 @@ class MLServiceImpl(IMLService):
             )
         elif temperature > 100:
             failure_type = (
-                "overheating"
-                if machine_type == "industrial_boiler"
-                else "thermal_stress"
+                "overheating" if machine_type == "industrial_boiler" else "thermal_stress"
             )
         elif rpm > 1900 or rpm < 1300:
             failure_type = "motor_failure"

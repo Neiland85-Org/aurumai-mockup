@@ -71,9 +71,7 @@ async def get_current_esg_mock(
     machine_id: str = Query(..., description="Machine ID", min_length=1),
 ) -> ESGResponse:
 
-    logger.info(
-        f"🔧 Using MOCK ESG endpoint for '{machine_id}' (database not available)"
-    )
+    logger.info(f"🔧 Using MOCK ESG endpoint for '{machine_id}' (database not available)")
 
     # Validate machine exists
     if machine_id not in VALID_MACHINE_IDS:

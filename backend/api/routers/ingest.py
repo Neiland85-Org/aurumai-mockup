@@ -135,9 +135,7 @@ async def ingest_raw(
             timestamp=meas.timestamp,
             metrics=meas.metrics,
         )
-        logger.info(
-            f"Raw telemetry ingested for machine {meas.machine_id}: {result['message']}"
-        )
+        logger.info(f"Raw telemetry ingested for machine {meas.machine_id}: {result['message']}")
     except (ResourceNotFoundException, ValidationException):
         raise
     except ValueError as exc:
@@ -193,9 +191,7 @@ async def ingest_features(
             timestamp=vec.timestamp,
             features=vec.features,
         )
-        logger.info(
-            f"Feature vector ingested for machine {vec.machine_id}: {result['message']}"
-        )
+        logger.info(f"Feature vector ingested for machine {vec.machine_id}: {result['message']}")
     except (ResourceNotFoundException, ValidationException):
         raise
     except ValueError as exc:

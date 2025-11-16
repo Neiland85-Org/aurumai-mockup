@@ -45,9 +45,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
 
         return self._feature_model_to_entity(model)
 
-    async def get_latest_raw_measurement(
-        self, machine_id: str
-    ) -> Optional[RawMeasurement]:
+    async def get_latest_raw_measurement(self, machine_id: str) -> Optional[RawMeasurement]:
         """Get latest raw measurement for machine"""
         stmt = (
             select(RawMeasurementModel)

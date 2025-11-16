@@ -60,9 +60,7 @@ class EmissionFactor:
         # More recent IPCC AR5: CH4 = 28, N2O = 265
         # We use AR5 values
         if self.co2eq_factor == 0.0:
-            self.co2eq_factor = (
-                self.co2_factor + (self.ch4_factor * 28) + (self.n2o_factor * 265)
-            )
+            self.co2eq_factor = self.co2_factor + (self.ch4_factor * 28) + (self.n2o_factor * 265)
 
     @staticmethod
     def create(

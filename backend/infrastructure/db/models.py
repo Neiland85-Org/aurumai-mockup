@@ -37,9 +37,7 @@ class MachineModel(Base):
     measurements = relationship(
         "RawMeasurementModel", back_populates="machine", cascade="all, delete-orphan"
     )
-    features = relationship(
-        "FeatureModel", back_populates="machine", cascade="all, delete-orphan"
-    )
+    features = relationship("FeatureModel", back_populates="machine", cascade="all, delete-orphan")
     predictions = relationship(
         "PredictionModel", back_populates="machine", cascade="all, delete-orphan"
     )
@@ -54,9 +52,7 @@ class RawMeasurementModel(Base):
     __tablename__ = "raw_measurements"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    machine_id = Column(
-        String(50), ForeignKey("machines.machine_id"), nullable=False, index=True
-    )
+    machine_id = Column(String(50), ForeignKey("machines.machine_id"), nullable=False, index=True)
     timestamp = Column(DateTime, nullable=False, index=True)
     metrics = Column(JSON, nullable=False)  # Stores dict of metric_name -> value
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -71,9 +67,7 @@ class FeatureModel(Base):
     __tablename__ = "features"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    machine_id = Column(
-        String(50), ForeignKey("machines.machine_id"), nullable=False, index=True
-    )
+    machine_id = Column(String(50), ForeignKey("machines.machine_id"), nullable=False, index=True)
     timestamp = Column(DateTime, nullable=False, index=True)
     features = Column(JSON, nullable=False)  # Stores dict of feature_name -> value
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -88,9 +82,7 @@ class PredictionModel(Base):
     __tablename__ = "predictions"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    machine_id = Column(
-        String(50), ForeignKey("machines.machine_id"), nullable=False, index=True
-    )
+    machine_id = Column(String(50), ForeignKey("machines.machine_id"), nullable=False, index=True)
     timestamp = Column(DateTime, nullable=False, index=True)
     risk_score = Column(Float, nullable=False)
     failure_probability = Column(Float, nullable=False)
@@ -111,9 +103,7 @@ class ESGRecordModel(Base):
     __tablename__ = "esg_records"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    machine_id = Column(
-        String(50), ForeignKey("machines.machine_id"), nullable=False, index=True
-    )
+    machine_id = Column(String(50), ForeignKey("machines.machine_id"), nullable=False, index=True)
     timestamp = Column(DateTime, nullable=False, index=True)
     instant_co2eq_kg = Column(Float, nullable=False)
     cumulative_co2eq_kg = Column(Float, nullable=False)
@@ -135,13 +125,9 @@ class AlertModel(Base):
     __tablename__ = "alerts"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    machine_id = Column(
-        String(50), ForeignKey("machines.machine_id"), nullable=False, index=True
-    )
+    machine_id = Column(String(50), ForeignKey("machines.machine_id"), nullable=False, index=True)
     timestamp = Column(DateTime, nullable=False, index=True)
-    alert_type = Column(
-        String(50), nullable=False
-    )  # anomaly, prediction, threshold, esg
+    alert_type = Column(String(50), nullable=False)  # anomaly, prediction, threshold, esg
     severity = Column(String(20), nullable=False)  # low, medium, high, critical
     title = Column(String(200), nullable=False)
     description = Column(Text)

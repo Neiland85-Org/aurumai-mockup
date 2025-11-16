@@ -65,9 +65,7 @@ async def predict_mock(
     machine_id: str = Query(..., description="Machine ID"),
 ) -> dict[str, Any]:
 
-    logger.info(
-        f"🔧 Using MOCK predict endpoint for '{machine_id}' (database not available)"
-    )
+    logger.info(f"🔧 Using MOCK predict endpoint for '{machine_id}' (database not available)")
 
     # Validate machine exists
     if machine_id not in VALID_MACHINE_IDS:

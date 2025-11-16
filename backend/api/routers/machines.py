@@ -59,9 +59,7 @@ def _validate_machine_id(machine_id: str) -> None:
 
 @router.get("/", response_model=list[MachineInfo])
 async def list_machines(
-    use_case: Annotated[
-        GetMachineMetricsUseCase, Depends(get_machine_metrics_use_case)
-    ],
+    use_case: Annotated[GetMachineMetricsUseCase, Depends(get_machine_metrics_use_case)],
 ) -> list[MachineInfo]:
     """
     List all available machines.
@@ -90,9 +88,7 @@ async def list_machines(
     except ComputationException:
         raise
     except Exception as exc:
-        logger.error(
-            f"Unexpected error retrieving machines: {type(exc).__name__}: {exc}"
-        )
+        logger.error(f"Unexpected error retrieving machines: {type(exc).__name__}: {exc}")
         raise ComputationException(
             message="Failed to retrieve machines list. Please try again.",
             error_code=ErrorCode.DATABASE_ERROR,
@@ -102,9 +98,7 @@ async def list_machines(
 @router.get("/{machine_id}/metrics", response_model=MachineMetrics)
 async def get_machine_metrics(
     machine_id: str,
-    use_case: Annotated[
-        GetMachineMetricsUseCase, Depends(get_machine_metrics_use_case)
-    ],
+    use_case: Annotated[GetMachineMetricsUseCase, Depends(get_machine_metrics_use_case)],
 ) -> MachineMetrics:
     """
     Get current metrics and status for a specific machine.
@@ -132,9 +126,7 @@ async def get_machine_metrics(
         latest_metrics: dict[str, Any] = {}
         if metrics.get("latest_measurement"):
             try:
-                last_timestamp = datetime.fromisoformat(
-                    metrics["latest_measurement"]["timestamp"]
-                )
+                last_timestamp = datetime.fromisoformat(metrics["latest_measurement"]["timestamp"])
                 latest_metrics = metrics["latest_measurement"]["metrics"]
             except (ValueError, KeyError) as exc:
                 logger.warning(f"Invalid measurement data for {machine_id}: {exc}")
@@ -169,9 +161,7 @@ async def get_machine_metrics(
 
         return MachineMetrics(
             machine_id=machine_id,
-            current_status=(
-                "operational" if metrics["machine"]["operational"] else "down"
-            ),
+            current_status=("operational" if metrics["machine"]["operational"] else "down"),
             last_measurement=last_timestamp,
             metrics=latest_metrics,
             alerts_count=alerts_count,

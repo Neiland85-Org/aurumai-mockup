@@ -55,9 +55,7 @@ class GetMachineMetricsUseCase:
             raise ValueError(message)
 
         # Get latest measurements
-        raw_measurement = await self.measurement_repo.get_latest_raw_measurement(
-            machine_id
-        )
+        raw_measurement = await self.measurement_repo.get_latest_raw_measurement(machine_id)
         features = await self.measurement_repo.get_latest_features(machine_id)
 
         # Get latest prediction
@@ -77,9 +75,7 @@ class GetMachineMetricsUseCase:
             "latest_measurement": (
                 {
                     "timestamp": (
-                        raw_measurement.timestamp.isoformat()
-                        if raw_measurement
-                        else None
+                        raw_measurement.timestamp.isoformat() if raw_measurement else None
                     ),
                     "metrics": raw_measurement.metrics if raw_measurement else {},
                 }
@@ -96,16 +92,10 @@ class GetMachineMetricsUseCase:
             ),
             "latest_prediction": (
                 {
-                    "timestamp": (
-                        prediction.timestamp.isoformat() if prediction else None
-                    ),
+                    "timestamp": (prediction.timestamp.isoformat() if prediction else None),
                     "risk_score": prediction.risk_score if prediction else None,
-                    "failure_probability": (
-                        prediction.failure_probability if prediction else None
-                    ),
-                    "maintenance_hours": (
-                        prediction.maintenance_hours if prediction else None
-                    ),
+                    "failure_probability": (prediction.failure_probability if prediction else None),
+                    "maintenance_hours": (prediction.maintenance_hours if prediction else None),
                     "failure_type": prediction.failure_type if prediction else None,
                 }
                 if prediction

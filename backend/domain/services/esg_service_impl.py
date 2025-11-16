@@ -48,13 +48,9 @@ class ESGServiceImpl(IESGService):
         """
         # Extract relevant measurements
         fuel_rate_lh = (
-            metrics.get("fuel_rate_lh")
-            or metrics.get("fuel_rate")
-            or random.uniform(8.0, 15.0)
+            metrics.get("fuel_rate_lh") or metrics.get("fuel_rate") or random.uniform(8.0, 15.0)
         )
-        power_kw = (
-            metrics.get("kwh") or metrics.get("power_kw") or random.uniform(2.0, 10.0)
-        )
+        power_kw = metrics.get("kwh") or metrics.get("power_kw") or random.uniform(2.0, 10.0)
         co2_ppm = metrics.get("co2_ppm") or random.uniform(420, 650)
 
         # Calculate instant emissions (per measurement period, e.g., per hour)

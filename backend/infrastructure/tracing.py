@@ -203,9 +203,7 @@ def set_span_status(success: bool, description: Optional[str] = None) -> None:
         span.set_status(Status(StatusCode.ERROR, description))
 
 
-def record_exception(
-    exception: Exception, attributes: Optional[dict[str, Any]] = None
-) -> None:
+def record_exception(exception: Exception, attributes: Optional[dict[str, Any]] = None) -> None:
     """
     Record an exception in the current span.
 

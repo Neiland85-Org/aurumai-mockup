@@ -39,9 +39,7 @@ def test_imports_domain_entities() -> None:
         assert Sensor is not None
     except ImportError:
         entities_path = backend_dir / "domain" / "entities"
-        assert (
-            entities_path.exists()
-        ), f"Domain entities path not found: {entities_path}"
+        assert entities_path.exists(), f"Domain entities path not found: {entities_path}"
         assert (entities_path / "machine.py").exists(), "machine.py not found"
         assert (entities_path / "sensor.py").exists(), "sensor.py not found"
 
@@ -63,12 +61,8 @@ def test_imports_repositories() -> None:
     except ImportError:
         repos_path = backend_dir / "domain" / "repositories"
         assert repos_path.exists(), f"Repositories path not found: {repos_path}"
-        assert (
-            repos_path / "machine_repository.py"
-        ).exists(), "machine_repository.py not found"
-        assert (
-            repos_path / "sensor_repository.py"
-        ).exists(), "sensor_repository.py not found"
+        assert (repos_path / "machine_repository.py").exists(), "machine_repository.py not found"
+        assert (repos_path / "sensor_repository.py").exists(), "sensor_repository.py not found"
 
 
 def test_app_creation() -> None:

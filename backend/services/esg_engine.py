@@ -80,11 +80,7 @@ def compute_esg_metrics(
         or measurements.get("fuel_rate")
         or random.uniform(8.0, 15.0)
     )
-    kwh = (
-        measurements.get("kwh")
-        or measurements.get("power_kw")
-        or random.uniform(2.0, 10.0)
-    )
+    kwh = measurements.get("kwh") or measurements.get("power_kw") or random.uniform(2.0, 10.0)
     co2_ppm = measurements.get("co2_ppm") or random.uniform(420, 650)
 
     # Select electricity factor by region
@@ -154,9 +150,7 @@ def calculate_carbon_intensity(
     return round(total_co2eq_kg / production_units, 3)
 
 
-def forecast_emissions(
-    current_rate_kg_per_hour: float, forecast_hours: int
-) -> ForecastResult:
+def forecast_emissions(current_rate_kg_per_hour: float, forecast_hours: int) -> ForecastResult:
     """
     Simple linear forecast of future emissions.
     In production, this would use time series forecasting models.

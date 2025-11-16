@@ -27,9 +27,7 @@ class ContextualJSONFormatter(jsonlogger.JsonFormatter):
     - environment: Deployment environment (dev/staging/prod)
     """
 
-    def __init__(
-        self, *args: Any, environment: str = "development", **kwargs: Any
-    ) -> None:
+    def __init__(self, *args: Any, environment: str = "development", **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.environment = environment
 
@@ -114,9 +112,7 @@ def setup_logging(
     return logger
 
 
-def get_logger(
-    name: str, level: str = "INFO", environment: str = "development"
-) -> logging.Logger:
+def get_logger(name: str, level: str = "INFO", environment: str = "development") -> logging.Logger:
     """
     Get or create a logger with structured JSON formatting.
 

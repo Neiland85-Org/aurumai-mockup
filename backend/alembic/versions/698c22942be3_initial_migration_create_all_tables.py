@@ -33,9 +33,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("machine_id"),
     )
-    op.create_index(
-        op.f("ix_machines_machine_id"), "machines", ["machine_id"], unique=False
-    )
+    op.create_index(op.f("ix_machines_machine_id"), "machines", ["machine_id"], unique=False)
 
     # Create raw_measurements table (will be converted to TimescaleDB hypertable)
     op.create_table(
@@ -78,12 +76,8 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        op.f("ix_features_machine_id"), "features", ["machine_id"], unique=False
-    )
-    op.create_index(
-        op.f("ix_features_timestamp"), "features", ["timestamp"], unique=False
-    )
+    op.create_index(op.f("ix_features_machine_id"), "features", ["machine_id"], unique=False)
+    op.create_index(op.f("ix_features_timestamp"), "features", ["timestamp"], unique=False)
 
     # Create predictions table (will be converted to TimescaleDB hypertable)
     op.create_table(
@@ -105,12 +99,8 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        op.f("ix_predictions_machine_id"), "predictions", ["machine_id"], unique=False
-    )
-    op.create_index(
-        op.f("ix_predictions_timestamp"), "predictions", ["timestamp"], unique=False
-    )
+    op.create_index(op.f("ix_predictions_machine_id"), "predictions", ["machine_id"], unique=False)
+    op.create_index(op.f("ix_predictions_timestamp"), "predictions", ["timestamp"], unique=False)
 
     # Create esg_records table (will be converted to TimescaleDB hypertable)
     op.create_table(
@@ -131,12 +121,8 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        op.f("ix_esg_records_machine_id"), "esg_records", ["machine_id"], unique=False
-    )
-    op.create_index(
-        op.f("ix_esg_records_timestamp"), "esg_records", ["timestamp"], unique=False
-    )
+    op.create_index(op.f("ix_esg_records_machine_id"), "esg_records", ["machine_id"], unique=False)
+    op.create_index(op.f("ix_esg_records_timestamp"), "esg_records", ["timestamp"], unique=False)
 
     # Create alerts table
     op.create_table(
@@ -161,9 +147,7 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        op.f("ix_alerts_machine_id"), "alerts", ["machine_id"], unique=False
-    )
+    op.create_index(op.f("ix_alerts_machine_id"), "alerts", ["machine_id"], unique=False)
     op.create_index(op.f("ix_alerts_timestamp"), "alerts", ["timestamp"], unique=False)
 
     # Enable TimescaleDB extension
